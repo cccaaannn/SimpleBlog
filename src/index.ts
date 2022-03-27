@@ -1,41 +1,31 @@
 import express from "express";
-
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-import { router as usersRouter } from "./routes/api/users.routes";
-import { router as postRouter } from "./routes/api/post.routes";
-import { router as loginRouter } from "./routes/api/login.routes";
+import UsersRouter from "./routes/api/v1/users.routes";
+import PostRouter from "./routes/api/v1/post.routes";
+import LoginRouter from "./routes/api/v1/login.routes";
 
 
-const dotenv = require('dotenv');
 dotenv.config();
-
-
-
 const app = express();
-
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 
-mongoose.connect(process.env.MONGO_CONNECTION_STRING || "", () => {
+mongoose.connect(process.env.MONGO_CONNECTION_STRING as string, () => {
 	console.log(`db connected`)
 })
 
 
-app.get('/', (req, res) => {
-	res.send("hi");
-});
+app.use('/api/v1/users', UsersRouter);
+app.use('/api/v1/posts', PostRouter);
+app.use('/api/v1/login', LoginRouter);
 
 
-app.use('/api/users', usersRouter);
-app.use('/api/posts', postRouter);
-app.use('/api/login', loginRouter);
-
-
-const PORT: number = parseInt(process.env.PORT || "3000")
-const IP: string = process.env.IP || "localhost"
+const PORT: number = parseInt(process.env.PORT as string) as number
+const IP: string = process.env.IP as string
 
 
 // start app

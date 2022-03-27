@@ -1,7 +1,7 @@
-import Status from "./enums/Status";
+import Status from "../../types/enums/Status";
 
 interface TokenPayload {
-    id: string|null,
+    id: string,
     status: Status,
     username: string,
     email: string,

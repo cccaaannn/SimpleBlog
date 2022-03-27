@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+
 import Visibility from "./enums/Visibility";
 import { Comment } from "./Comment";
 

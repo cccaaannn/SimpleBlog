@@ -1,4 +1,4 @@
-import { Result, SuccessResult } from "../Results/Result";
+import { Result, SuccessResult } from "../results/Result";
 
 interface Functions {
     function: Function,

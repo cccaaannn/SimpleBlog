@@ -1,4 +1,4 @@
-import { LoginService } from "../services/login.service"
+import LoginService from "../services/login.service"
 
 async function login(req: any, res: any, next: any) {
     try {
@@ -9,7 +9,6 @@ async function login(req: any, res: any, next: any) {
     }
 }
 
-export const LoginController = {
-    login
-};
+const LoginController = { login };
+export default LoginController;
 

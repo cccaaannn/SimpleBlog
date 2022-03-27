@@ -1,16 +1,16 @@
 import { UserModel } from "../models/UserModel";
 import { User, UserSort } from "../types/User";
-import { IResult, Result, SuccessResult, ErrorResult } from "../Results/Result";
-import { IDataResult, DataResult, SuccessDataResult, ErrorDataResult } from "../Results/DataResult";
+import { IResult, Result, SuccessResult, ErrorResult } from "../core/results/Result";
+import { IDataResult, DataResult, SuccessDataResult, ErrorDataResult } from "../core/results/DataResult";
 import Status from "../types/enums/Status";
-import run from "../utils/business-runner";
+import run from "../core/utils/business-runner";
 import Roles from "../types/enums/Roles";
 
-import { EncryptionService } from './encryption.service';
+import EncryptionService from '../core/services/encryption.service';
 
 
 
-async function getAll(userSort?: UserSort): Promise<DataResult<User[]>> {
+async function getAll(userSort?: UserSort): Promise<IDataResult<User[]>> {
     if (userSort) {
         return new SuccessDataResult(await UserModel.find({ status: { $ne: Status.DELETED } }).sort(userSort));
     }
@@ -30,7 +30,7 @@ async function getById(id: number): Promise<DataResult<User | null>> {
     return new SuccessDataResult(await UserModel.findById(id));
 }
 
-async function getByUsername(username: string): Promise<DataResult<User | null>> {
+async function getByUsername(username: string): Promise<IDataResult<User | null>> {
     const res: Result = await run(
         [
             { function: isExistsUsername, args: [username] }
@@ -48,7 +48,7 @@ async function getByUsername(username: string): Promise<DataResult<User | null>>
     return new SuccessDataResult(temp);
 }
 
-async function add(user: User): Promise<Result> {
+async function add(user: User): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isUsernameUnique, args: [user.username] },
@@ -67,7 +67,7 @@ async function add(user: User): Promise<Result> {
     return new SuccessResult("Created");
 }
 
-async function update(id: number, user: User): Promise<Result> {
+async function update(id: number, user: User): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] },
@@ -82,7 +82,7 @@ async function update(id: number, user: User): Promise<Result> {
     }
 
     // If users password changed, re-encrypt it
-    if(user.password) {
+    if (user.password) {
         const oldUser: User | null = await UserModel.findById(id);
         if (oldUser != null && !await EncryptionService.compare(user.password, oldUser.password)) {
             user.password = await EncryptionService.hash(user.password)
@@ -93,7 +93,7 @@ async function update(id: number, user: User): Promise<Result> {
     return new SuccessResult("User updated");
 }
 
-async function remove(id: number): Promise<Result> {
+async function remove(id: number): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] }
@@ -107,7 +107,7 @@ async function remove(id: number): Promise<Result> {
     return new SuccessResult("User deleted");
 }
 
-async function purge(id: number): Promise<Result> {
+async function purge(id: number): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] }
@@ -125,7 +125,7 @@ async function purge(id: number): Promise<Result> {
 
 // ---------- ---------- business rules ---------- ----------
 
-async function isUsernameUnique(username: string, id?: number): Promise<Result> {
+async function isUsernameUnique(username: string, id?: number): Promise<IResult> {
     let user: any = null;
     if (id == undefined) {
         user = await UserModel.find({ username: username, status: { $ne: Status.DELETED } });
@@ -141,7 +141,7 @@ async function isUsernameUnique(username: string, id?: number): Promise<Result> 
     return new SuccessResult();
 }
 
-async function isEmailUnique(email: string, id?: number): Promise<Result> {
+async function isEmailUnique(email: string, id?: number): Promise<IResult> {
     let user: any = null;
     if (id == undefined) {
         user = await UserModel.find({ email: email, status: { $ne: Status.DELETED } });
@@ -157,7 +157,7 @@ async function isEmailUnique(email: string, id?: number): Promise<Result> {
     return new SuccessResult();
 }
 
-async function isEmailNotChanged(email: string, id: number): Promise<Result> {
+async function isEmailNotChanged(email: string, id: number): Promise<IResult> {
     if (email == null) {
         return new SuccessResult();
     }
@@ -169,7 +169,7 @@ async function isEmailNotChanged(email: string, id: number): Promise<Result> {
     return new SuccessResult();
 }
 
-async function isExists(id: number): Promise<Result> {
+async function isExists(id: number): Promise<IResult> {
     const user: any[] = await UserModel.find({ _id: id, status: { $ne: Status.DELETED } });
     if (user.length > 0) {
         return new SuccessResult();
@@ -177,7 +177,7 @@ async function isExists(id: number): Promise<Result> {
     return new ErrorResult("User not exits");
 }
 
-async function isExistsUsername(username: string): Promise<Result> {
+async function isExistsUsername(username: string): Promise<IResult> {
     const user: any[] = await UserModel.find({ username: username, status: { $ne: Status.DELETED } });
     if (user.length > 0) {
         return new SuccessResult();
@@ -185,14 +185,14 @@ async function isExistsUsername(username: string): Promise<Result> {
     return new ErrorResult("User not exits");
 }
 
-async function isStatusPossible(status: Status) {
+async function isStatusPossible(status: Status): Promise<IResult> {
     if (status in Status || status == null) {
         return new SuccessResult();
     }
     return new ErrorResult("Status is not exists");
 }
 
-async function isRolePossible(role: Roles) {
+async function isRolePossible(role: Roles): Promise<IResult> {
     if (role in Roles || role == null) {
         return new SuccessResult();
     }
@@ -203,12 +203,5 @@ async function isRolePossible(role: Roles) {
 
 
 
-export const UserService = {
-    getAll,
-    getById,
-    getByUsername,
-    add,
-    update,
-    remove,
-    purge
-};
+const UserService = { getAll, getById, getByUsername, add, update, remove, purge };
+export default UserService;

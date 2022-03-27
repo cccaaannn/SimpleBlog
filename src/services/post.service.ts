@@ -1,60 +1,43 @@
 import { PostModel } from "../models/PostModel"
 import { Post, PostSort } from "../types/Post"
-import { IResult, Result, SuccessResult, ErrorResult } from "../Results/Result"
-import { IDataResult, DataResult, SuccessDataResult, ErrorDataResult } from "../Results/DataResult"
-import Visibility from "../types/enums/Visibility";
-import run from "../utils/business-runner";
+import { IResult, Result, SuccessResult, ErrorResult } from "../core/results/Result"
+import { IDataResult, DataResult, SuccessDataResult, ErrorDataResult } from "../core/results/DataResult"
+import run from "../core/utils/business-runner";
 
 
-async function getAll(postSort?: PostSort): Promise<DataResult<Post[]>> {
-    if(postSort) {
+async function getAll(postSort?: PostSort): Promise<IDataResult<Post[]>> {
+    if (postSort) {
         return new SuccessDataResult(await PostModel.find().sort(postSort));
     }
     return new SuccessDataResult(await PostModel.find());
 }
 
-async function getByVisibility(visibility: string, postSort?: PostSort): Promise<DataResult<Post[]>> {
-    if(postSort) {
+async function getByVisibility(visibility: string, postSort?: PostSort): Promise<IDataResult<Post[]>> {
+    if (postSort) {
         return new SuccessDataResult(await PostModel.find({ visibility: { $eq: visibility } }).sort(postSort));
     }
     return new SuccessDataResult(await PostModel.find({ visibility: { $eq: visibility } }));
 }
 
-async function getByUserId(userId: number, postSort?: PostSort): Promise<DataResult<Post[]>> {
-    if(postSort) {
+async function getByUserId(userId: number, postSort?: PostSort): Promise<IDataResult<Post[]>> {
+    if (postSort) {
         return new SuccessDataResult(await PostModel.find({ owner: { $eq: userId } }).sort(postSort));
     }
     return new SuccessDataResult(await PostModel.find({ owner: { $eq: userId } }));
 }
 
-async function add(post: Post): Promise<Result> {
-    // const res: Result = await run(
-    //     [
-    //         { function: isUsernameUnique, args: [user.username] },
-    //         { function: isEmailUnique, args: [user.email] },
-    //         { function: isStatusPossible, args: [user.status] },
-    //         { function: isRolePossible, args: [user.role] }
-    //     ]
-    // );
-    // if(!res.status) {
-    //     return res;
-    // }
-
+async function add(post: Post): Promise<IResult> {
     await PostModel.create(post);
     return new SuccessResult("Created");
 }
 
-async function update(id: number, post: Post): Promise<Result> {
+async function update(id: number, post: Post): Promise<IResult> {
     const res: Result = await run(
         [
-            { function: isExists, args: [id] },
-            // { function: isUsernameUnique, args: [user.username, id] },
-            // { function: isEmailNotChanged, args: [user.email, id] },
-            // { function: isStatusPossible, args: [user.status] },
-            // { function: isRolePossible, args: [user.role] }
+            { function: isExists, args: [id] }
         ]
     );
-    if(!res.status) {
+    if (!res.status) {
         return res;
     }
 
@@ -62,17 +45,13 @@ async function update(id: number, post: Post): Promise<Result> {
     return new SuccessResult("Post updated");
 }
 
-async function addComment(id: number, comment: Comment): Promise<Result> {
+async function addComment(id: number, comment: Comment): Promise<IResult> {
     const res: Result = await run(
         [
-            { function: isExists, args: [id] },
-            // { function: isUsernameUnique, args: [user.username, id] },
-            // { function: isEmailNotChanged, args: [user.email, id] },
-            // { function: isStatusPossible, args: [user.status] },
-            // { function: isRolePossible, args: [user.role] }
+            { function: isExists, args: [id] }
         ]
     );
-    if(!res.status) {
+    if (!res.status) {
         return res;
     }
 
@@ -80,31 +59,27 @@ async function addComment(id: number, comment: Comment): Promise<Result> {
     return new SuccessResult("Post updated");
 }
 
-async function removeComment(postId: number, commentId: number): Promise<Result> {
+async function removeComment(postId: number, commentId: number): Promise<IResult> {
     const res: Result = await run(
         [
-            { function: isExists, args: [postId] },
-            // { function: isUsernameUnique, args: [user.username, id] },
-            // { function: isEmailNotChanged, args: [user.email, id] },
-            // { function: isStatusPossible, args: [user.status] },
-            // { function: isRolePossible, args: [user.role] }
+            { function: isExists, args: [postId] }
         ]
     );
-    if(!res.status) {
+    if (!res.status) {
         return res;
     }
 
-    await PostModel.findOneAndUpdate({ _id: postId }, { $pull: { comments: { _id : commentId } } }, { new: true });
+    await PostModel.findOneAndUpdate({ _id: postId }, { $pull: { comments: { _id: commentId } } }, { new: true });
     return new SuccessResult("Post updated");
 }
 
-async function remove(id: number): Promise<Result> {
+async function remove(id: number): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] }
         ]
     );
-    if(!res.status) {
+    if (!res.status) {
         return res;
     }
 
@@ -115,9 +90,9 @@ async function remove(id: number): Promise<Result> {
 
 // ---------- ---------- business rules ---------- ----------
 
-async function isExists(id: number): Promise<Result> {
+async function isExists(id: number): Promise<IResult> {
     const post: any[] = await PostModel.find({ _id: id });
-    if(post.length > 0) {
+    if (post.length > 0) {
         return new SuccessResult();
     }
     return new ErrorResult("Post not exits");
@@ -127,15 +102,5 @@ async function isExists(id: number): Promise<Result> {
 
 
 
-
-
-export const PostService = {
-    getAll,
-    getByVisibility,
-    getByUserId,
-    add,
-    update,
-    addComment,
-    removeComment,
-    remove
-};
+const PostService = { getAll, getByVisibility, getByUserId, add, update, addComment, removeComment, remove };
+export default PostService;

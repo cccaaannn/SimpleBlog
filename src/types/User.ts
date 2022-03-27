@@ -1,9 +1,10 @@
 import { Schema } from "mongoose";
+
 import Roles from "./enums/Roles";
 import Status from "./enums/Status";
 
 interface User {
-    _id?: Schema.Types.ObjectId,
+    _id: Schema.Types.ObjectId,
     username: string,
     email: string,
     password: string,

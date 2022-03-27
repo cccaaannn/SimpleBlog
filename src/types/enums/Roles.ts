@@ -1,7 +1,7 @@
 enum Roles {
-    USER="user",
-    ADMIN="admin",
-    SYS_ADMIN="sys_admin"
+    USER="USER",
+    ADMIN="ADMIN",
+    SYS_ADMIN="SYS_ADMIN"
 }
 
 export default Roles;

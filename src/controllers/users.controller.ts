@@ -1,4 +1,4 @@
-import { UserService } from "../services/user.service"
+import UserService from "../services/user.service"
 import { UserSort } from "../types/User";
 
 async function getAll(req: any, res: any, next: any) {
@@ -51,10 +51,5 @@ async function remove(req: any, res: any, next: any) {
     }
 }
 
-export const UserController = {
-    getAll,
-    getById,
-    add,
-    update,
-    remove
-};
+const UserController = {getAll, getById,add,update, remove};
+export default UserController;

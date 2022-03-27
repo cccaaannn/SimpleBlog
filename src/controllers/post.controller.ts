@@ -1,10 +1,10 @@
-import { PostService } from "../services/post.service"
+import PostService from "../services/post.service"
 import { PostSort } from "../types/Post";
 
 async function getAll(req: any, res: any, next: any) {
     try {
-        let postSort: PostSort|undefined = undefined;
-        if(req.query.field && req.query.asc) {
+        let postSort: PostSort | undefined = undefined;
+        if (req.query.field && req.query.asc) {
             postSort = { [req.query.field]: req.query.asc };
         }
 
@@ -17,8 +17,8 @@ async function getAll(req: any, res: any, next: any) {
 
 async function getByVisibility(req: any, res: any, next: any) {
     try {
-        let postSort: PostSort|undefined = undefined;
-        if(req.query.field && req.query.asc) {
+        let postSort: PostSort | undefined = undefined;
+        if (req.query.field && req.query.asc) {
             postSort = { [req.query.field]: req.query.asc };
         }
 
@@ -31,8 +31,8 @@ async function getByVisibility(req: any, res: any, next: any) {
 
 async function getByUserId(req: any, res: any, next: any) {
     try {
-        let postSort: PostSort|undefined = undefined;
-        if(req.query.field && req.query.asc) {
+        let postSort: PostSort | undefined = undefined;
+        if (req.query.field && req.query.asc) {
             postSort = { [req.query.field]: req.query.asc };
         }
 
@@ -89,14 +89,5 @@ async function remove(req: any, res: any, next: any) {
 }
 
 
-
-export const PostController = {
-    getAll,
-    getByVisibility,
-    getByUserId,
-    add,
-    update,
-    addComment,
-    removeComment,
-    remove
-};
+const PostController = { getAll, getByVisibility, getByUserId, add, update, addComment, removeComment, remove };
+export default PostController;
