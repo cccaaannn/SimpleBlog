@@ -2,12 +2,14 @@ import { IDataResult, DataResult, ErrorDataResult, SuccessDataResult } from '../
 import { Login } from '../core/types/Login'
 import { Token } from '../core/types/Token'
 import { TokenPayload } from '../core/types/TokenPayload';
-import { User } from '../types/User';
+import { User, UserAdd } from '../types/User';
 
 import JWTService from '../core/services/jwt.service'
 import EncryptionService from '../core/services/encryption.service';
 
 import UserService from './user.service'
+import { IResult, SuccessResult } from '../core/results/Result';
+import { SignUp } from '../core/types/SignUp';
 
 
 async function login(login: Login): Promise<IDataResult<Token | null>> {
@@ -36,6 +38,23 @@ async function login(login: Login): Promise<IDataResult<Token | null>> {
 }
 
 
+async function signUp(signUp: SignUp): Promise<IResult> {
+
+    const user: UserAdd = {
+        email: signUp.email,
+        username: signUp.username,
+        password: signUp.password
+    }
+
+    const userAddResult: IResult = await UserService.add(user);
+    if(!userAddResult.status) {
+        return userAddResult;
+    }
+
+    return new SuccessResult("User successfully created")
+}
+
+
 
 // ---------- ---------- business rules ---------- ----------
 
@@ -43,6 +62,6 @@ async function login(login: Login): Promise<IDataResult<Token | null>> {
 // ---------- ---------- ---------- ---------- ----------
 
 
-const LoginService = { login };
+const LoginService = { login, signUp };
 export default LoginService;
 

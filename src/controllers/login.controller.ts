@@ -9,6 +9,15 @@ async function login(req: any, res: any, next: any) {
     }
 }
 
-const LoginController = { login };
+async function signUp(req: any, res: any, next: any) {
+    try {
+        res.json(await LoginService.signUp(req.body));
+    } catch (err: any) {
+        console.error(`Error`, err.message);
+        next(err);
+    }
+}
+
+const LoginController = { login, signUp };
 export default LoginController;
 

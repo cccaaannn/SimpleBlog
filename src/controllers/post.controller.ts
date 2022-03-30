@@ -45,7 +45,7 @@ async function getByUserId(req: any, res: any, next: any) {
 
 async function add(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.add(req.body));
+        res.json(await PostService.add(req.body, res.locals.tokenPayload));
     } catch (err: any) {
         console.error(`Error`, err.message);
         next(err);
@@ -54,7 +54,7 @@ async function add(req: any, res: any, next: any) {
 
 async function update(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.update(req.params.id, req.body));
+        res.json(await PostService.update(req.params.postId, req.body, res.locals.tokenPayload));
     } catch (err: any) {
         console.error(`Error`, err.message);
         next(err);
@@ -63,7 +63,7 @@ async function update(req: any, res: any, next: any) {
 
 async function addComment(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.addComment(req.params.id, req.body));
+        res.json(await PostService.addComment(req.params.postId, req.body, res.locals.tokenPayload));
     } catch (err: any) {
         console.error(`Error`, err.message);
         next(err);
@@ -72,7 +72,7 @@ async function addComment(req: any, res: any, next: any) {
 
 async function removeComment(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.removeComment(req.params.postId, req.params.commentId));
+        res.json(await PostService.removeComment(req.params.postId, req.params.commentId, res.locals.tokenPayload));
     } catch (err: any) {
         console.error(`Error`, err.message);
         next(err);
@@ -81,7 +81,7 @@ async function removeComment(req: any, res: any, next: any) {
 
 async function remove(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.remove(req.params.id));
+        res.json(await PostService.remove(req.params.id, res.locals.tokenPayload));
     } catch (err: any) {
         console.error(`Error`, err.message);
         next(err);

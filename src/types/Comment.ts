@@ -7,4 +7,10 @@ interface Comment {
     dateCreated: Date
 };
 
-export { Comment };
+interface CommentAdd {
+    owner: string,
+    comment: string,
+};
+
+
+export { Comment, CommentAdd };

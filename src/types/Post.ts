@@ -13,6 +13,19 @@ interface Post {
     dateCreated: Date
 };
 
+interface PostAdd {
+    owner: string,
+    header: string,
+    body: string,
+    visibility: Visibility
+};
+
+interface PostUpdate {
+    header: string,
+    body: string,
+    visibility: Visibility
+};
+
 interface PostSort {
     _id?: number,
     owner?: number,
@@ -20,4 +33,4 @@ interface PostSort {
     dateCreated?: number
 };
 
-export { Post, PostSort };
+export { Post, PostAdd, PostUpdate, PostSort };

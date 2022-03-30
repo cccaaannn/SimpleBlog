@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 
-import Roles from "./enums/Roles";
+import Roles from "../core/types/enums/Roles";
 import Status from "./enums/Status";
 
 interface User {
@@ -13,6 +13,17 @@ interface User {
     dateCreated: Date
 };
 
+interface UserAdd {
+    username: string,
+    email: string,
+    password: string
+};
+
+interface UserUpdate {
+    username: string,
+    password?: string
+};
+
 interface UserSort {
     _id?: number
     username?: number,
@@ -22,4 +33,4 @@ interface UserSort {
     dateCreated?: number
 };
 
-export { User, UserSort };
+export { User, UserAdd, UserUpdate,  UserSort };

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import PostController from '../../../controllers/post.controller';
 import { allowForRoles } from '../../../core/middlewares/secured-operation';
-import Roles from '../../../types/enums/Roles';
+import Roles from '../../../core/types/enums/Roles';
 
 const PostRouter = Router();
 
@@ -11,11 +11,11 @@ PostRouter.get('/getByVisibility/:visibility', PostController.getByVisibility);
 
 PostRouter.get('/getByUserId/:userId', allowForRoles([Roles.USER, Roles.ADMIN]), PostController.getByUserId);
 
-PostRouter.post('/', PostController.add);
+PostRouter.post('/add', PostController.add);
 
-PostRouter.put('/update/:id', PostController.update);
+PostRouter.put('/update/:postId', PostController.update);
 
-PostRouter.put('/addComment/:id', PostController.addComment);
+PostRouter.put('/addComment/:postId', PostController.addComment);
 
 PostRouter.put('/removeComment/:postId/:commentId', PostController.removeComment);
 

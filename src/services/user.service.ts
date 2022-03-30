@@ -1,13 +1,14 @@
 import { UserModel } from "../models/UserModel";
-import { User, UserSort } from "../types/User";
+import { User, UserAdd, UserSort, UserUpdate } from "../types/User";
 import { IResult, Result, SuccessResult, ErrorResult } from "../core/results/Result";
 import { IDataResult, DataResult, SuccessDataResult, ErrorDataResult } from "../core/results/DataResult";
 import Status from "../types/enums/Status";
 import run from "../core/utils/business-runner";
-import Roles from "../types/enums/Roles";
+import Roles from "../core/types/enums/Roles";
 
 import EncryptionService from '../core/services/encryption.service';
-
+import { PostModel } from "../models/PostModel";
+import { TokenPayload } from "../core/types/TokenPayload";
 
 
 async function getAll(userSort?: UserSort): Promise<IDataResult<User[]>> {
@@ -17,7 +18,7 @@ async function getAll(userSort?: UserSort): Promise<IDataResult<User[]>> {
     return new SuccessDataResult(await UserModel.find({ status: { $ne: Status.DELETED } }));
 }
 
-async function getById(id: number): Promise<DataResult<User | null>> {
+async function getById(id: string): Promise<DataResult<User | null>> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] }
@@ -48,13 +49,11 @@ async function getByUsername(username: string): Promise<IDataResult<User | null>
     return new SuccessDataResult(temp);
 }
 
-async function add(user: User): Promise<IResult> {
+async function add(user: UserAdd): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isUsernameUnique, args: [user.username] },
-            { function: isEmailUnique, args: [user.email] },
-            { function: isStatusPossible, args: [user.status] },
-            { function: isRolePossible, args: [user.role] }
+            { function: isEmailUnique, args: [user.email] }
         ]
     );
     if (!res.status) {
@@ -63,18 +62,22 @@ async function add(user: User): Promise<IResult> {
 
     user.password = await EncryptionService.hash(user.password)
 
-    await UserModel.create(user);
+    const userToAdd: UserAdd = {
+        username: user.username,
+        email: user.email,
+        password: user.password
+    }
+
+    await UserModel.create(userToAdd);
     return new SuccessResult("Created");
 }
 
-async function update(id: number, user: User): Promise<IResult> {
+async function update(id: string, user: UserUpdate, tokenPayload: TokenPayload): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] },
-            { function: isUsernameUnique, args: [user.username, id] },
-            { function: isEmailNotChanged, args: [user.email, id] },
-            { function: isStatusPossible, args: [user.status] },
-            { function: isRolePossible, args: [user.role] }
+            { function: isUserAllowedForOperation, args: [id, tokenPayload] },
+            { function: isUsernameUnique, args: [user.username, id] }
         ]
     );
     if (!res.status) {
@@ -89,11 +92,59 @@ async function update(id: number, user: User): Promise<IResult> {
         }
     }
 
-    await UserModel.findOneAndUpdate({ _id: id }, user, { new: true });
+    const userToUpdate: UserUpdate = {
+        username: user.username,
+        password: user.password
+    }
+
+    await UserModel.findOneAndUpdate({ _id: id }, userToUpdate, { new: true });
     return new SuccessResult("User updated");
 }
 
-async function remove(id: number): Promise<IResult> {
+async function changeRole(id: string, role: Roles): Promise<IResult> {
+    const res: Result = await run(
+        [
+            { function: isExists, args: [id] },
+            { function: isRolePossible, args: [role] }
+        ]
+    );
+    if (!res.status) {
+        return res;
+    }
+
+    await UserModel.findOneAndUpdate({ _id: id }, { role: role }, { new: true });
+    return new SuccessResult("User deleted");
+}
+
+async function suspend(id: string): Promise<IResult> {
+    const res: Result = await run(
+        [
+            { function: isExists, args: [id] }
+        ]
+    );
+    if (!res.status) {
+        return res;
+    }
+
+    await UserModel.findOneAndUpdate({ _id: id }, { status: Status.PASSIVE }, { new: true });
+    return new SuccessResult("User deleted");
+}
+
+async function activate(id: string): Promise<IResult> {
+    const res: Result = await run(
+        [
+            { function: isExists, args: [id] }
+        ]
+    );
+    if (!res.status) {
+        return res;
+    }
+
+    await UserModel.findOneAndUpdate({ _id: id }, { status: Status.ACTIVE }, { new: true });
+    return new SuccessResult("User deleted");
+}
+
+async function remove(id: string): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] }
@@ -107,17 +158,26 @@ async function remove(id: number): Promise<IResult> {
     return new SuccessResult("User deleted");
 }
 
-async function purge(id: number): Promise<IResult> {
+async function purge(id: string, tokenPayload: TokenPayload): Promise<IResult> {
     const res: Result = await run(
         [
-            { function: isExists, args: [id] }
+            { function: isUserAllowedForOperation, args: [id, tokenPayload] }
         ]
     );
     if (!res.status) {
         return res;
     }
 
-    await UserModel.findOneAndDelete({ _id: id });
+    try {
+        await PostModel.deleteMany({ owner: id });
+        await PostModel.updateMany({}, { $pull: { comments: { owner: id } } });
+        await UserModel.findOneAndDelete({ _id: id });
+    }
+    catch (error) {
+        console.log(error);
+        return new ErrorResult("Operation failed");
+    }
+
     return new SuccessResult("User purged");
 }
 
@@ -125,7 +185,21 @@ async function purge(id: number): Promise<IResult> {
 
 // ---------- ---------- business rules ---------- ----------
 
-async function isUsernameUnique(username: string, id?: number): Promise<IResult> {
+
+async function isUserAllowedForOperation(operatingUserId: string, tokenPayload: TokenPayload): Promise<IResult> {
+    if (tokenPayload.role == Roles.ADMIN || tokenPayload.role == Roles.SYS_ADMIN) {
+        return new SuccessResult();
+    }
+
+    if (tokenPayload.id == operatingUserId) {
+        return new SuccessResult();
+    }
+
+    return new ErrorResult("Not permitted");
+}
+
+
+async function isUsernameUnique(username: string, id?: string): Promise<IResult> {
     let user: any = null;
     if (id == undefined) {
         user = await UserModel.find({ username: username, status: { $ne: Status.DELETED } });
@@ -141,13 +215,16 @@ async function isUsernameUnique(username: string, id?: number): Promise<IResult>
     return new SuccessResult();
 }
 
-async function isEmailUnique(email: string, id?: number): Promise<IResult> {
+/*
+ * Even if user is deleted same Email san not be used.
+*/
+async function isEmailUnique(email: string, id?: string): Promise<IResult> {
     let user: any = null;
     if (id == undefined) {
-        user = await UserModel.find({ email: email, status: { $ne: Status.DELETED } });
+        user = await UserModel.find({ email: email });
     }
     else {
-        user = await UserModel.find({ _id: { $ne: id }, email: email, status: { $ne: Status.DELETED } });
+        user = await UserModel.find({ _id: { $ne: id }, email: email });
     }
 
     if (user == null || user.length > 0) {
@@ -157,7 +234,7 @@ async function isEmailUnique(email: string, id?: number): Promise<IResult> {
     return new SuccessResult();
 }
 
-async function isEmailNotChanged(email: string, id: number): Promise<IResult> {
+async function isEmailNotChanged(email: string, id: string): Promise<IResult> {
     if (email == null) {
         return new SuccessResult();
     }
@@ -169,7 +246,7 @@ async function isEmailNotChanged(email: string, id: number): Promise<IResult> {
     return new SuccessResult();
 }
 
-async function isExists(id: number): Promise<IResult> {
+async function isExists(id: string): Promise<IResult> {
     const user: any[] = await UserModel.find({ _id: id, status: { $ne: Status.DELETED } });
     if (user.length > 0) {
         return new SuccessResult();
@@ -185,13 +262,6 @@ async function isExistsUsername(username: string): Promise<IResult> {
     return new ErrorResult("User not exits");
 }
 
-async function isStatusPossible(status: Status): Promise<IResult> {
-    if (status in Status || status == null) {
-        return new SuccessResult();
-    }
-    return new ErrorResult("Status is not exists");
-}
-
 async function isRolePossible(role: Roles): Promise<IResult> {
     if (role in Roles || role == null) {
         return new SuccessResult();
@@ -203,5 +273,5 @@ async function isRolePossible(role: Roles): Promise<IResult> {
 
 
 
-const UserService = { getAll, getById, getByUsername, add, update, remove, purge };
+const UserService = { getAll, getById, getByUsername, add, update, changeRole, suspend, activate, remove, purge };
 export default UserService;
