@@ -49,7 +49,7 @@ async function getByUsername(username: string): Promise<IDataResult<User | null>
     return new SuccessDataResult(temp);
 }
 
-async function add(user: UserAdd): Promise<IResult> {
+async function add(user: UserAdd): Promise<IDataResult<User|null>> {
     const res: Result = await run(
         [
             { function: isUsernameUnique, args: [user.username] },
@@ -57,7 +57,7 @@ async function add(user: UserAdd): Promise<IResult> {
         ]
     );
     if (!res.status) {
-        return res;
+        return new ErrorDataResult(null, res.message);
     }
 
     user.password = await EncryptionService.hash(user.password)
@@ -68,8 +68,8 @@ async function add(user: UserAdd): Promise<IResult> {
         password: user.password
     }
 
-    await UserModel.create(userToAdd);
-    return new SuccessResult("Created");
+    const createdUser: User = await UserModel.create(userToAdd);
+    return new SuccessDataResult(createdUser, "Created");
 }
 
 async function update(id: string, user: UserUpdate, tokenPayload: TokenPayload): Promise<IResult> {

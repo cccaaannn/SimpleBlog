@@ -7,4 +7,6 @@ LoginRouter.post('/login', LoginController.login);
 
 LoginRouter.post('/signUp', LoginController.signUp);
 
+LoginRouter.post('/verify', LoginController.verify);
+
 export default LoginRouter;
