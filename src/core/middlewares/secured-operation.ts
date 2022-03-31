@@ -24,6 +24,7 @@ function extractAndValidateToken() {
             return res.status(403).json(new ErrorResult(verificationResult.message))
         }
 
+        // save token to res.locals so following middlewares can use it
         res.locals.token = token;
         res.locals.tokenPayload = verificationResult.data;
 
