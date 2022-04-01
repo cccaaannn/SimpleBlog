@@ -1,10 +1,8 @@
-import { Schema } from "mongoose";
-
 import Roles from "../core/types/enums/Roles";
 import Status from "./enums/Status";
 
 interface User {
-    _id: Schema.Types.ObjectId,
+    _id: string,
     username: string,
     email: string,
     password: string,

@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from "dotenv";
+import { ErrorResult, IResult, SuccessResult } from '../results/Result';
 dotenv.config();
 
 class EmailService {
@@ -23,7 +24,7 @@ class EmailService {
         console.info("Email service created");
     }
 
-    async send(to: string, subject: string, text: string, html: string) {
+    async send(to: string, subject: string, text: string, html: string): Promise<IResult> {
         const mailOptions = {
             from: this.username,
             to: to,
@@ -35,9 +36,11 @@ class EmailService {
         try{
             const res = await this.transporter.sendMail(mailOptions);
             console.info("Email sent " + res.response);
+            return new SuccessResult(`Email sent to ${to}`);
         }
         catch(err){
             console.info(err);
+            return new ErrorResult("An error occurred while sending email");
         }
     }
 
