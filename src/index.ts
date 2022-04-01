@@ -5,7 +5,7 @@ import cors from 'cors';
 
 import UsersRouter from "./routes/api/v1/users.routes";
 import PostRouter from "./routes/api/v1/post.routes";
-import LoginRouter from "./routes/api/v1/login.routes";
+import AuthRouter from "./routes/api/v1/auth.routes";
 import { extractAndValidateToken } from "./core/middlewares/secured-operation";
 
 
@@ -23,7 +23,7 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING as string, () => {
 
 app.use('/api/v1/users', extractAndValidateToken(), UsersRouter);
 app.use('/api/v1/posts', extractAndValidateToken(), PostRouter);
-app.use('/api/v1/auth', LoginRouter);
+app.use('/api/v1/auth', AuthRouter);
 
 
 const PORT: number = parseInt(process.env.PORT as string) as number

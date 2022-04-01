@@ -49,6 +49,24 @@ async function getByUsername(username: string): Promise<IDataResult<User | null>
     return new SuccessDataResult(temp);
 }
 
+async function getByEmail(email: string): Promise<IDataResult<User | null>> {
+    const res: Result = await run(
+        [
+            { function: isExistsEmail, args: [email] }
+        ]
+    );
+    if (!res.status) {
+        return new ErrorDataResult(null, res.message);
+    }
+    const temp: any = await UserModel.findOne({ email: email, status: { $ne: Status.DELETED } });
+
+    if (temp == null) {
+        return new ErrorDataResult(null, "User not exits");
+    }
+
+    return new SuccessDataResult(temp);
+}
+
 async function add(user: UserAdd): Promise<IDataResult<User|null>> {
     const res: Result = await run(
         [
@@ -262,6 +280,14 @@ async function isExistsUsername(username: string): Promise<IResult> {
     return new ErrorResult("User not exits");
 }
 
+async function isExistsEmail(email: string): Promise<IResult> {
+    const user: any[] = await UserModel.find({ email: email, status: { $ne: Status.DELETED } });
+    if (user.length > 0) {
+        return new SuccessResult();
+    }
+    return new ErrorResult("User not exits");
+}
+
 async function isRolePossible(role: Roles): Promise<IResult> {
     if (role in Roles || role == null) {
         return new SuccessResult();
@@ -273,5 +299,5 @@ async function isRolePossible(role: Roles): Promise<IResult> {
 
 
 
-const UserService = { getAll, getById, getByUsername, add, update, changeRole, suspend, activate, remove, purge };
+const UserService = { getAll, getById, getByUsername, getByEmail, add, update, changeRole, suspend, activate, remove, purge };
 export default UserService;
