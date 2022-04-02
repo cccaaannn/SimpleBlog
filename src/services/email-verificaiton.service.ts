@@ -1,21 +1,21 @@
+// Node imports
 import * as fs from 'fs/promises';
 
-import { DataResult } from '../core/results/DataResult';
-import { ErrorResult, IResult, Result } from '../core/results/Result';
-
-import { EmailService } from '../core/services/email.service';
+// Project imports
 import JWTService from '../core/services/jwt.service';
-import { Token } from '../core/types/Token';
+import { EmailService } from '../core/services/email.service';
+import { EmailVerificationConfig } from '../configs/email-verification.config';
+import UserService from './user.service';
+
+import { ErrorResult, IResult, Result } from '../core/results/Result';
+import { DataResult } from '../core/results/DataResult';
 import { TokenPayload } from '../core/types/TokenPayload';
+import { Token } from '../core/types/Token';
 import { User } from '../types/User';
 
-import { EmailVerificationConfig } from '../configs/email-verification.config';
-
-import UserService from './user.service';
 
 // Instantiate email service
 const emailService = new EmailService();
-
 
 async function sendVerificationEmail(userId: string): Promise<IResult> {
 

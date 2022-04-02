@@ -144,7 +144,7 @@ async function suspend(id: string): Promise<IResult> {
         return res;
     }
 
-    await UserModel.findOneAndUpdate({ _id: id }, { status: Status.PASSIVE }, { new: true });
+    await UserModel.findOneAndUpdate({ _id: id }, { status: Status.SUSPENDED }, { new: true });
     return new SuccessResult("User deleted");
 }
 

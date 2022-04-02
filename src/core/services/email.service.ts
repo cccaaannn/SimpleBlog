@@ -1,7 +1,13 @@
+// Main lib imports
 import nodemailer from 'nodemailer';
+
+// Side lib imports
 import dotenv from "dotenv";
-import { ErrorResult, IResult, SuccessResult } from '../results/Result';
 dotenv.config();
+
+// Project imports
+import { ErrorResult, IResult, SuccessResult } from '../results/Result';
+
 
 class EmailService {
 

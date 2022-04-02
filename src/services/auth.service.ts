@@ -1,17 +1,18 @@
-import { IDataResult, DataResult, ErrorDataResult, SuccessDataResult } from '../core/results/DataResult';
-import { Login } from '../core/types/Login'
-import { Token } from '../core/types/Token'
-import { TokenPayload } from '../core/types/TokenPayload';
-import { User, UserAdd } from '../types/User';
-
-import JWTService from '../core/services/jwt.service'
-import EncryptionService from '../core/services/encryption.service';
-
-import UserService from './user.service'
-import { ErrorResult, IResult, SuccessResult } from '../core/results/Result';
-import { SignUp } from '../core/types/SignUp';
-import Status from '../types/enums/Status';
+// Project imports
 import EmailVerificationService from './email-verificaiton.service';
+import EncryptionService from '../core/services/encryption.service';
+import JWTService from '../core/services/jwt.service';
+import UserService from './user.service';
+
+import { IDataResult, DataResult, ErrorDataResult, SuccessDataResult } from '../core/results/DataResult';
+import { ErrorResult, IResult, SuccessResult } from '../core/results/Result';
+import { Login } from '../core/types/Login';
+import { Token } from '../core/types/Token';
+import { SignUp } from '../core/types/SignUp';
+import { TokenPayload } from '../core/types/TokenPayload';
+
+import Status from '../types/enums/Status';
+import { User, UserAdd } from '../types/User';
 
 
 async function login(login: Login): Promise<IDataResult<Token | null>> {
@@ -22,7 +23,11 @@ async function login(login: Login): Promise<IDataResult<Token | null>> {
     }
 
     if (userResult.data.status == Status.PASSIVE) {
-        return new ErrorDataResult(null, "User is inactive");
+        return new ErrorDataResult(null, "User is pending fpr activation");
+    }
+
+    if (userResult.data.status == Status.SUSPENDED) {
+        return new ErrorDataResult(null, "User is suspended");
     }
 
     const user: User = userResult.data;
