@@ -1,4 +1,5 @@
 // Project imports
+import { IResult } from "../core/results/Result";
 import PostService from "../services/post.service"
 import { PostSort } from "../types/Post";
 
@@ -9,10 +10,15 @@ async function getAll(req: any, res: any, next: any) {
             postSort = { [req.query.field]: req.query.asc };
         }
 
-        res.json(await PostService.getAll(postSort));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.getAll(postSort);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 
@@ -23,10 +29,15 @@ async function getByVisibility(req: any, res: any, next: any) {
             postSort = { [req.query.field]: req.query.asc };
         }
 
-        res.json(await PostService.getByVisibility(req.params.visibility, postSort));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.getByVisibility(req.params.visibility, postSort);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 
@@ -37,55 +48,85 @@ async function getByUserId(req: any, res: any, next: any) {
             postSort = { [req.query.field]: req.query.asc };
         }
 
-        res.json(await PostService.getByUserId(req.params.userId, postSort));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.getByUserId(req.params.userId, postSort);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 
 async function add(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.add(req.body, res.locals.tokenPayload));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.add(req.body, res.locals.tokenPayload);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 
 async function update(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.update(req.params.postId, req.body, res.locals.tokenPayload));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.update(req.params.postId, req.body, res.locals.tokenPayload);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 
 async function addComment(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.addComment(req.params.postId, req.body, res.locals.tokenPayload));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.addComment(req.params.postId, req.body, res.locals.tokenPayload);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 
 async function removeComment(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.removeComment(req.params.postId, req.params.commentId, res.locals.tokenPayload));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.removeComment(req.params.postId, req.params.commentId, res.locals.tokenPayload);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 
 async function remove(req: any, res: any, next: any) {
     try {
-        res.json(await PostService.remove(req.params.id, res.locals.tokenPayload));
-    } catch (err: any) {
-        console.error(`Error`, err.message);
-        next(err);
+        const result: IResult = await PostService.remove(req.params.id, res.locals.tokenPayload);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
     }
 }
 

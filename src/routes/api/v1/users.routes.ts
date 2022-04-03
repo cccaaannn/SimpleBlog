@@ -3,7 +3,7 @@ import { Router } from 'express';
 
 // Project imports
 import UserController from '../../../controllers/users.controller';
-import { allowForRoles } from '../../../core/middlewares/secured-operation';
+import { allowForRoles } from '../../../core/middlewares/secured-operation.middleware';
 import Roles from '../../../core/types/enums/Roles';
 
 const usersRouter = Router();
