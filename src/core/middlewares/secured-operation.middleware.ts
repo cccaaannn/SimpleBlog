@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from 'express';
 import JWTService from "../services/jwt.service"
 import { DataResult } from "../results/DataResult";
 import { ErrorResult } from "../results/Result";
@@ -6,7 +7,7 @@ import { TokenPayload } from "../types/TokenPayload";
 import Roles from "../types/enums/Roles";
 
 function extractAndValidateToken() {
-    return async function (req: any, res: any, next: any) {
+    return async function (req: Request, res: Response, next: NextFunction) {
         const authHeader = req.headers['authorization']
         const tokenHeader = authHeader && authHeader.split(' ')[1]
 
@@ -33,7 +34,7 @@ function extractAndValidateToken() {
 }
 
 function allowForRoles(acceptedRoles: Roles[]) {
-    return async function(req: any, res: any, next: any) {
+    return async function(req: Request, res: Response, next: NextFunction) {
         const userRole: string = res.locals.tokenPayload.role.toUpperCase();
         if(acceptedRoles && !acceptedRoles.some(role => role === userRole)) {
             return res.status(403).json(new ErrorResult("Not authorized"))
