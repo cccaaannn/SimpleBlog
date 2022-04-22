@@ -70,7 +70,7 @@ async function signUp(signUp: SignUp): Promise<IResult> {
     return new SuccessResult(`Email sent to ${signUp.email}`);
 }
 
-async function sendVerification(email: string) {
+async function sendVerification(email: string): Promise<IResult> {
     // Get user information
     const userResult: DataResult<User | null> = await UserService.getByEmail(email);
     if (userResult == null || userResult.data == null || !userResult.status) {

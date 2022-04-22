@@ -4,12 +4,12 @@ import Visibility from "./enums/Visibility";
 import { Comment } from "./Comment";
 
 interface Post {
-    _id?: Schema.Types.ObjectId,
-    owner: Schema.Types.ObjectId,
+    _id: string,
+    owner: string,
     header: string,
     body: string,
     visibility: Visibility
-    comments: Comment,
+    comments: Comment[],
     dateCreated: Date
 };
 

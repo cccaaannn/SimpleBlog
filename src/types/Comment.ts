@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 
 interface Comment {
-    _id?: Schema.Types.ObjectId,
+    _id: string,
     owner: string,
     comment: string,
     dateCreated: Date

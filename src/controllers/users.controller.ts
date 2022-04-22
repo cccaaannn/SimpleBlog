@@ -36,19 +36,19 @@ async function getById(req: any, res: any, next: any) {
     }
 }
 
-async function add(req: any, res: any, next: any) {
-    try {
-        const result: IResult = await UserService.add(req.body);
-        if(result.status) {
-            return res.status(200).json(result);
-        }
-        return res.status(400).json(result);
-    } 
-    catch (err: any) {
-        res.locals.err = err;
-        next();
-    }
-}
+// async function add(req: any, res: any, next: any) {
+//     try {
+//         const result: IResult = await UserService.add(req.body);
+//         if(result.status) {
+//             return res.status(200).json(result);
+//         }
+//         return res.status(400).json(result);
+//     } 
+//     catch (err: any) {
+//         res.locals.err = err;
+//         next();
+//     }
+// }
 
 async function update(req: any, res: any, next: any) {
     try {
@@ -134,5 +134,5 @@ async function purge(req: any, res: any, next: any) {
     }
 }
 
-const UserController = { getAll, getById, add, update, changeRole, suspend, activate, remove, purge };
+const UserController = { getAll, getById, update, changeRole, suspend, activate, remove, purge };
 export default UserController;
