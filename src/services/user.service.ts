@@ -203,7 +203,6 @@ async function purge(id: string, tokenPayload: TokenPayload): Promise<IResult> {
 
 // ---------- ---------- business rules ---------- ----------
 
-
 async function isUserAllowedForOperation(operatingUserId: string, tokenPayload: TokenPayload): Promise<IResult> {
     if (tokenPayload.role == Roles.ADMIN || tokenPayload.role == Roles.SYS_ADMIN) {
         return new SuccessResult();
@@ -215,7 +214,6 @@ async function isUserAllowedForOperation(operatingUserId: string, tokenPayload: 
 
     return new ErrorResult("Not permitted");
 }
-
 
 async function isUsernameUnique(username: string, id?: string): Promise<IResult> {
     let user: any = null;
@@ -234,7 +232,7 @@ async function isUsernameUnique(username: string, id?: string): Promise<IResult>
 }
 
 /*
- * Even if user is deleted same Email san not be used.
+ * Even if user is deleted same Email can not be used.
 */
 async function isEmailUnique(email: string, id?: string): Promise<IResult> {
     let user: any = null;
@@ -264,7 +262,7 @@ async function isEmailNotChanged(email: string, id: string): Promise<IResult> {
     return new SuccessResult();
 }
 
-async function isExists(id: string): Promise<IResult> {
+async function isExists(id: string): Promise<IResult> {    
     const user: any[] = await UserModel.find({ _id: id, status: { $ne: Status.DELETED } });
     if (user.length > 0) {
         return new SuccessResult();
