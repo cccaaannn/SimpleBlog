@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon ./src/index.ts",
-    "test": "jest"
+    "test": "jest -c jest.config.js --verbose --runInBand"
   },
   "author": "Can Kurt",
   "license": "MIT",
