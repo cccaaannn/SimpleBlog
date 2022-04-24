@@ -1,5 +1,3 @@
-import { Schema } from "mongoose";
-
 interface Comment {
     _id: string,
     owner: string,
