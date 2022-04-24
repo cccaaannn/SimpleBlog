@@ -437,7 +437,7 @@ describe('User controller', () => {
 				throw new Error();
 			});
 
-			const mReq = getMockReq({ query: {}, params: { mId } });
+			const mReq = getMockReq({ query: {}, params: { id: mId } });
 			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
 			const mNext = jest.fn();
 
