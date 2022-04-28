@@ -5,15 +5,14 @@ import PostService from "../../../src/services/post.service";
 import { Post, PostAdd } from "../../../src/types/Post";
 import Visibility from "../../../src/types/enums/Visibility";
 import { CommentAdd } from "../../../src/types/Comment";
-import { MockValues } from "../mocks/const-mock-values";
+import { MockValues } from "../../utils/mocks/const-mock-values";
 
 
 describe('Post service', () => {
 
-
     describe('getAll', () => {
 
-        it('Should call PostModel find and return success result', async () => {
+        test('Get all posts', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
 
             const result = await PostService.getAll();
@@ -23,7 +22,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call PostModel find with PostSort parameters and return success result', async () => {
+        test('Get all posts with sort', async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
                 return MockValues.mPostSorter;
             });
@@ -42,7 +41,7 @@ describe('Post service', () => {
 
     describe('getByVisibility', () => {
 
-        it('Should call PostModel find and return success result', async () => {
+        test("Get post by user's visibility", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
 
             const result = await PostService.getByVisibility(Visibility.PUBLIC);
@@ -53,7 +52,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call PostModel find with PostSort parameters and return success result', async () => {
+        test("Get post by user's visibility with sort", async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
                 return MockValues.mPostSorter;
             });
@@ -73,7 +72,7 @@ describe('Post service', () => {
 
     describe('getByUserId', () => {
 
-        it('Should call PostModel find and return success result', async () => {
+        test("Get posts by user's by id", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
 
             const result = await PostService.getByUserId(MockValues.mUserId1);
@@ -84,7 +83,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call PostModel find with PostSort parameters and return success result', async () => {
+        test("Get posts by user's by id with sort", async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
                 return MockValues.mPostSorter;
             });
@@ -111,10 +110,10 @@ describe('Post service', () => {
             visibility: Visibility.PUBLIC
         }
 
-        it('Should call PostModel create and return success result', async () => {
+        test('User adding a post', async () => {
             jest.spyOn(PostModel, 'create').mockResolvedValueOnce("" as never);
 
-            const result = await PostService.add(MockValues.postToAdd, MockValues.mTokenPayloadUser1);
+            const result = await PostService.add(MockValues.mPostToAdd, MockValues.mTokenPayloadUser1);
 
             expect(PostModel.create).toBeCalled();
             expect(PostModel.create).toBeCalledWith(postToAddResult);
@@ -126,7 +125,7 @@ describe('Post service', () => {
 
     describe('update', () => {
 
-        it('Should call PostModel findOneAndUpdate and return success result (User updating its own post)', async () => {
+        test('User updating its own post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(MockValues.mPost1 as Post);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
@@ -146,7 +145,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call PostModel findOneAndUpdate and return success result (Admin updating another users post)', async () => {
+        test('Admin updating another users post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
 
@@ -162,7 +161,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call PostModel findOneAndUpdate and return error result (User trying to update not existing post)', async () => {
+        test('User trying to update not existing post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsEmpty as Post[]);
 
             const result = await PostService.update(MockValues.mPostId1, MockValues.mPostToUpdate, MockValues.mTokenPayloadUser1);
@@ -174,7 +173,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
-        it('Should return error result (User trying to update another users post)', async () => {
+        test('User trying to update another users post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(null);
 
@@ -199,7 +198,7 @@ describe('Post service', () => {
             comment: "mock_data"
         }
 
-        it('Should call PostModel findOneAndUpdate and return success result', async () => {
+        test('User adding comment to a post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
 
@@ -214,7 +213,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call PostModel findOneAndUpdate and return success result (User trying to add comment to a non existing post)', async () => {
+        test('User trying to add comment to a non existing post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsEmpty as Post[]);
 
             const result = await PostService.addComment(MockValues.mPostId1, MockValues.mCommentAdd, MockValues.mTokenPayloadUser1);
@@ -230,7 +229,7 @@ describe('Post service', () => {
 
     describe('removeComment', () => {
 
-        it('Should call PostModel findOneAndUpdate and return success result (User deleting its own comment from another users post)', async () => {
+        test('User deleting its own comment from another users post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(MockValues.mPost1 as Post);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
@@ -249,7 +248,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call PostModel findOneAndUpdate and return success result (Admin deleting another users comment from another users post)', async () => {
+        test('Admin deleting another users comment from another users post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
 
@@ -264,7 +263,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call PostModel findOneAndUpdate and return success result (User trying to delete non existing comment from a post or a non existing post)', async () => {
+        test('User trying to delete non existing comment from a post or a non existing post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsEmpty as Post[]);
 
             const result = await PostService.removeComment(MockValues.mPostId2, MockValues.mCommentId1, MockValues.mTokenPayloadUser1);
@@ -276,7 +275,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
-        it('Should call PostModel findOneAndUpdate and return success result (User trying to delete another users comment from another users post)', async () => {
+        test('User trying to delete another users comment from another users post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(null);
 
@@ -294,9 +293,9 @@ describe('Post service', () => {
 
     });
 
-    describe('update', () => {
+    describe('remove', () => {
 
-        it('Should call PostModel findOneAndDelete and return success result (User deleting its own post)', async () => {
+        test('User deleting its own post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(MockValues.mPost1 as Post);
             jest.spyOn(PostModel, 'findOneAndDelete').mockResolvedValueOnce("" as never);
@@ -316,7 +315,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call PostModel findOneAndDelete and return success result (Admin deleting another users post)', async () => {
+        test('Admin deleting another users post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOneAndDelete').mockResolvedValueOnce("" as never);
 
@@ -332,7 +331,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call PostModel findOneAndDelete and return error result (User trying to delete not existing post)', async () => {
+        test('User trying to delete not existing post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsEmpty as Post[]);
 
             const result = await PostService.remove(MockValues.mPostId1, MockValues.mTokenPayloadUser1);
@@ -344,7 +343,7 @@ describe('Post service', () => {
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
-        it('Should return error result (User trying to delete another users post)', async () => {
+        test('User trying to delete another users post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(null);
 
@@ -361,6 +360,5 @@ describe('Post service', () => {
         });
 
     });
-
 
 });

@@ -8,36 +8,15 @@ import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
 import { TokenPayload } from '../../../src/core/types/TokenPayload';
 import { UserModel } from '../../../src/models/UserModel';
 import { PostModel } from "../../../src/models/PostModel";
+import { MockValues } from "../../utils/mocks/const-mock-values";
 
 
 describe('User service', () => {
 
     describe('getAll', () => {
-        const mDate = new Date();
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
 
-        const mUsersSorter: any = {
-            sort: function () {
-                return mUsers
-            }
-        }
-
-        const mUserSort: UserSort = {
-            username: 1
-        }
-
-        it('Should call UserModel find and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
+        test('Get all users', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
 
             const result = await UserService.getAll();
 
@@ -47,18 +26,18 @@ describe('User service', () => {
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call UserModel find with UserSort parameters and return success result', async () => {
+        test('Get all users with sort', async () => {
             jest.spyOn(UserModel, 'find').mockImplementationOnce((params: any) => {
-                return mUsersSorter;
+                return MockValues.mUsersSorter;
             });
-            jest.spyOn(mUsersSorter, 'sort').mockResolvedValueOnce(mUsers as User[]);
+            jest.spyOn(MockValues.mUsersSorter, 'sort').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
 
-            const result = await UserService.getAll(mUserSort);
+            const result = await UserService.getAll(MockValues.mUserSort);
 
             expect(UserModel.find).toBeCalled();
             expect(UserModel.find).toBeCalledWith({ status: { $ne: Status.DELETED } });
-            expect(mUsersSorter.sort).toBeCalled();
-            expect(mUsersSorter.sort).toBeCalledWith(mUserSort);
+            expect(MockValues.mUsersSorter.sort).toBeCalled();
+            expect(MockValues.mUsersSorter.sort).toBeCalledWith(MockValues.mUserSort);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
@@ -66,54 +45,28 @@ describe('User service', () => {
     });
 
     describe('getById', () => {
-        const mId = "mock_value";
-        const mDate = new Date();
-        const mUser: User = {
-            _id: "test_id_hash1",
-            status: Status.ACTIVE,
-            username: "test1",
-            email: "test1@test1",
-            password: "test_pass_hash1",
-            role: Roles.ADMIN,
-            dateCreated: mDate
-        }
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
+        test('Get user by id', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(MockValues.mUser1 as User);
 
-        const mUsersEmpty: User[] = []
-
-        it('Should call UserModel findById and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
-            jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(mUser as User);
-
-            const result = await UserService.getById(mId);
+            const result = await UserService.getById(MockValues.mUserId1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toBeCalledWith({ _id: mId, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toBeCalledWith({ _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(UserModel.findById).toBeCalled();
-            expect(UserModel.findById).toBeCalledWith(mId);
+            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId1);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call UserModel findById and return error result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsersEmpty as User[]);
-            jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(mUser as User);
+        test('Get non existing user by id', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
 
-            const result = await UserService.getById(mId);
+            const result = await UserService.getById(MockValues.mUserId1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toBeCalledWith({ _id: mId, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toBeCalledWith({ _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorDataResult);
         });
@@ -121,54 +74,42 @@ describe('User service', () => {
     });
 
     describe('getByUsername', () => {
-        const mUsername = "mock_value";
-        const mDate = new Date();
-        const mUser: User = {
-            _id: "test_id_hash1",
-            status: Status.ACTIVE,
-            username: "test1",
-            email: "test1@test1",
-            password: "test_pass_hash1",
-            role: Roles.ADMIN,
-            dateCreated: mDate
-        }
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
+        test('Get user by username', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(MockValues.mUser1 as User);
 
-        const mUsersEmpty: User[] = []
-
-        it('Should call UserModel findOne and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
-            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(mUser as User);
-
-            const result = await UserService.getByUsername(mUsername);
+            const result = await UserService.getByUsername(MockValues.mUsername1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toBeCalledWith({ username: mUsername, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toBeCalledWith({ username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
             expect(UserModel.findOne).toBeCalled();
-            expect(UserModel.findOne).toBeCalledWith({ username: mUsername, status: { $ne: Status.DELETED } });
+            expect(UserModel.findOne).toBeCalledWith({ username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call UserModel findOne and return error result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsersEmpty as User[]);
-            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(mUser as User);
+        test('Get non existing user by username', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
 
-            const result = await UserService.getByUsername(mUsername);
+            const result = await UserService.getByUsername(MockValues.mUsername1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toBeCalledWith({ username: mUsername, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toBeCalledWith({ username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorDataResult);
+        });
+
+        test('Db returns null', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(null);
+
+            const result = await UserService.getByUsername(MockValues.mUsername1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toBeCalledWith({ username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
+            expect(UserModel.findOne).toBeCalled();
+            expect(UserModel.findOne).toBeCalledWith({ username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorDataResult);
         });
@@ -176,54 +117,42 @@ describe('User service', () => {
     });
 
     describe('getByEmail', () => {
-        const mEmail = "mock_value";
-        const mDate = new Date();
-        const mUser: User = {
-            _id: "test_id_hash1",
-            status: Status.ACTIVE,
-            username: "test1",
-            email: "test1@test1",
-            password: "test_pass_hash1",
-            role: Roles.ADMIN,
-            dateCreated: mDate
-        }
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
+        test('Get user by email', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(MockValues.mUser1 as User);
 
-        const mUsersEmpty: User[] = []
-
-        it('Should call UserModel findOne and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
-            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(mUser as User);
-
-            const result = await UserService.getByEmail(mEmail);
+            const result = await UserService.getByEmail(MockValues.mEmail1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toBeCalledWith({ email: mEmail, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toBeCalledWith({ email: MockValues.mEmail1, status: { $ne: Status.DELETED } });
             expect(UserModel.findOne).toBeCalled();
-            expect(UserModel.findOne).toBeCalledWith({ email: mEmail, status: { $ne: Status.DELETED } });
+            expect(UserModel.findOne).toBeCalledWith({ email: MockValues.mEmail1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call UserModel findOne and return error result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsersEmpty as User[]);
-            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(mUser as User);
+        test('Get non existing user by email', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
 
-            const result = await UserService.getByEmail(mEmail);
+            const result = await UserService.getByEmail(MockValues.mEmail1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toBeCalledWith({ email: mEmail, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toBeCalledWith({ email: MockValues.mEmail1, status: { $ne: Status.DELETED } });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorDataResult);
+        });
+
+        test('Db returns null', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(null);
+
+            const result = await UserService.getByEmail(MockValues.mEmail1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toBeCalledWith({ email: MockValues.mEmail1, status: { $ne: Status.DELETED } });
+            expect(UserModel.findOne).toBeCalled();
+            expect(UserModel.findOne).toBeCalledWith({ email: MockValues.mEmail1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorDataResult);
         });
@@ -231,66 +160,45 @@ describe('User service', () => {
     });
 
     describe('add', () => {
-        const mEmail = "mock_value";
-        const mUsername = "mock_value";
-        const mDate = new Date();
 
-        const mUser: User = {
-            _id: "test_id_hash1",
-            status: Status.ACTIVE,
-            username: "test1",
-            email: "test1@test1",
-            password: "test_pass_hash1",
-            role: Roles.ADMIN,
-            dateCreated: mDate
-        }
+        test('User add', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+            jest.spyOn(UserModel, 'create').mockResolvedValueOnce(MockValues.mUser1 as never);
+            jest.spyOn(EncryptionService, 'hash').mockResolvedValueOnce(MockValues.mUserToAdd.password);
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
-
-        const mUserToAdd: UserAdd = {
-            username: "mock_value",
-            email: "mock_value",
-            password: "mock_value"
-        }
-
-        const mUsersEmpty: User[] = []
-
-        it('Should call UserModel create and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValue(mUsersEmpty as User[]);
-            jest.spyOn(UserModel, 'create').mockResolvedValueOnce(mUser as never);
-            jest.spyOn(EncryptionService, 'hash').mockResolvedValueOnce(mUserToAdd.password);
-
-            const result = await UserService.add(mUserToAdd);
+            const result = await UserService.add(MockValues.mUserToAdd);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { username: mUsername, status: { $ne: Status.DELETED } });
-            expect(UserModel.find).toHaveBeenNthCalledWith(2, { email: mEmail });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(2, { email: MockValues.mEmail1 });
             expect(EncryptionService.hash).toBeCalled();
-            expect(EncryptionService.hash).toBeCalledWith(mUserToAdd.password);
+            expect(EncryptionService.hash).toBeCalledWith(MockValues.mUserToAdd.password);
             expect(UserModel.create).toBeCalled();
-            expect(UserModel.create).toBeCalledWith(mUserToAdd);
+            expect(UserModel.create).toBeCalledWith(MockValues.mUserToAdd);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        it('Should call UserModel create and return error result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValue(mUsers as User[]);
-            jest.spyOn(UserModel, 'create').mockResolvedValueOnce(mUser as never);
-
-            const result = await UserService.add(mUserToAdd);
+        test('User add with existing username', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            
+            const result = await UserService.add(MockValues.mUserToAdd);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toBeCalledWith({ username: mUsername, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toBeCalledWith({ username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorDataResult);
+        });
+
+        test('User add with existing email', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+
+            const result = await UserService.add(MockValues.mUserToAdd);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toBeCalledWith({ username: MockValues.mUsername1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorDataResult);
         });
@@ -298,136 +206,83 @@ describe('User service', () => {
     });
 
     describe('update', () => {
-        const mIdUserItself = "1";
-        const mIdAnotherUser = "2";
-        const mDate = new Date();
 
-        const mUser: User = {
-            _id: "test_id_hash1",
-            status: Status.ACTIVE,
-            username: "test1",
-            email: "test1@test1",
-            password: "test_pass_hash1",
-            role: Roles.ADMIN,
-            dateCreated: mDate
-        }
-
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
-
-        const mTokenPayload: TokenPayload = {
-            id: "1",
-            status: Status.ACTIVE,
-            username: "mock_data",
-            email: "mock_data",
-            role: Roles.USER,
-        }
-
-        const mTokenPayloadAdmin: TokenPayload = {
-            id: "1",
-            status: Status.ACTIVE,
-            username: "mock_data",
-            email: "mock_data",
-            role: Roles.ADMIN,
-        }
-
-        const mUserToUpdate: UserUpdate = {
-            username: "mock_value"
-        }
-
-        const mUserToUpdateWithPassword: UserUpdate = {
-            username: "mock_value",
-            password: "password"
-        }
-
-        const mUsersEmpty: User[] = []
-
-        it('Should call UserModel findOneAndUpdate and return success result (user updating itself)', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]).mockResolvedValueOnce(mUsersEmpty as User[]);
+        test('User updating itself', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]).mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.update(mIdUserItself, mUserToUpdate, mTokenPayload);
+            const result = await UserService.update(MockValues.mUserId1, MockValues.mUserToUpdate, MockValues.mTokenPayloadUser1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
-            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: mIdUserItself }, username: mUserToUpdate.username, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: MockValues.mUserId1 }, username: MockValues.mUserToUpdate.username, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: mIdUserItself }, mUserToUpdate, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, MockValues.mUserToUpdate, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call UserModel findOneAndUpdate and return success result (user updating itself with password)', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]).mockResolvedValueOnce(mUsersEmpty as User[]);
-            jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(mUser as User);
+        test('User updating itself with password', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]).mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+            jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(MockValues.mUser1 as User);
             jest.spyOn(EncryptionService, 'compare').mockResolvedValueOnce(false);
-            jest.spyOn(EncryptionService, 'hash').mockResolvedValueOnce("password");
+            jest.spyOn(EncryptionService, 'hash').mockResolvedValueOnce(MockValues.mPassword1);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-
-            const result = await UserService.update(mIdUserItself, mUserToUpdateWithPassword, mTokenPayload);
+            const result = await UserService.update(MockValues.mUserId1, MockValues.mUserToUpdateWithPassword, MockValues.mTokenPayloadUser1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
-            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: mIdUserItself }, username: mUserToUpdateWithPassword.username, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: MockValues.mUserId1 }, username: MockValues.mUserToUpdateWithPassword.username, status: { $ne: Status.DELETED } });
 
             expect(EncryptionService.compare).toBeCalled();
-            expect(EncryptionService.compare).toBeCalledWith(mUserToUpdateWithPassword.password, mUser.password);
+            expect(EncryptionService.compare).toBeCalledWith(MockValues.mUserToUpdateWithPassword.password, MockValues.mUser1.password);
 
             expect(EncryptionService.hash).toBeCalled();
-            expect(EncryptionService.hash).toBeCalledWith(mUserToUpdateWithPassword.password);
+            expect(EncryptionService.hash).toBeCalledWith(MockValues.mUserToUpdateWithPassword.password);
 
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: mIdUserItself }, mUserToUpdateWithPassword, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, MockValues.mUserToUpdateWithPassword, { new: true });
 
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call UserModel findOneAndUpdate and return success result (admin updating another user)', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]).mockResolvedValueOnce(mUsersEmpty as User[]);
+        test('Admin updating another user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]).mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.update(mIdAnotherUser, mUserToUpdate, mTokenPayloadAdmin);
+            const result = await UserService.update(MockValues.mUserId2, MockValues.mUserToUpdate, MockValues.mTokenPayloadAdmin);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdAnotherUser, status: { $ne: Status.DELETED } });
-            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: mIdAnotherUser }, username: mUserToUpdate.username, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId2, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: MockValues.mUserId2 }, username: MockValues.mUserToUpdate.username, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: mIdAnotherUser }, mUserToUpdate, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId2 }, MockValues.mUserToUpdate, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call UserModel findOneAndUpdate and return error result (user not exists)', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsersEmpty as User[]);
+        test('User not exists', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.update(mIdUserItself, mUserToUpdate, mTokenPayload);
+            const result = await UserService.update(MockValues.mUserId1, MockValues.mUserToUpdate, MockValues.mTokenPayloadUser1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
-        it('Should call UserModel findOneAndUpdate and return error result (user is not allowed to change this user)', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
+        test('User is not allowed to change this user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.update(mIdAnotherUser, mUserToUpdate, mTokenPayload);
+            const result = await UserService.update(MockValues.mUserId2, MockValues.mUserToUpdate, MockValues.mTokenPayloadUser1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdAnotherUser, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId2, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
@@ -435,43 +290,29 @@ describe('User service', () => {
     });
 
     describe('changeRole', () => {
-        const mIdUserItself = "1";
-        const mDate = new Date();
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
-
-        it('Should call UserModel findOneAndUpdate and return success result (possible role)', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
+        test('Change role)', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.changeRole(mIdUserItself, Roles.ADMIN);
+            const result = await UserService.changeRole(MockValues.mUserId1, Roles.ADMIN);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: mIdUserItself }, { role: Roles.ADMIN }, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, { role: Roles.ADMIN }, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call UserModel findOneAndUpdate and return error result (impossible role)', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
+        test('Change to an impossible role', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.changeRole(mIdUserItself, "AAA" as Roles);
+            const result = await UserService.changeRole(MockValues.mUserId1, "AAA" as Roles);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
@@ -479,169 +320,150 @@ describe('User service', () => {
     });
 
     describe('suspend', () => {
-        const mIdUserItself = "1";
-        const mDate = new Date();
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
-
-        it('Should call UserModel findOneAndUpdate and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
+        test('Suspend user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.suspend(mIdUserItself);
+            const result = await UserService.suspend(MockValues.mUserId1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: mIdUserItself }, { status: Status.SUSPENDED }, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, { status: Status.SUSPENDED }, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+        test('Suspend non existing user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+
+            const result = await UserService.suspend(MockValues.mUserId1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
         });
 
     });
 
     describe('activate', () => {
-        const mIdUserItself = "1";
-        const mDate = new Date();
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
-
-        it('Should call UserModel findOneAndUpdate and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
+        test('Activate user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.activate(mIdUserItself);
+            const result = await UserService.activate(MockValues.mUserId1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: mIdUserItself }, { status: Status.ACTIVE }, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, { status: Status.ACTIVE }, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+        test('Activate non existing user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+
+            const result = await UserService.activate(MockValues.mUserId1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
         });
 
     });
 
     describe('remove', () => {
-        const mIdUserItself = "1";
-        const mDate = new Date();
 
-        const mUsers: User[] = [
-            {
-                _id: "test_id_hash1",
-                status: Status.ACTIVE,
-                username: "test1",
-                email: "test1@test1",
-                password: "test_pass_hash1",
-                role: Roles.ADMIN,
-                dateCreated: mDate
-            }
-        ]
-
-        it('Should call UserModel findOneAndUpdate and return success result', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(mUsers as User[]);
+        test('Delete user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.remove(mIdUserItself);
+            const result = await UserService.remove(MockValues.mUserId1);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: mIdUserItself, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: mIdUserItself }, { status: Status.DELETED }, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, { status: Status.DELETED }, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+        test('Delete non existing user', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+
+            const result = await UserService.remove(MockValues.mUserId1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
         });
 
     });
 
-
     describe('purge', () => {
-        const mIdUserItself = "1";
-        const mIdAnotherUser = "2";
-        const mDate = new Date();
 
-        const mTokenPayload: TokenPayload = {
-            id: "1",
-            status: Status.ACTIVE,
-            username: "mock_data",
-            email: "mock_data",
-            role: Roles.USER,
-        }
-
-        const mTokenPayloadAdmin: TokenPayload = {
-            id: "1",
-            status: Status.ACTIVE,
-            username: "mock_data",
-            email: "mock_data",
-            role: Roles.ADMIN,
-        }
-
-        it('Should call UserModel findOneAndUpdate and return success result (user purging itself)', async () => {
+        test('User purging itself', async () => {
             jest.spyOn(PostModel, 'deleteMany').mockResolvedValueOnce("" as any);
             jest.spyOn(PostModel, 'updateMany').mockResolvedValueOnce("" as any);
             jest.spyOn(UserModel, 'findOneAndDelete').mockResolvedValueOnce("");
 
-            const result = await UserService.purge(mIdUserItself, mTokenPayload);
+            const result = await UserService.purge(MockValues.mUserId1, MockValues.mTokenPayloadUser1);
 
             expect(PostModel.deleteMany).toBeCalled();
-            expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: mIdUserItself });
+            expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId1 });
 
             expect(PostModel.updateMany).toBeCalled();
-            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: mIdUserItself } } });
+            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId1 } } });
 
             expect(UserModel.findOneAndDelete).toBeCalled();
-            expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: mIdUserItself });
+            expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: MockValues.mUserId1 });
    
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call UserModel findOneAndUpdate and return success result (admin purging another user)', async () => {
+        test('Admin purging another user', async () => {
             jest.spyOn(PostModel, 'deleteMany').mockResolvedValueOnce("" as any);
             jest.spyOn(PostModel, 'updateMany').mockResolvedValueOnce("" as any);
             jest.spyOn(UserModel, 'findOneAndDelete').mockResolvedValueOnce("");
 
-            const result = await UserService.purge(mIdAnotherUser, mTokenPayloadAdmin);
+            const result = await UserService.purge(MockValues.mUserId2, MockValues.mTokenPayloadAdmin);
 
             expect(PostModel.deleteMany).toBeCalled();
-            expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: mIdAnotherUser });
+            expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId2 });
 
             expect(PostModel.updateMany).toBeCalled();
-            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: mIdAnotherUser } } });
+            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId2 } } });
 
             expect(UserModel.findOneAndDelete).toBeCalled();
-            expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: mIdAnotherUser });
+            expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: MockValues.mUserId2 });
    
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
-        it('Should call UserModel findOneAndUpdate and return success result (user is not allowed to purge this user)', async () => {
-            jest.spyOn(PostModel, 'deleteMany').mockResolvedValueOnce("" as any);
-            jest.spyOn(PostModel, 'updateMany').mockResolvedValueOnce("" as any);
-            jest.spyOn(UserModel, 'findOneAndDelete').mockResolvedValueOnce("");
+        test('User trying to purge another user', async () => {
+            const result = await UserService.purge(MockValues.mUserId2, MockValues.mTokenPayloadUser1);
 
-            const result = await UserService.purge(mIdAnotherUser, mTokenPayload);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Purge fail', async () => {
+            jest.spyOn(PostModel, 'deleteMany').mockImplementation(() => {
+				throw new Error();
+			});
+
+            const result = await UserService.purge(MockValues.mUserId1, MockValues.mTokenPayloadUser1);
+    
+            expect(PostModel.deleteMany).toBeCalled();
+            expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId1 });
 
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
