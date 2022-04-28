@@ -25,7 +25,7 @@ async function sendVerificationEmail(userId: string): Promise<IResult> {
         template = await fs.readFile(EmailVerificationConfig.EMAIL_HTML_TEMPLATE_PATH, 'utf8')
     }
     catch (err) {
-        console.info(err);
+        // console.info(err);
         return new ErrorResult("Can not send email this time.");
     }
 
@@ -44,7 +44,6 @@ async function sendVerificationEmail(userId: string): Promise<IResult> {
         username: userResult.data.username
     }
     const token: Token = JWTService.generateToken(tokenPayload, process.env.JWT_EMAIL_VERIFICATION_TOKEN_EXPIRATION)
-    console.info(token);
 
     // Build url for account activation, this will be embedded in html content of the email
     const URL: string = `${process.env.FRONTEND_URL}${process.env.FRONTEND_EMAIL_VERIFY_PATH}${token.token}`;

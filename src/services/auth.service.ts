@@ -1,5 +1,5 @@
 // Project imports
-import EmailVerificationService from './email-verificaiton.service';
+import EmailVerificationService from './email-verification.service';
 import EncryptionService from '../core/services/encryption.service';
 import JWTService from '../core/services/jwt.service';
 import UserService from './user.service';
@@ -23,7 +23,7 @@ async function login(login: Login): Promise<IDataResult<Token | null>> {
     }
 
     if (userResult.data.status == Status.PASSIVE) {
-        return new ErrorDataResult(null, "User is pending fpr activation");
+        return new ErrorDataResult(null, "User is pending for activation");
     }
 
     if (userResult.data.status == Status.SUSPENDED) {
@@ -77,6 +77,10 @@ async function sendVerification(email: string): Promise<IResult> {
         return new ErrorResult("User not exists");
     }
     
+    if (userResult.data.status == Status.SUSPENDED) {
+        return new ErrorResult("User is suspended");
+    }
+
     // Prevent unnecessary email sending
     if(userResult.data.status == Status.ACTIVE) {
         return new ErrorResult("User is already active");
@@ -103,6 +107,10 @@ async function verify(token: Token): Promise<IResult> {
     const userResult: DataResult<User | null> = await UserService.getById(tokenPayload.id);
     if (userResult == null || userResult.data == null || !userResult.status) {
         return new ErrorResult("Account verification failed");
+    }
+
+    if (userResult.data.status == Status.SUSPENDED) {
+        return new ErrorResult("User is suspended");
     }
 
     // fail if already active

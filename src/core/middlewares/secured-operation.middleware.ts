@@ -6,6 +6,7 @@ import { Token } from "../types/Token";
 import { TokenPayload } from "../types/TokenPayload";
 import Roles from "../types/enums/Roles";
 
+
 function extractAndValidateToken() {
     return async function (req: Request, res: Response, next: NextFunction) {
         const authHeader = req.headers['authorization']
@@ -18,7 +19,7 @@ function extractAndValidateToken() {
         const token: Token = { token: tokenHeader }
 
         const verificationResult: DataResult<TokenPayload | null> = await JWTService.verify(token);
-        console.log(verificationResult.data);
+        // console.log(verificationResult.data);
 
         // If token is not verified
         if (verificationResult == null || verificationResult.data == null || !verificationResult.status) {

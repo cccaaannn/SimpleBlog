@@ -67,7 +67,7 @@ async function getByEmail(email: string): Promise<IDataResult<User | null>> {
     return new SuccessDataResult(temp);
 }
 
-async function add(user: UserAdd): Promise<IDataResult<User|null>> {
+async function add(user: UserAdd): Promise<IDataResult<User | null>> {
     const res: Result = await run(
         [
             { function: isUsernameUnique, args: [user.username] },
@@ -192,7 +192,6 @@ async function purge(id: string, tokenPayload: TokenPayload): Promise<IResult> {
         await UserModel.findOneAndDelete({ _id: id });
     }
     catch (error) {
-        console.log(error);
         return new ErrorResult("Operation failed");
     }
 
@@ -234,35 +233,34 @@ async function isUsernameUnique(username: string, id?: string): Promise<IResult>
 /*
  * Even if user is deleted same Email can not be used.
 */
-async function isEmailUnique(email: string, id?: string): Promise<IResult> {
-    let user: any = null;
-    if (id == undefined) {
-        user = await UserModel.find({ email: email });
-    }
-    else {
-        user = await UserModel.find({ _id: { $ne: id }, email: email });
-    }
+async function isEmailUnique(email: string): Promise<IResult> {
+    const user = await UserModel.find({ email: email });
 
-    if (user == null || user.length > 0) {
+    if (user.length > 0) {
         return new ErrorResult("email is taken");
     }
 
     return new SuccessResult();
 }
 
-async function isEmailNotChanged(email: string, id: string): Promise<IResult> {
-    if (email == null) {
-        return new SuccessResult();
-    }
+// Unused version also supports update 
+// async function isEmailUnique(email: string, id?: string): Promise<IResult> {
+//     let user: any = null;
+//     if (id == undefined) {
+//         user = await UserModel.find({ email: email });
+//     }
+//     else {
+//         user = await UserModel.find({ _id: { $ne: id }, email: email });
+//     }
 
-    const user = await UserModel.find({ _id: { $ne: id }, status: { $ne: Status.DELETED } });
-    if (user == null || user[0].email != email) {
-        return new ErrorResult("Can not update email");
-    }
-    return new SuccessResult();
-}
+//     if (user == null || user.length > 0) {
+//         return new ErrorResult("email is taken");
+//     }
 
-async function isExists(id: string): Promise<IResult> {    
+//     return new SuccessResult();
+// }
+
+async function isExists(id: string): Promise<IResult> {
     const user: any[] = await UserModel.find({ _id: id, status: { $ne: Status.DELETED } });
     if (user.length > 0) {
         return new SuccessResult();
