@@ -1,23 +1,23 @@
 name: Node CI
 
 on:
-    push:
-        branches: [master]
+  push:
+    branches: [master]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: Use Node test
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16.x
-            - name: make test coverage
-            - run: npm install
-            - run: make test-coverage
-            # - run: npm run build --if-present
-            - name: Coveralls
-              uses: coverallsapp/github-action@master
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node test
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: make test coverage
+        run: |
+          npm install
+          make test-coverage
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
