@@ -221,6 +221,20 @@ export namespace MockValues {
         password: mPassword1
     }
 
+    export const mUserToAddActive: any = {
+        username: mUsername1,
+        email: mEmail1,
+        password: mPassword1,
+        status: Status.ACTIVE
+    }
+
+    export const mUserToAddSuspended: any = {
+        username: mUsername1,
+        email: mEmail1,
+        password: mPassword1,
+        status: Status.SUSPENDED
+    }
+
     export const mUserToUpdate: UserUpdate = {
         username: mUsername1
     }
