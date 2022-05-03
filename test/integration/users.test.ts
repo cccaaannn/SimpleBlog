@@ -5,15 +5,16 @@ import supertest from 'supertest';
 import { MockValues } from '../utils/mocks/const-mock-values';
 
 // Project imports
+import EncryptionService from '../../src/core/services/encryption.service';
 import MongoDBService from '../../src/core/services/mongodb.service'
+import JWTService from '../../src/core/services/jwt.service';
+import Roles from '../../src/core/types/enums/Roles';
+import Status from '../../src/types/enums/Status';
+import app from '../../src/app';
+
 import { UserModel } from '../../src/models/UserModel';
 import { Token } from '../../src/core/types/Token';
 import { User } from '../../src/types/User';
-import JWTService from '../../src/core/services/jwt.service';
-import app from '../../src/app';
-import Roles from '../../src/core/types/enums/Roles';
-import Status from '../../src/types/enums/Status';
-import EncryptionService from '../../src/core/services/encryption.service';
 
 
 describe('/api/v1/users', () => {
@@ -39,11 +40,9 @@ describe('/api/v1/users', () => {
             // Get admin token
             const token: Token = JWTService.generateToken(MockValues.mTokenPayloadAdmin);
 
-
             expect(createdUser.username).not.toEqual(MockValues.mUsername2);
             const comparisonResultBefore: any = await EncryptionService.compare(MockValues.mPassword2, createdUser.password);
             expect(comparisonResultBefore).toEqual(false);
-
 
             const res = await request.put(`/api/v1/users/update/${createdUser._id}`)
                 .set('Accept', 'application/json')
@@ -60,7 +59,6 @@ describe('/api/v1/users', () => {
 
             // Is user updated
             const updatedUser: any = await UserModel.findById(createdUser._id);
-            console.log(updatedUser);
 
             expect(updatedUser.username).toEqual(MockValues.mUsername2);
 
