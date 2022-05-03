@@ -2,10 +2,10 @@ import Visibility from "../../../src/types/enums/Visibility";
 import Roles from "../../../src/core/types/enums/Roles";
 import Status from "../../../src/types/enums/Status";
 
-import { Post, PostAdd, PostSort, PostUpdate } from "../../../src/types/Post";
-import { User, UserAdd, UserSort, UserUpdate } from "../../../src/types/User";
 import { ErrorDataResult, SuccessDataResult } from "../../../src/core/results/DataResult";
 import { ErrorResult, IResult, SuccessResult } from "../../../src/core/results/Result";
+import { Post, PostAdd, PostSort, PostUpdate } from "../../../src/types/Post";
+import { User, UserAdd, UserSort, UserUpdate } from "../../../src/types/User";
 import { TokenPayload } from '../../../src/core/types/TokenPayload';
 import { CommentAdd } from "../../../src/types/Comment";
 import { SignUp } from "../../../src/core/types/SignUp";
@@ -41,6 +41,19 @@ export namespace MockValues {
     export const mCommentId2 = "comment2";
     export const mCommentId3 = "comment3";
 
+    export const mPostHeader1 = "header1";
+    export const mPostHeader2 = "header2";
+    export const mPostHeader3 = "header3";
+
+    export const mPostBody1 = "body1";
+    export const mPostBody2 = "body2";
+    export const mPostBody3 = "body3";
+
+    export const mComment1 = "comment1";
+    export const mComment2 = "comment2";
+    export const mComment3 = "comment3";
+
+
     export const mDateNow = new Date();
 
     export const mTokenPayloadUser1: TokenPayload = {
@@ -68,14 +81,14 @@ export namespace MockValues {
         {
             _id: mPostId1,
             owner: mUserId1,
-            header: "mock_data",
-            body: "mock_data",
+            header: mPostHeader1,
+            body: mPostBody1,
             visibility: Visibility.PUBLIC,
             comments: [
                 {
                     _id: mCommentId1,
                     owner: mUserId1,
-                    comment: "mock_data",
+                    comment: mComment1,
                     dateCreated: mDateNow
                 }
             ],
@@ -84,14 +97,14 @@ export namespace MockValues {
         {
             _id: mPostId2,
             owner: mUserId2,
-            header: "mock_data",
-            body: "mock_data",
+            header: mPostHeader2,
+            body: mPostBody2,
             visibility: Visibility.PUBLIC,
             comments: [
                 {
                     _id: mCommentId2,
                     owner: mUserId2,
-                    comment: "mock_data",
+                    comment: mComment2,
                     dateCreated: mDateNow
                 }
             ],
@@ -104,14 +117,14 @@ export namespace MockValues {
     export const mPost1: Post = {
         _id: mPostId1,
         owner: mUserId1,
-        header: "mock_data",
-        body: "mock_data",
+        header: mPostHeader1,
+        body: mPostBody1,
         visibility: Visibility.PUBLIC,
         comments: [
             {
                 _id: mCommentId1,
                 owner: mUserId1,
-                comment: "mock_data",
+                comment: mComment1,
                 dateCreated: mDateNow
             }
         ],
@@ -120,20 +133,43 @@ export namespace MockValues {
 
     export const mPostToAdd: PostAdd = {
         owner: mUserId1,
-        header: "mock_data",
-        body: "mock_data",
+        header: mPostHeader1,
+        body: mPostBody1,
         visibility: Visibility.PUBLIC
     }
 
+    export const mPostToAddPrivate: PostAdd = {
+        owner: mUserId1,
+        header: mPostHeader1,
+        body: mPostBody1,
+        visibility: Visibility.PRIVATE
+    }
+
+    export const mPostToAddWithComment1: any = {
+        owner: mUserId1,
+        header: mPostHeader1,
+        body: mPostBody1,
+        visibility: Visibility.PUBLIC,
+        comments: [
+            { comment: mComment1 }
+        ]
+    }
+
     export const mPostToUpdate: PostUpdate = {
-        header: "mock_data",
-        body: "mock_data",
+        header: mPostHeader1,
+        body: mPostBody1,
+        visibility: Visibility.PUBLIC
+    }
+
+    export const mPostToUpdate2: PostUpdate = {
+        header: mPostHeader2,
+        body: mPostBody2,
         visibility: Visibility.PUBLIC
     }
 
     export const mCommentAdd: CommentAdd = {
-        owner: "mock_data",
-        comment: "mock_data"
+        owner: mUserId1,
+        comment: mComment1
     }
 
     export const mPostSort: PostSort = {
@@ -219,6 +255,14 @@ export namespace MockValues {
         username: mUsername1,
         email: mEmail1,
         password: mPassword1
+    }
+
+    export const mUserToAddAdmin: any = {
+        username: mUsername1,
+        email: mEmail1,
+        password: mPassword1,
+        status: Status.ACTIVE,
+        role: Roles.ADMIN
     }
 
     export const mUserToAddActive: any = {
