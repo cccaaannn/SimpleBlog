@@ -1,14 +1,14 @@
-import UserService from "../../../src/services/user.service"
 import EncryptionService from "../../../src/core/services/encryption.service";
+import UserService from "../../../src/services/user.service"
 import Roles from "../../../src/core/types/enums/Roles";
 import Status from "../../../src/types/enums/Status";
+
 import { ErrorDataResult, SuccessDataResult } from "../../../src/core/results/DataResult";
-import { User, UserAdd, UserSort, UserUpdate } from "../../../src/types/User";
 import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
-import { TokenPayload } from '../../../src/core/types/TokenPayload';
+import { MockValues } from "../../utils/mocks/const-mock-values";
 import { UserModel } from '../../../src/models/UserModel';
 import { PostModel } from "../../../src/models/PostModel";
-import { MockValues } from "../../utils/mocks/const-mock-values";
+import { User } from "../../../src/types/User";
 
 
 describe('User service', () => {

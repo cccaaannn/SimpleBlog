@@ -1,10 +1,11 @@
 import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { DataResult, ErrorDataResult, SuccessDataResult } from "../../../../src/core/results/DataResult";
 import JWTService from "../../../../src/core/services/jwt.service";
-import { Token } from "../../../../src/core/types/Token";
+
+import { DataResult, ErrorDataResult, SuccessDataResult } from "../../../../src/core/results/DataResult";
 import { TokenPayload } from "../../../../src/core/types/TokenPayload";
 import { MockValues } from "../../../utils/mocks/const-mock-values";
+import { Token } from "../../../../src/core/types/Token";
 
 
 describe('JWTService service', () => {

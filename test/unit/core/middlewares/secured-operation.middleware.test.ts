@@ -1,8 +1,9 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
 
-import { allowForRoles, extractAndValidateToken } from "../../../../src/core/middlewares/secured-operation.middleware";
 import JWTService from '../../../../src/core/services/jwt.service';
 import Roles from '../../../../src/core/types/enums/Roles';
+
+import { allowForRoles, extractAndValidateToken } from "../../../../src/core/middlewares/secured-operation.middleware";
 import { MockValues } from '../../../utils/mocks/const-mock-values';
 
 

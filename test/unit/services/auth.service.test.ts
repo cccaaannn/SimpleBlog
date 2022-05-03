@@ -1,10 +1,11 @@
-import { ErrorDataResult, SuccessDataResult } from "../../../src/core/results/DataResult";
-import { ErrorResult, SuccessResult } from "../../../src/core/results/Result";
+import EmailVerificationService from "../../../src/services/email-verification.service";
 import EncryptionService from "../../../src/core/services/encryption.service";
 import JWTService from "../../../src/core/services/jwt.service";
-import AuthService from "../../../src/services/auth.service";
-import EmailVerificationService from "../../../src/services/email-verification.service";
 import UserService from "../../../src/services/user.service";
+import AuthService from "../../../src/services/auth.service";
+
+import { ErrorDataResult, SuccessDataResult } from "../../../src/core/results/DataResult";
+import { ErrorResult, SuccessResult } from "../../../src/core/results/Result";
 import { MockValues } from "../../utils/mocks/const-mock-values";
 
 

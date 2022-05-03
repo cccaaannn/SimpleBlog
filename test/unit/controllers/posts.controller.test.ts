@@ -1,9 +1,10 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
 
-import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
+import PostController from '../../../src/controllers/post.controller';
 import PostService from '../../../src/services/post.service';
 import Visibility from '../../../src/types/enums/Visibility';
-import PostController from '../../../src/controllers/post.controller';
+
+import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
 import { MockValues } from '../../utils/mocks/const-mock-values';
 
 

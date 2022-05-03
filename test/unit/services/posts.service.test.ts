@@ -1,11 +1,11 @@
-import { SuccessDataResult } from "../../../src/core/results/DataResult";
-import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
-import { PostModel } from "../../../src/models/PostModel";
 import PostService from "../../../src/services/post.service";
-import { Post, PostAdd } from "../../../src/types/Post";
 import Visibility from "../../../src/types/enums/Visibility";
-import { CommentAdd } from "../../../src/types/Comment";
+
+import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
+import { SuccessDataResult } from "../../../src/core/results/DataResult";
 import { MockValues } from "../../utils/mocks/const-mock-values";
+import { PostModel } from "../../../src/models/PostModel";
+import { Post } from "../../../src/types/Post";
 
 
 describe('Post service', () => {
@@ -103,20 +103,13 @@ describe('Post service', () => {
 
     describe('add', () => {
 
-        const postToAddResult: PostAdd = {
-            owner: MockValues.mTokenPayloadUser1.id,
-            header: "mock_data",
-            body: "mock_data",
-            visibility: Visibility.PUBLIC
-        }
-
         test('User adding a post', async () => {
             jest.spyOn(PostModel, 'create').mockResolvedValueOnce("" as never);
 
             const result = await PostService.add(MockValues.mPostToAdd, MockValues.mTokenPayloadUser1);
 
             expect(PostModel.create).toBeCalled();
-            expect(PostModel.create).toBeCalledWith(postToAddResult);
+            expect(PostModel.create).toBeCalledWith(MockValues.mPostToAdd);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
@@ -193,11 +186,6 @@ describe('Post service', () => {
 
     describe('addComment', () => {
 
-        const mCommentAddResult: CommentAdd = {
-            owner: MockValues.mTokenPayloadUser1.id,
-            comment: "mock_data"
-        }
-
         test('User adding comment to a post', async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
@@ -208,7 +196,7 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
 
             expect(PostModel.findOneAndUpdate).toBeCalled();
-            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId1 }, { $push: { comments: mCommentAddResult } }, { new: true });
+            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId1 }, { $push: { comments: MockValues.mCommentAdd } }, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
