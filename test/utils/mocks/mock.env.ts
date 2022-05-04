@@ -1,6 +1,6 @@
 // Server settings
 process.env.PORT="3000"
-process.env.IP="localhost"
+process.env.IP="0.0.0.0"
 process.env.NODE_ENV="test"
 
 // JWT settings
