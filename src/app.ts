@@ -5,6 +5,7 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cors from 'cors';
+import helmet from 'helmet';
 
 // Project imports
 import { extractAndValidateToken } from "./core/middlewares/secured-operation.middleware";
@@ -19,6 +20,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors());
+app.use(helmet());
 
 app.use('/api/v1/users', extractAndValidateToken(), UsersRouter);
 app.use('/api/v1/posts', extractAndValidateToken(), PostRouter);

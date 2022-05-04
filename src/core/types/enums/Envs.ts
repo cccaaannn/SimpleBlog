@@ -1,6 +1,7 @@
 enum Envs {
-    PROD="prod",
-    TEST="test"
+    PROD="production",
+    TEST="test",
+    DEV="development"
 }
 
 export default Envs;
