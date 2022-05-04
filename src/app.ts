@@ -17,13 +17,14 @@ import { exceptionHandler } from "./core/middlewares/exception-handler.middlewar
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
 app.use(cors());
 app.use(helmet());
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
 
 app.use('/api/v1/users', extractAndValidateToken(), UsersRouter);
-app.use('/api/v1/posts', extractAndValidateToken(), PostRouter);
+app.use('/api/v1/posts', PostRouter);
 app.use('/api/v1/auth', AuthRouter);
 
 app.use(exceptionHandler());
