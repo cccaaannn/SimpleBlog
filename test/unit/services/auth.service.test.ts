@@ -284,7 +284,7 @@ describe('Auth service', () => {
 
         test('Not existing or deleted user', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mErrorDataResult);
-            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendPasswordResetEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
 
@@ -296,7 +296,7 @@ describe('Auth service', () => {
 
         test('Suspended user', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Suspended);
-            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendPasswordResetEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
 
@@ -308,7 +308,7 @@ describe('Auth service', () => {
 
         test('Passive user', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
-            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendPasswordResetEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
 
@@ -320,7 +320,7 @@ describe('Auth service', () => {
 
         test('Successful reset code sending', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Active);
-            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendPasswordResetEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
 
