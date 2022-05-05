@@ -57,7 +57,7 @@ describe('/api/v1/posts', () => {
 
     describe('/getByUserId', () => {
 
-        test('Successfully retrieving all posts', async () => {
+        test('Successfully retrieving all posts of a user by id', async () => {
             // Add mock user
             const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
             const createdUser2: User = await UserModel.create(MockValues.mUserToAddActive);
@@ -86,9 +86,9 @@ describe('/api/v1/posts', () => {
 
     });
 
-    describe('/getByVisibility', () => {
+    describe('/getForPublic', () => {
 
-        test('Successfully retrieving all posts of a user by id', async () => {
+        test('Successfully retrieving all public posts', async () => {
             // Add mock user
             const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
 
@@ -97,16 +97,17 @@ describe('/api/v1/posts', () => {
             postToAdd.owner = createdUser._id;
             await PostModel.create(postToAdd);
 
+            const postToAddMembers: any = { ...MockValues.mPostToAddMembers }
+            postToAddMembers.owner = createdUser._id;
+            await PostModel.create(postToAddMembers);
+            
             const postToAddPrivate: any = { ...MockValues.mPostToAddPrivate }
             postToAddPrivate.owner = createdUser._id;
             await PostModel.create(postToAddPrivate);
 
-            // Get admin token
-            const token: Token = JWTService.generateToken(MockValues.mTokenPayloadAdmin);
-
-            const res = await request.get(`/api/v1/posts/getByVisibility/${Visibility.PUBLIC}`)
+            const res = await request.get(`/api/v1/posts/getForPublic`)
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token.token}`);
+                .set('Authorization', ``);
 
             expect(res.body.data.length).toEqual(1);
             expect(res.status).toEqual(200);
@@ -114,9 +115,9 @@ describe('/api/v1/posts', () => {
 
     });
 
-    describe('/getByVisibility', () => {
+    describe('/getForMembers', () => {
 
-        test('Successfully retrieving all posts by visibility', async () => {
+        test('Successfully retrieving all public or member posts', async () => {
             // Add mock user
             const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
 
@@ -125,6 +126,10 @@ describe('/api/v1/posts', () => {
             postToAdd.owner = createdUser._id;
             await PostModel.create(postToAdd);
 
+            const postToAddMembers: any = { ...MockValues.mPostToAddMembers }
+            postToAddMembers.owner = createdUser._id;
+            await PostModel.create(postToAddMembers);
+            
             const postToAddPrivate: any = { ...MockValues.mPostToAddPrivate }
             postToAddPrivate.owner = createdUser._id;
             await PostModel.create(postToAddPrivate);
@@ -132,11 +137,11 @@ describe('/api/v1/posts', () => {
             // Get admin token
             const token: Token = JWTService.generateToken(MockValues.mTokenPayloadAdmin);
 
-            const res = await request.get(`/api/v1/posts/getByVisibility/${Visibility.PUBLIC}`)
+            const res = await request.get(`/api/v1/posts/getForMembers`)
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${token.token}`);
 
-            expect(res.body.data.length).toEqual(1);
+            expect(res.body.data.length).toEqual(2);
             expect(res.status).toEqual(200);
         });
 

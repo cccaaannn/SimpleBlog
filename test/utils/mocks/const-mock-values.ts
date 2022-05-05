@@ -138,11 +138,25 @@ export namespace MockValues {
         visibility: Visibility.PUBLIC
     }
 
+    export const mPostToAddMembers: PostAdd = {
+        owner: mUserId1,
+        header: mPostHeader1,
+        body: mPostBody1,
+        visibility: Visibility.MEMBERS
+    }
+
     export const mPostToAddPrivate: PostAdd = {
         owner: mUserId1,
         header: mPostHeader1,
         body: mPostBody1,
         visibility: Visibility.PRIVATE
+    }
+
+    export const mPostToAddImpossibleVisibility: any = {
+        owner: mUserId1,
+        header: mPostHeader1,
+        body: mPostBody1,
+        visibility: "mock"
     }
 
     export const mPostToAddWithComment1: any = {

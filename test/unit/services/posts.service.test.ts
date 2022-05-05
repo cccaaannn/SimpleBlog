@@ -39,29 +39,56 @@ describe('Post service', () => {
 
     });
 
-    describe('getByVisibility', () => {
+    describe('getForPublic', () => {
 
-        test("Get post by user's visibility", async () => {
+        test("Get post for public", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
 
-            const result = await PostService.getByVisibility(Visibility.PUBLIC);
+            const result = await PostService.getForPublic();
 
             expect(PostModel.find).toBeCalled();
-            expect(PostModel.find).toBeCalledWith({ visibility: { $eq: Visibility.PUBLIC } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        test("Get post by user's visibility with sort", async () => {
+        test("Get post for public with sort", async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
                 return MockValues.mPostSorter;
             });
             jest.spyOn(MockValues.mPostSorter, 'sort').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
 
-            const result = await PostService.getByVisibility(Visibility.PUBLIC, MockValues.mPostSort);
+            const result = await PostService.getForPublic(MockValues.mPostSort);
 
             expect(PostModel.find).toBeCalled();
-            expect(PostModel.find).toBeCalledWith({ visibility: { $eq: Visibility.PUBLIC } });
+            expect(MockValues.mPostSorter.sort).toBeCalled();
+            expect(MockValues.mPostSorter.sort).toBeCalledWith(MockValues.mPostSort);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(SuccessDataResult);
+        });
+
+    });
+
+    describe('getForMembers', () => {
+
+        test("Get post for members", async () => {
+            jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+
+            const result = await PostService.getForMembers();
+
+            expect(PostModel.find).toBeCalled();
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(SuccessDataResult);
+        });
+
+        test("Get post for members with sort", async () => {
+            jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
+                return MockValues.mPostSorter;
+            });
+            jest.spyOn(MockValues.mPostSorter, 'sort').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+
+            const result = await PostService.getForMembers(MockValues.mPostSort);
+
+            expect(PostModel.find).toBeCalled();
             expect(MockValues.mPostSorter.sort).toBeCalled();
             expect(MockValues.mPostSorter.sort).toBeCalledWith(MockValues.mPostSort);
             expect(result).toBeDefined();
@@ -107,6 +134,17 @@ describe('Post service', () => {
             jest.spyOn(PostModel, 'create').mockResolvedValueOnce("" as never);
 
             const result = await PostService.add(MockValues.mPostToAdd, MockValues.mTokenPayloadUser1);
+
+            expect(PostModel.create).toBeCalled();
+            expect(PostModel.create).toBeCalledWith(MockValues.mPostToAdd);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+        test('User adding a post with wrong Visibility', async () => {
+            jest.spyOn(PostModel, 'create').mockResolvedValueOnce("" as never);
+
+            const result = await PostService.add(MockValues.mPostToAddImpossibleVisibility, MockValues.mTokenPayloadUser1);
 
             expect(PostModel.create).toBeCalled();
             expect(PostModel.create).toBeCalledWith(MockValues.mPostToAdd);

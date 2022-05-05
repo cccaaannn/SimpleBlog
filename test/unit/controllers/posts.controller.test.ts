@@ -74,66 +74,133 @@ describe('Post controller', () => {
 
     });
 
-    describe('getByVisibility', () => {
+    describe('getForPublic', () => {
 
         test('Success', async () => {
-            jest.spyOn(PostService, 'getByVisibility').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
+            jest.spyOn(PostService, 'getForPublic').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
 
-            const mReq = getMockReq({ query: {}, params: { visibility: Visibility.PUBLIC } });
+            const mReq = getMockReq({ query: {} });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await PostController.getByVisibility(mReq, mRes.res, mNext);
+            await PostController.getForPublic(mReq, mRes.res, mNext);
 
-            expect(PostService.getByVisibility).toBeCalled();
-            expect(PostService.getByVisibility).toBeCalledWith(Visibility.PUBLIC, undefined)
+            expect(PostService.getForPublic).toBeCalled();
+            expect(PostService.getForPublic).toBeCalledWith(undefined)
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
         });
 
         test('Success with query parameters', async () => {
-            jest.spyOn(PostService, 'getByVisibility').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
+            jest.spyOn(PostService, 'getForPublic').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
 
-            const mReq = getMockReq({ query: { field: "visibility", asc: 1 }, params: { visibility: Visibility.PUBLIC } });
+            const mReq = getMockReq({ query: { field: "visibility", asc: 1 } });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await PostController.getByVisibility(mReq, mRes.res, mNext);
+            await PostController.getForPublic(mReq, mRes.res, mNext);
 
-            expect(PostService.getByVisibility).toBeCalled();
-            expect(PostService.getByVisibility).toBeCalledWith(Visibility.PUBLIC, MockValues.mPostSort)
+            expect(PostService.getForPublic).toBeCalled();
+            expect(PostService.getForPublic).toBeCalledWith(MockValues.mPostSort)
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
         });
 
         test('Error', async () => {
-            jest.spyOn(PostService, 'getByVisibility').mockResolvedValueOnce(MockValues.mErrorResult as any);
+            jest.spyOn(PostService, 'getForPublic').mockResolvedValueOnce(MockValues.mErrorResult as any);
 
-            const mReq = getMockReq({ query: {}, params: { visibility: Visibility.PUBLIC } });
+            const mReq = getMockReq({ query: {} });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await PostController.getByVisibility(mReq, mRes.res, mNext);
+            await PostController.getForPublic(mReq, mRes.res, mNext);
 
-            expect(PostService.getByVisibility).toBeCalled();
-            expect(PostService.getByVisibility).toBeCalledWith(Visibility.PUBLIC, undefined)
+            expect(PostService.getForPublic).toBeCalled();
+            expect(PostService.getForPublic).toBeCalledWith(undefined)
             expect(mRes.res.status).toBeCalledWith(400);
             expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
         });
 
         test('Exception', async () => {
-            jest.spyOn(PostService, 'getByVisibility').mockImplementation(() => {
+            jest.spyOn(PostService, 'getForPublic').mockImplementation(() => {
                 throw new Error();
             });
 
-            const mReq = getMockReq({ query: {}, params: { visibility: Visibility.PUBLIC } });
+            const mReq = getMockReq({ query: {} });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await PostController.getByVisibility(mReq, mRes.res, mNext);
+            await PostController.getForPublic(mReq, mRes.res, mNext);
 
-            expect(PostService.getByVisibility).toBeCalled();
-            expect(PostService.getByVisibility).toBeCalledWith(Visibility.PUBLIC, undefined)
+            expect(PostService.getForPublic).toBeCalled();
+            expect(PostService.getForPublic).toBeCalledWith(undefined)
+            expect(mNext).toBeCalled();
+            expect(mRes.res.locals.err).toBeDefined();
+            expect(mRes.res.locals.err).toBeInstanceOf(Error);
+        });
+
+    });
+
+    describe('getForMembers', () => {
+
+        test('Success', async () => {
+            jest.spyOn(PostService, 'getForMembers').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
+
+            const mReq = getMockReq({ query: {} });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getForMembers(mReq, mRes.res, mNext);
+
+            expect(PostService.getForMembers).toBeCalled();
+            expect(PostService.getForMembers).toBeCalledWith( undefined)
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
+        });
+
+        test('Success with query parameters', async () => {
+            jest.spyOn(PostService, 'getForMembers').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
+
+            const mReq = getMockReq({ query: { field: "visibility", asc: 1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getForMembers(mReq, mRes.res, mNext);
+
+            expect(PostService.getForMembers).toBeCalled();
+            expect(PostService.getForMembers).toBeCalledWith(MockValues.mPostSort)
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
+        });
+
+        test('Error', async () => {
+            jest.spyOn(PostService, 'getForMembers').mockResolvedValueOnce(MockValues.mErrorResult as any);
+
+            const mReq = getMockReq({ query: {} });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getForMembers(mReq, mRes.res, mNext);
+
+            expect(PostService.getForMembers).toBeCalled();
+            expect(PostService.getForMembers).toBeCalledWith(undefined)
+            expect(mRes.res.status).toBeCalledWith(400);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
+        });
+
+        test('Exception', async () => {
+            jest.spyOn(PostService, 'getForMembers').mockImplementation(() => {
+                throw new Error();
+            });
+
+            const mReq = getMockReq({ query: {} });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getForMembers(mReq, mRes.res, mNext);
+
+            expect(PostService.getForMembers).toBeCalled();
+            expect(PostService.getForMembers).toBeCalledWith(undefined)
             expect(mNext).toBeCalled();
             expect(mRes.res.locals.err).toBeDefined();
             expect(mRes.res.locals.err).toBeInstanceOf(Error);
