@@ -7,8 +7,12 @@ AuthRouter.post('/login', AuthController.login);
 
 AuthRouter.post('/signUp', AuthController.signUp);
 
-AuthRouter.get('/sendVerification/:email', AuthController.sendVerification);
+AuthRouter.get('/sendAccountVerification/:email', AuthController.sendAccountVerification);
 
-AuthRouter.post('/verify', AuthController.verify);
+AuthRouter.post('/verifyAccount', AuthController.verifyAccount);
+
+AuthRouter.get('/sendPasswordReset/:email', AuthController.sendPasswordReset);
+
+AuthRouter.post('/resetPassword', AuthController.resetPassword);
 
 export default AuthRouter;

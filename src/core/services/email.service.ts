@@ -27,7 +27,7 @@ class EmailService {
             auth: { user: this.username, pass: this.password }
         });
 
-        console.info("Email service created");
+        console.info(`Email service created with ${this.username }`);
     }
 
     async send(to: string, subject: string, text: string, html: string): Promise<IResult> {
