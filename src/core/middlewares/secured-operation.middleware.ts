@@ -5,6 +5,7 @@ import { ErrorResult } from "../results/Result";
 import { Token } from "../types/Token";
 import { TokenPayload } from "../types/TokenPayload";
 import Roles from "../types/enums/Roles";
+import TokenType from '../types/enums/TokenType';
 
 
 function extractAndValidateToken() {
@@ -26,7 +27,12 @@ function extractAndValidateToken() {
             return res.status(403).json(new ErrorResult(verificationResult.message))
         }
 
-        // save token to res.locals so following middlewares can use it
+        // Wrong token type
+        if(verificationResult.data.type != TokenType.AUTH) {
+            return res.status(403).json(new ErrorResult("Invalid token provided"))
+        }
+
+        // save token to res.locals so following middle-wares can use it
         res.locals.token = token;
         res.locals.tokenPayload = verificationResult.data;
 
