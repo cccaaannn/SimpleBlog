@@ -11,6 +11,7 @@ import { CommentAdd } from "../../../src/types/Comment";
 import { SignUp } from "../../../src/core/types/SignUp";
 import { Login } from "../../../src/core/types/Login";
 import { Token } from "../../../src/core/types/Token";
+import TokenType from "../../../src/core/types/enums/TokenType";
 
 
 export namespace MockValues {
@@ -61,7 +62,26 @@ export namespace MockValues {
         status: Status.ACTIVE,
         username: mUsername1,
         email: mEmail1,
-        role: Roles.USER
+        role: Roles.USER,
+        type: TokenType.AUTH
+    }
+
+    export const mTokenPayloadVerifyUser1: TokenPayload = {
+        id: mUserId1,
+        status: Status.ACTIVE,
+        username: mUsername1,
+        email: mEmail1,
+        role: Roles.USER,
+        type: TokenType.VERIFY
+    }
+    
+    export const mTokenPayloadResetUser1: TokenPayload = {
+        id: mUserId1,
+        status: Status.ACTIVE,
+        username: mUsername1,
+        email: mEmail1,
+        role: Roles.USER,
+        type: TokenType.RESET
     }
 
     export const mTokenPayloadAdmin: TokenPayload = {
@@ -70,6 +90,7 @@ export namespace MockValues {
         username: mUsername1,
         email: mEmail1,
         role: Roles.ADMIN,
+        type: TokenType.AUTH
     }
 
     // ---------- ---------- ---------- ---------- ----------
@@ -366,6 +387,16 @@ export namespace MockValues {
 
     export const mSuccessDataResultTokenPayloadUser1: SuccessDataResult<TokenPayload> = {
         data: mTokenPayloadUser1,
+        status: true
+    }
+
+    export const mSuccessDataResultTokenPayloadVerifyUser1: SuccessDataResult<TokenPayload> = {
+        data: mTokenPayloadVerifyUser1,
+        status: true
+    }
+
+    export const mSuccessDataResultTokenPayloadResetUser1: SuccessDataResult<TokenPayload> = {
+        data: mTokenPayloadResetUser1,
         status: true
     }
 

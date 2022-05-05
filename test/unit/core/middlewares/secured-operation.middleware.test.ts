@@ -35,6 +35,19 @@ describe('secured-operation middleware', () => {
             expect(mRes.res.json).toBeCalled();
         });
 
+        test('Wrong token type', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadResetUser1);
+
+            const mReq = getMockReq({ headers: { authorization: "bearer " + MockValues.mToken1.token } });
+            const mRes = getMockRes({ status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await extractAndValidateToken()(mReq, mRes.res, mNext);
+
+            expect(mRes.res.status).toBeCalledWith(403);
+            expect(mRes.res.json).toBeCalled();
+        });
+
         test('Successful token extraction and verification', async () => {
             jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
 

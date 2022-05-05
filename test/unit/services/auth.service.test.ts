@@ -1,4 +1,4 @@
-import EmailVerificationService from "../../../src/services/email-verification.service";
+import EmailAuthService from "../../../src/services/email-auth.service";
 import EncryptionService from "../../../src/core/services/encryption.service";
 import JWTService from "../../../src/core/services/jwt.service";
 import UserService from "../../../src/services/user.service";
@@ -99,7 +99,7 @@ describe('Auth service', () => {
 
         test('Non unique username or email', async () => {
             jest.spyOn(UserService, 'add').mockResolvedValueOnce(MockValues.mErrorDataResult);
-            jest.spyOn(EmailVerificationService, 'sendVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.signUp(MockValues.mSignUp1);
 
@@ -111,7 +111,7 @@ describe('Auth service', () => {
 
         test('Successful signup', async () => {
             jest.spyOn(UserService, 'add').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1);
-            jest.spyOn(EmailVerificationService, 'sendVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.signUp(MockValues.mSignUp1);
 
@@ -124,13 +124,13 @@ describe('Auth service', () => {
     });
 
 
-    describe('sendVerification', () => {
+    describe('sendAccountVerificationEmail', () => {
 
         test('Not existing or deleted user', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mErrorDataResult);
-            jest.spyOn(EmailVerificationService, 'sendVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
-            const result = await AuthService.sendVerification(MockValues.mEmail1);
+            const result = await AuthService.sendAccountVerification(MockValues.mEmail1);
 
             expect(UserService.getByEmail).toBeCalled();
             expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
@@ -140,9 +140,9 @@ describe('Auth service', () => {
 
         test('Suspended user', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Suspended);
-            jest.spyOn(EmailVerificationService, 'sendVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
-            const result = await AuthService.sendVerification(MockValues.mEmail1);
+            const result = await AuthService.sendAccountVerification(MockValues.mEmail1);
 
             expect(UserService.getByEmail).toBeCalled();
             expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
@@ -152,9 +152,9 @@ describe('Auth service', () => {
 
         test('Active user', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Active);
-            jest.spyOn(EmailVerificationService, 'sendVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
-            const result = await AuthService.sendVerification(MockValues.mEmail1);
+            const result = await AuthService.sendAccountVerification(MockValues.mEmail1);
 
             expect(UserService.getByEmail).toBeCalled();
             expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
@@ -164,9 +164,9 @@ describe('Auth service', () => {
 
         test('Successful verification code sending', async () => {
             jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
-            jest.spyOn(EmailVerificationService, 'sendVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
-            const result = await AuthService.sendVerification(MockValues.mEmail1);
+            const result = await AuthService.sendAccountVerification(MockValues.mEmail1);
 
             expect(UserService.getByEmail).toBeCalled();
             expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
@@ -177,12 +177,23 @@ describe('Auth service', () => {
     });
 
 
-    describe('verify', () => {
+    describe('verifyAccount', () => {
 
         test('Wrong verification token', async () => {
             jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mErrorDataResult);
 
-            const result = await AuthService.verify(MockValues.mToken1);
+            const result = await AuthService.verifyAccount(MockValues.mToken1);
+
+            expect(JWTService.verify).toBeCalled();
+            expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Wrong token type', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
+
+            const result = await AuthService.verifyAccount(MockValues.mToken1);
 
             expect(JWTService.verify).toBeCalled();
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
@@ -191,81 +202,224 @@ describe('Auth service', () => {
         });
 
         test('Not existing or deleted user', async () => {
-            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadVerifyUser1);
             jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mErrorDataResult);
 
-            const result = await AuthService.verify(MockValues.mToken1);
+            const result = await AuthService.verifyAccount(MockValues.mToken1);
 
             expect(JWTService.verify).toBeCalled();
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
             expect(UserService.getById).toBeCalled();
-            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadUser1.data.id);
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
         test('Suspended user', async () => {
-            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadVerifyUser1);
             jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Suspended);
 
-            const result = await AuthService.verify(MockValues.mToken1);
+            const result = await AuthService.verifyAccount(MockValues.mToken1);
 
             expect(JWTService.verify).toBeCalled();
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
             expect(UserService.getById).toBeCalled();
-            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadUser1.data.id);
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
         test('Active user', async () => {
-            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadVerifyUser1);
             jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Active);
 
-            const result = await AuthService.verify(MockValues.mToken1);
+            const result = await AuthService.verifyAccount(MockValues.mToken1);
 
             expect(JWTService.verify).toBeCalled();
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
             expect(UserService.getById).toBeCalled();
-            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadUser1.data.id);
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
         test('Activation fail', async () => {
-            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadVerifyUser1);
             jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
             jest.spyOn(UserService, 'activate').mockResolvedValueOnce(MockValues.mErrorResult);
 
-            const result = await AuthService.verify(MockValues.mToken1);
+            const result = await AuthService.verifyAccount(MockValues.mToken1);
 
             expect(JWTService.verify).toBeCalled();
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
             expect(UserService.getById).toBeCalled();
-            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadUser1.data.id);
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(UserService.activate).toBeCalled();
-            expect(UserService.activate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadUser1.data.id);
+            expect(UserService.activate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
         test('Successful activation', async () => {
-            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadVerifyUser1);
             jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
             jest.spyOn(UserService, 'activate').mockResolvedValueOnce(MockValues.mSuccessResult);
 
-            const result = await AuthService.verify(MockValues.mToken1);
+            const result = await AuthService.verifyAccount(MockValues.mToken1);
 
             expect(JWTService.verify).toBeCalled();
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
             expect(UserService.getById).toBeCalled();
-            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadUser1.data.id);
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(UserService.activate).toBeCalled();
-            expect(UserService.activate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadUser1.data.id);
+            expect(UserService.activate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
 
     });
+
+
+    describe('sendPasswordReset', () => {
+
+        test('Not existing or deleted user', async () => {
+            jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mErrorDataResult);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+
+            const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
+
+            expect(UserService.getByEmail).toBeCalled();
+            expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Suspended user', async () => {
+            jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Suspended);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+
+            const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
+
+            expect(UserService.getByEmail).toBeCalled();
+            expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Passive user', async () => {
+            jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+
+            const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
+
+            expect(UserService.getByEmail).toBeCalled();
+            expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Successful reset code sending', async () => {
+            jest.spyOn(UserService, 'getByEmail').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Active);
+            jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
+
+            const result = await AuthService.sendPasswordReset(MockValues.mEmail1);
+
+            expect(UserService.getByEmail).toBeCalled();
+            expect(UserService.getByEmail).toBeCalledWith(MockValues.mEmail1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+    });
+
+
+    describe('resetPassword', () => {
+
+        test('Wrong verification token', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mErrorDataResult);
+
+            const result = await AuthService.resetPassword(MockValues.mToken1, MockValues.mPassword1);
+
+            expect(JWTService.verify).toBeCalled();
+            expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Wrong token type', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadUser1);
+
+            const result = await AuthService.resetPassword(MockValues.mToken1, MockValues.mPassword1);
+
+            expect(JWTService.verify).toBeCalled();
+            expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Not existing or deleted user', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadResetUser1);
+            jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mErrorDataResult);
+
+            const result = await AuthService.resetPassword(MockValues.mToken1, MockValues.mPassword1);
+
+            expect(JWTService.verify).toBeCalled();
+            expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(UserService.getById).toBeCalled();
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadResetUser1.data.id);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Non active user', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadResetUser1);
+            jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
+
+            const result = await AuthService.resetPassword(MockValues.mToken1, MockValues.mPassword1);
+
+            expect(JWTService.verify).toBeCalled();
+            expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(UserService.getById).toBeCalled();
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadResetUser1.data.id);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Password reset fail', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadResetUser1);
+            jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Active);
+            jest.spyOn(UserService, 'update').mockResolvedValueOnce(MockValues.mErrorResult);
+
+            const result = await AuthService.resetPassword(MockValues.mToken1, MockValues.mPassword1);
+
+            expect(JWTService.verify).toBeCalled();
+            expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(UserService.getById).toBeCalled();
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadResetUser1.data.id);
+            expect(UserService.update).toBeCalled();
+            expect(UserService.update).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadResetUser1.data.id, MockValues.mUserToUpdateWithPassword, MockValues.mSuccessDataResultTokenPayloadResetUser1.data);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+        test('Successful password reset', async () => {
+            jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadResetUser1);
+            jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Active);
+            jest.spyOn(UserService, 'update').mockResolvedValueOnce(MockValues.mSuccessResult);
+
+            const result = await AuthService.resetPassword(MockValues.mToken1, MockValues.mPassword1);
+
+            expect(JWTService.verify).toBeCalled();
+            expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(UserService.getById).toBeCalled();
+            expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadResetUser1.data.id);
+            expect(UserService.update).toBeCalled();
+            expect(UserService.update).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadResetUser1.data.id, MockValues.mUserToUpdateWithPassword, MockValues.mSuccessDataResultTokenPayloadResetUser1.data);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+    });
+
 
 });

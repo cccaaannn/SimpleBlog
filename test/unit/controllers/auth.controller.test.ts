@@ -112,40 +112,40 @@ describe('Auth controller', () => {
 
     });
 
-    describe('sendVerification', () => {
+    describe('sendAccountVerification', () => {
 
         test('Success', async () => {
-            jest.spyOn(AuthService, 'sendVerification').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(AuthService, 'sendAccountVerification').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const mReq = getMockReq({ query: {}, params: { email: MockValues.mEmail1 } });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await AuthController.sendVerification(mReq, mRes.res, mNext);
+            await AuthController.sendAccountVerification(mReq, mRes.res, mNext);
 
-            expect(AuthService.sendVerification).toBeCalled();
-            expect(AuthService.sendVerification).toBeCalledWith(MockValues.mEmail1);
+            expect(AuthService.sendAccountVerification).toBeCalled();
+            expect(AuthService.sendAccountVerification).toBeCalledWith(MockValues.mEmail1);
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessResult);
         });
 
         test('Error', async () => {
-            jest.spyOn(AuthService, 'sendVerification').mockResolvedValueOnce(MockValues.mErrorResult);
+            jest.spyOn(AuthService, 'sendAccountVerification').mockResolvedValueOnce(MockValues.mErrorResult);
 
             const mReq = getMockReq({ query: {}, params: { email: MockValues.mEmail1 } });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await AuthController.sendVerification(mReq, mRes.res, mNext);
+            await AuthController.sendAccountVerification(mReq, mRes.res, mNext);
 
-            expect(AuthService.sendVerification).toBeCalled();
-            expect(AuthService.sendVerification).toBeCalledWith(MockValues.mEmail1);
+            expect(AuthService.sendAccountVerification).toBeCalled();
+            expect(AuthService.sendAccountVerification).toBeCalledWith(MockValues.mEmail1);
             expect(mRes.res.status).toBeCalledWith(400);
             expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
         });
 
         test('Exception', async () => {
-            jest.spyOn(AuthService, 'sendVerification').mockImplementation(() => {
+            jest.spyOn(AuthService, 'sendAccountVerification').mockImplementation(() => {
                 throw new Error();
             });
 
@@ -153,10 +153,10 @@ describe('Auth controller', () => {
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await AuthController.sendVerification(mReq, mRes.res, mNext);
+            await AuthController.sendAccountVerification(mReq, mRes.res, mNext);
 
-            expect(AuthService.sendVerification).toBeCalled();
-            expect(AuthService.sendVerification).toBeCalledWith(MockValues.mEmail1);
+            expect(AuthService.sendAccountVerification).toBeCalled();
+            expect(AuthService.sendAccountVerification).toBeCalledWith(MockValues.mEmail1);
             expect(mNext).toBeCalled();
             expect(mRes.res.locals.err).toBeDefined();
             expect(mRes.res.locals.err).toBeInstanceOf(Error);
@@ -164,40 +164,40 @@ describe('Auth controller', () => {
 
     });
 
-    describe('verify', () => {
+    describe('verifyAccount', () => {
 
         test('Success', async () => {
-            jest.spyOn(AuthService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(AuthService, 'verifyAccount').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const mReq = getMockReq({ query: {}, body: MockValues.mToken1 });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await AuthController.verify(mReq, mRes.res, mNext);
+            await AuthController.verifyAccount(mReq, mRes.res, mNext);
 
-            expect(AuthService.verify).toBeCalled();
-            expect(AuthService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(AuthService.verifyAccount).toBeCalled();
+            expect(AuthService.verifyAccount).toBeCalledWith(MockValues.mToken1);
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessResult);
         });
 
         test('Error', async () => {
-            jest.spyOn(AuthService, 'verify').mockResolvedValueOnce(MockValues.mErrorResult);
+            jest.spyOn(AuthService, 'verifyAccount').mockResolvedValueOnce(MockValues.mErrorResult);
 
             const mReq = getMockReq({ query: {}, body: MockValues.mToken1 });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await AuthController.verify(mReq, mRes.res, mNext);
+            await AuthController.verifyAccount(mReq, mRes.res, mNext);
 
-            expect(AuthService.verify).toBeCalled();
-            expect(AuthService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(AuthService.verifyAccount).toBeCalled();
+            expect(AuthService.verifyAccount).toBeCalledWith(MockValues.mToken1);
             expect(mRes.res.status).toBeCalledWith(400);
             expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
         });
 
         test('Exception', async () => {
-            jest.spyOn(AuthService, 'verify').mockImplementation(() => {
+            jest.spyOn(AuthService, 'verifyAccount').mockImplementation(() => {
                 throw new Error();
             });
 
@@ -205,10 +205,114 @@ describe('Auth controller', () => {
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
-            await AuthController.verify(mReq, mRes.res, mNext);
+            await AuthController.verifyAccount(mReq, mRes.res, mNext);
 
-            expect(AuthService.verify).toBeCalled();
-            expect(AuthService.verify).toBeCalledWith(MockValues.mToken1);
+            expect(AuthService.verifyAccount).toBeCalled();
+            expect(AuthService.verifyAccount).toBeCalledWith(MockValues.mToken1);
+            expect(mNext).toBeCalled();
+            expect(mRes.res.locals.err).toBeDefined();
+            expect(mRes.res.locals.err).toBeInstanceOf(Error);
+        });
+
+    });
+
+    describe('sendPasswordReset', () => {
+
+        test('Success', async () => {
+            jest.spyOn(AuthService, 'sendPasswordReset').mockResolvedValueOnce(MockValues.mSuccessResult);
+
+            const mReq = getMockReq({ query: {}, params: { email: MockValues.mEmail1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await AuthController.sendPasswordReset(mReq, mRes.res, mNext);
+
+            expect(AuthService.sendPasswordReset).toBeCalled();
+            expect(AuthService.sendPasswordReset).toBeCalledWith(MockValues.mEmail1);
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessResult);
+        });
+
+        test('Error', async () => {
+            jest.spyOn(AuthService, 'sendPasswordReset').mockResolvedValueOnce(MockValues.mErrorResult);
+
+            const mReq = getMockReq({ query: {}, params: { email: MockValues.mEmail1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await AuthController.sendPasswordReset(mReq, mRes.res, mNext);
+
+            expect(AuthService.sendPasswordReset).toBeCalled();
+            expect(AuthService.sendPasswordReset).toBeCalledWith(MockValues.mEmail1);
+            expect(mRes.res.status).toBeCalledWith(400);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
+        });
+
+        test('Exception', async () => {
+            jest.spyOn(AuthService, 'sendPasswordReset').mockImplementation(() => {
+                throw new Error();
+            });
+
+            const mReq = getMockReq({ query: {}, params: { email: MockValues.mEmail1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await AuthController.sendPasswordReset(mReq, mRes.res, mNext);
+
+            expect(AuthService.sendPasswordReset).toBeCalled();
+            expect(AuthService.sendPasswordReset).toBeCalledWith(MockValues.mEmail1);
+            expect(mNext).toBeCalled();
+            expect(mRes.res.locals.err).toBeDefined();
+            expect(mRes.res.locals.err).toBeInstanceOf(Error);
+        });
+
+    });
+
+    describe('resetPassword', () => {
+
+        test('Success', async () => {
+            jest.spyOn(AuthService, 'resetPassword').mockResolvedValueOnce(MockValues.mSuccessResult);
+
+            const mReq = getMockReq({ query: {}, body: { token: MockValues.mToken1.token, password: MockValues.mPassword1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await AuthController.resetPassword(mReq, mRes.res, mNext);
+
+            expect(AuthService.resetPassword).toBeCalled();
+            expect(AuthService.resetPassword).toBeCalledWith(MockValues.mToken1, MockValues.mPassword1);
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessResult);
+        });
+
+        test('Error', async () => {
+            jest.spyOn(AuthService, 'resetPassword').mockResolvedValueOnce(MockValues.mErrorResult);
+
+            const mReq = getMockReq({ query: {}, body: { token: MockValues.mToken1.token, password: MockValues.mPassword1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await AuthController.resetPassword(mReq, mRes.res, mNext);
+
+            expect(AuthService.resetPassword).toBeCalled();
+            expect(AuthService.resetPassword).toBeCalledWith(MockValues.mToken1, MockValues.mPassword1);
+            expect(mRes.res.status).toBeCalledWith(400);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
+        });
+
+        test('Exception', async () => {
+            jest.spyOn(AuthService, 'resetPassword').mockImplementation(() => {
+                throw new Error();
+            });
+
+            const mReq = getMockReq({ query: {}, body: { token: MockValues.mToken1.token, password: MockValues.mPassword1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await AuthController.resetPassword(mReq, mRes.res, mNext);
+
+            expect(AuthService.resetPassword).toBeCalled();
+            expect(AuthService.resetPassword).toBeCalledWith(MockValues.mToken1, MockValues.mPassword1);
             expect(mNext).toBeCalled();
             expect(mRes.res.locals.err).toBeDefined();
             expect(mRes.res.locals.err).toBeInstanceOf(Error);
