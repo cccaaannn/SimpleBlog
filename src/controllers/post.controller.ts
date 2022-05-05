@@ -3,6 +3,7 @@ import { IResult } from "../core/results/Result";
 import PostService from "../services/post.service"
 import { PostSort } from "../types/Post";
 
+
 async function getAll(req: any, res: any, next: any) {
     try {
         let postSort: PostSort | undefined = undefined;
@@ -22,14 +23,33 @@ async function getAll(req: any, res: any, next: any) {
     }
 }
 
-async function getByVisibility(req: any, res: any, next: any) {
+async function getForPublic(req: any, res: any, next: any) {
     try {
         let postSort: PostSort | undefined = undefined;
         if (req.query.field && req.query.asc) {
             postSort = { [req.query.field]: req.query.asc };
         }
 
-        const result: IResult = await PostService.getByVisibility(req.params.visibility, postSort);
+        const result: IResult = await PostService.getForPublic(postSort);
+        if(result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    } 
+    catch (err: any) {
+        res.locals.err = err;
+        next();
+    }
+}
+
+async function getForMembers(req: any, res: any, next: any) {
+    try {
+        let postSort: PostSort | undefined = undefined;
+        if (req.query.field && req.query.asc) {
+            postSort = { [req.query.field]: req.query.asc };
+        }
+
+        const result: IResult = await PostService.getForMembers(postSort);
         if(result.status) {
             return res.status(200).json(result);
         }
@@ -131,5 +151,5 @@ async function remove(req: any, res: any, next: any) {
 }
 
 
-const PostController = { getAll, getByVisibility, getByUserId, add, update, addComment, removeComment, remove };
+const PostController = { getAll, getForPublic, getForMembers, getByUserId, add, update, addComment, removeComment, remove };
 export default PostController;

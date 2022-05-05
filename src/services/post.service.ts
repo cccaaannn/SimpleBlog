@@ -6,6 +6,7 @@ import run from "../core/utils/business-runner";
 import { TokenPayload } from "../core/types/TokenPayload";
 import Roles from "../core/types/enums/Roles";
 import { CommentAdd } from "../types/Comment";
+import Visibility from "../types/enums/Visibility";
 
 
 async function getAll(postSort?: PostSort): Promise<IDataResult<Post[]>> {
@@ -15,11 +16,18 @@ async function getAll(postSort?: PostSort): Promise<IDataResult<Post[]>> {
     return new SuccessDataResult(await PostModel.find());
 }
 
-async function getByVisibility(visibility: string, postSort?: PostSort): Promise<IDataResult<Post[]>> {
+async function getForPublic(postSort?: PostSort): Promise<IDataResult<Post[]>> {
     if (postSort) {
-        return new SuccessDataResult(await PostModel.find({ visibility: { $eq: visibility } }).sort(postSort));
+        return new SuccessDataResult(await PostModel.find({ visibility: { $eq: Visibility.PUBLIC } }).sort(postSort));
     }
-    return new SuccessDataResult(await PostModel.find({ visibility: { $eq: visibility } }));
+    return new SuccessDataResult(await PostModel.find({ visibility: { $eq: Visibility.PUBLIC } }));
+}
+
+async function getForMembers(postSort?: PostSort): Promise<IDataResult<Post[]>> {
+    if (postSort) {
+        return new SuccessDataResult(await PostModel.find({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] } }).sort(postSort));
+    }
+    return new SuccessDataResult(await PostModel.find({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] } }));
 }
 
 async function getByUserId(userId: string, postSort?: PostSort): Promise<IDataResult<Post[]>> {
@@ -31,11 +39,16 @@ async function getByUserId(userId: string, postSort?: PostSort): Promise<IDataRe
 
 async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IResult> {
 
+    let visibility: Visibility = Visibility.PUBLIC;
+    if(Object.values(Visibility).includes(post.visibility as Visibility)) {
+        visibility = post.visibility as Visibility
+    }
+
     const postToAdd: PostAdd = {
         owner: tokenPayload.id,
         header: post.header,
         body: post.body,
-        visibility: post.visibility
+        visibility: visibility
     }
 
     await PostModel.create(postToAdd);
@@ -163,5 +176,5 @@ async function isExists(id: string): Promise<IResult> {
 
 
 
-const PostService = { getAll, getByVisibility, getByUserId, add, update, addComment, removeComment, remove };
+const PostService = { getAll, getForPublic, getForMembers, getByUserId, add, update, addComment, removeComment, remove };
 export default PostService;
