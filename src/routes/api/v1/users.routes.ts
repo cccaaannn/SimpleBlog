@@ -4,6 +4,7 @@ import { Router } from 'express';
 // Project imports
 import UserController from '../../../controllers/users.controller';
 import { allowForRoles } from '../../../core/middlewares/secured-operation.middleware';
+import { bodyTrimer } from '../../../core/middlewares/body-trimer.middleware';
 import Roles from '../../../core/types/enums/Roles';
 
 const usersRouter = Router();
@@ -11,7 +12,7 @@ const usersRouter = Router();
 // User - Admin
 // usersRouter.post('/add', allowForRoles([Roles.ADMIN, Roles.USER]), UserController.add);
 
-usersRouter.put('/update/:id', allowForRoles([Roles.ADMIN, Roles.USER]), UserController.update);
+usersRouter.put('/update/:id', allowForRoles([Roles.ADMIN, Roles.USER]), bodyTrimer(), UserController.update);
 
 usersRouter.delete('/purge/:id', allowForRoles([Roles.ADMIN, Roles.USER]), UserController.purge);
 
