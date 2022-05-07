@@ -457,4 +457,19 @@ export namespace MockValues {
 
     // ---------- ---------- ---------- ---------- ----------
 
+
+    // ---------- ---------- Other ---------- ----------
+
+    export const mUnstripedBody1: any = {
+        key1: "  value1  ",
+        key2: "  value2  "
+    }
+
+    export const mStripedBody1: any = {
+        key1: "value1",
+        key2: "value2"
+    }
+
+    // ---------- ---------- ---------- ---------- ----------
+
 }
