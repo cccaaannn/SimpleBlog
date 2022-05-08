@@ -11,7 +11,7 @@ import { Token } from '../core/types/Token';
 import { SignUp } from '../core/types/SignUp';
 import { TokenPayload } from '../core/types/TokenPayload';
 
-import Status from '../types/enums/Status';
+import Status from '../core/types/enums/Status';
 import { User, UserAdd, UserUpdate } from '../types/User';
 import TokenType from '../core/types/enums/TokenType';
 

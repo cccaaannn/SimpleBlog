@@ -1,5 +1,5 @@
 import Roles from "../core/types/enums/Roles";
-import Status from "./enums/Status";
+import Status from "../core/types/enums/Status";
 
 interface User {
     _id: string,

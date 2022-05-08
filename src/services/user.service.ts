@@ -2,7 +2,7 @@ import { UserModel } from "../models/UserModel";
 import { User, UserAdd, UserSort, UserUpdate } from "../types/User";
 import { IResult, Result, SuccessResult, ErrorResult } from "../core/results/Result";
 import { IDataResult, DataResult, SuccessDataResult, ErrorDataResult } from "../core/results/DataResult";
-import Status from "../types/enums/Status";
+import Status from "../core/types/enums/Status";
 import run from "../core/utils/business-runner";
 import Roles from "../core/types/enums/Roles";
 

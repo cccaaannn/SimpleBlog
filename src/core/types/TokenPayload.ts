@@ -1,4 +1,4 @@
-import Status from "../../types/enums/Status";
+import Status from "./enums/Status";
 import TokenType from "./enums/TokenType";
 
 interface TokenPayload {
