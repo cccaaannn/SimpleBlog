@@ -9,7 +9,7 @@ import EncryptionService from '../../src/core/services/encryption.service';
 import MongoDBService from '../../src/core/services/mongodb.service'
 import JWTService from '../../src/core/services/jwt.service';
 import Roles from '../../src/core/types/enums/Roles';
-import Status from '../../src/types/enums/Status';
+import Status from '../../src/core/types/enums/Status';
 import app from '../../src/app';
 
 import { UserModel } from '../../src/models/UserModel';

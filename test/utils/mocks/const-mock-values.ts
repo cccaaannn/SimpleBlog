@@ -1,6 +1,6 @@
 import Visibility from "../../../src/types/enums/Visibility";
 import Roles from "../../../src/core/types/enums/Roles";
-import Status from "../../../src/types/enums/Status";
+import Status from "../../../src/core/types/enums/Status";
 
 import { ErrorDataResult, SuccessDataResult } from "../../../src/core/results/DataResult";
 import { ErrorResult, IResult, SuccessResult } from "../../../src/core/results/Result";
@@ -12,6 +12,7 @@ import { SignUp } from "../../../src/core/types/SignUp";
 import { Login } from "../../../src/core/types/Login";
 import { Token } from "../../../src/core/types/Token";
 import TokenType from "../../../src/core/types/enums/TokenType";
+import Category from "../../../src/types/enums/Category";
 
 
 export namespace MockValues {
@@ -49,6 +50,10 @@ export namespace MockValues {
     export const mPostBody1 = "body1";
     export const mPostBody2 = "body2";
     export const mPostBody3 = "body3";
+
+    export const mImage1 = "image1";
+    export const mImage2 = "image2";
+    export const mImage3 = "image3";
 
     export const mComment1 = "comment1";
     export const mComment2 = "comment2";
@@ -104,6 +109,8 @@ export namespace MockValues {
             owner: mUserId1,
             header: mPostHeader1,
             body: mPostBody1,
+            image: mImage1,
+            category: Category.GENERAL,
             visibility: Visibility.PUBLIC,
             comments: [
                 {
@@ -120,6 +127,7 @@ export namespace MockValues {
             owner: mUserId2,
             header: mPostHeader2,
             body: mPostBody2,
+            category: Category.GENERAL,
             visibility: Visibility.PUBLIC,
             comments: [
                 {
@@ -140,6 +148,8 @@ export namespace MockValues {
         owner: mUserId1,
         header: mPostHeader1,
         body: mPostBody1,
+        image: mImage1,
+        category: Category.GENERAL,
         visibility: Visibility.PUBLIC,
         comments: [
             {
@@ -156,6 +166,8 @@ export namespace MockValues {
         owner: mUserId1,
         header: mPostHeader1,
         body: mPostBody1,
+        image: mImage1,
+        category: Category.GENERAL,
         visibility: Visibility.PUBLIC
     }
 
@@ -163,6 +175,8 @@ export namespace MockValues {
         owner: mUserId1,
         header: mPostHeader1,
         body: mPostBody1,
+        image: mImage1,
+        category: Category.GENERAL,
         visibility: Visibility.MEMBERS
     }
 
@@ -170,14 +184,26 @@ export namespace MockValues {
         owner: mUserId1,
         header: mPostHeader1,
         body: mPostBody1,
+        image: mImage1,
+        category: Category.GENERAL,
         visibility: Visibility.PRIVATE
     }
 
-    export const mPostToAddImpossibleVisibility: any = {
+    export const mPostToAddWithoutImage: PostAdd = {
         owner: mUserId1,
         header: mPostHeader1,
         body: mPostBody1,
-        visibility: "mock"
+        category: Category.GENERAL,
+        visibility: Visibility.PUBLIC
+    }
+
+    export const mPostToAddWrongValidations: any = {
+        owner: mUserId1,
+        header: mPostHeader1,
+        body: mPostBody1,
+        image: mImage1,
+        category: Category.ALL, // Posts can not have all category type
+        visibility: "mock"      // Posts can not have wrong visibility option 
     }
 
     export const mPostToAddWithComment1: any = {

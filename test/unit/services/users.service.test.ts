@@ -1,7 +1,7 @@
 import EncryptionService from "../../../src/core/services/encryption.service";
 import UserService from "../../../src/services/user.service"
 import Roles from "../../../src/core/types/enums/Roles";
-import Status from "../../../src/types/enums/Status";
+import Status from "../../../src/core/types/enums/Status";
 
 import { ErrorDataResult, SuccessDataResult } from "../../../src/core/results/DataResult";
 import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';

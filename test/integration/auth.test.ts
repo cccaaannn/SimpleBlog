@@ -9,7 +9,7 @@ import EmailAuthService from '../../src/services/email-auth.service';
 import EncryptionService from '../../src/core/services/encryption.service';
 import MongoDBService from '../../src/core/services/mongodb.service'
 import JWTService from '../../src/core/services/jwt.service';
-import Status from '../../src/types/enums/Status';
+import Status from '../../src/core/types/enums/Status';
 import app from '../../src/app';
 
 import { TokenPayload } from '../../src/core/types/TokenPayload';
