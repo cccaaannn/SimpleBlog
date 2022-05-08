@@ -111,7 +111,7 @@ async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IResult> 
         owner: tokenPayload.id,
         header: post.header,
         body: post.body,
-        image: post?.image,
+        image: post.image,
         category: category,
         visibility: visibility
     }
@@ -134,7 +134,7 @@ async function update(id: string, post: PostUpdate, tokenPayload: TokenPayload):
     const postToUpdate: PostUpdate = {
         header: post.header,
         body: post.body,
-        image: post?.image,
+        image: post.image,
         visibility: post.visibility
     }
 

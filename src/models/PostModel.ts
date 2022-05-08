@@ -13,7 +13,7 @@ const PostSchema = new Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     header: { type: String, required: true },
     body: { type: String, required: true },
-    image: { type: String, required: false },
+    image: { type: String, required: true },
     category: { type: String, default: Category.GENERAL },
     visibility: { type: String, default: Visibility.PUBLIC },
     comments: [CommentSchema],

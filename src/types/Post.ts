@@ -8,7 +8,7 @@ interface Post {
     owner: string,
     header: string,
     body: string,
-    image?: string,
+    image: string,
     category: Category,
     visibility: Visibility,
     comments: Comment[],
@@ -19,7 +19,7 @@ interface PostAdd {
     owner: string,
     header: string,
     body: string,
-    image?: string,
+    image: string,
     category: Category,
     visibility: Visibility
 };
@@ -27,7 +27,7 @@ interface PostAdd {
 interface PostUpdate {
     header: string,
     body: string,
-    image?: string,
+    image: string,
     visibility: Visibility
 };
 
