@@ -30,8 +30,6 @@ async function getAll(req: any, res: any, next: any) {
         return res.status(400).json(result);
     } 
     catch (err: any) {
-        console.log(err);
-        
         res.locals.err = err;
         next();
     }

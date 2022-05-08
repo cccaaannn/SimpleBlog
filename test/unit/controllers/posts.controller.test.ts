@@ -6,13 +6,14 @@ import Visibility from '../../../src/types/enums/Visibility';
 
 import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
 import { MockValues } from '../../utils/mocks/const-mock-values';
+import Category from '../../../src/types/enums/Category';
 
 
 describe('Post controller', () => {
 
     describe('getAll', () => {
 
-        test('Success', async () => {
+        test('Success without any parameters', async () => {
             jest.spyOn(PostService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
 
             const mReq = getMockReq({ query: {} });
@@ -22,21 +23,22 @@ describe('Post controller', () => {
             await PostController.getAll(mReq, mRes.res, mNext);
 
             expect(PostService.getAll).toBeCalled();
+            expect(PostService.getAll).toBeCalledWith(null, null, null);
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
         });
 
-        test('Success with query parameters', async () => {
+        test('Success with all parameters', async () => {
             jest.spyOn(PostService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
 
-            const mReq = getMockReq({ query: { field: "visibility", asc: 1 } });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mReq = getMockReq({ query: { field: "visibility", asc: 1, category: Category.GENERAL } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
             await PostController.getAll(mReq, mRes.res, mNext);
 
             expect(PostService.getAll).toBeCalled();
-            expect(PostService.getAll).toBeCalledWith(MockValues.mPostSort)
+            expect(PostService.getAll).toBeCalledWith(MockValues.mTokenPayloadUser1, Category.GENERAL, MockValues.mPostSort)
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
         });
@@ -74,143 +76,9 @@ describe('Post controller', () => {
 
     });
 
-    describe('getForPublic', () => {
-
-        test('Success', async () => {
-            jest.spyOn(PostService, 'getForPublic').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
-
-            const mReq = getMockReq({ query: {} });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForPublic(mReq, mRes.res, mNext);
-
-            expect(PostService.getForPublic).toBeCalled();
-            expect(PostService.getForPublic).toBeCalledWith(undefined)
-            expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
-        });
-
-        test('Success with query parameters', async () => {
-            jest.spyOn(PostService, 'getForPublic').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
-
-            const mReq = getMockReq({ query: { field: "visibility", asc: 1 } });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForPublic(mReq, mRes.res, mNext);
-
-            expect(PostService.getForPublic).toBeCalled();
-            expect(PostService.getForPublic).toBeCalledWith(MockValues.mPostSort)
-            expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
-        });
-
-        test('Error', async () => {
-            jest.spyOn(PostService, 'getForPublic').mockResolvedValueOnce(MockValues.mErrorResult as any);
-
-            const mReq = getMockReq({ query: {} });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForPublic(mReq, mRes.res, mNext);
-
-            expect(PostService.getForPublic).toBeCalled();
-            expect(PostService.getForPublic).toBeCalledWith(undefined)
-            expect(mRes.res.status).toBeCalledWith(400);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
-        });
-
-        test('Exception', async () => {
-            jest.spyOn(PostService, 'getForPublic').mockImplementation(() => {
-                throw new Error();
-            });
-
-            const mReq = getMockReq({ query: {} });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForPublic(mReq, mRes.res, mNext);
-
-            expect(PostService.getForPublic).toBeCalled();
-            expect(PostService.getForPublic).toBeCalledWith(undefined)
-            expect(mNext).toBeCalled();
-            expect(mRes.res.locals.err).toBeDefined();
-            expect(mRes.res.locals.err).toBeInstanceOf(Error);
-        });
-
-    });
-
-    describe('getForMembers', () => {
-
-        test('Success', async () => {
-            jest.spyOn(PostService, 'getForMembers').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
-
-            const mReq = getMockReq({ query: {} });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForMembers(mReq, mRes.res, mNext);
-
-            expect(PostService.getForMembers).toBeCalled();
-            expect(PostService.getForMembers).toBeCalledWith( undefined)
-            expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
-        });
-
-        test('Success with query parameters', async () => {
-            jest.spyOn(PostService, 'getForMembers').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
-
-            const mReq = getMockReq({ query: { field: "visibility", asc: 1 } });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForMembers(mReq, mRes.res, mNext);
-
-            expect(PostService.getForMembers).toBeCalled();
-            expect(PostService.getForMembers).toBeCalledWith(MockValues.mPostSort)
-            expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
-        });
-
-        test('Error', async () => {
-            jest.spyOn(PostService, 'getForMembers').mockResolvedValueOnce(MockValues.mErrorResult as any);
-
-            const mReq = getMockReq({ query: {} });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForMembers(mReq, mRes.res, mNext);
-
-            expect(PostService.getForMembers).toBeCalled();
-            expect(PostService.getForMembers).toBeCalledWith(undefined)
-            expect(mRes.res.status).toBeCalledWith(400);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
-        });
-
-        test('Exception', async () => {
-            jest.spyOn(PostService, 'getForMembers').mockImplementation(() => {
-                throw new Error();
-            });
-
-            const mReq = getMockReq({ query: {} });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getForMembers(mReq, mRes.res, mNext);
-
-            expect(PostService.getForMembers).toBeCalled();
-            expect(PostService.getForMembers).toBeCalledWith(undefined)
-            expect(mNext).toBeCalled();
-            expect(mRes.res.locals.err).toBeDefined();
-            expect(mRes.res.locals.err).toBeInstanceOf(Error);
-        });
-
-    });
-
     describe('getByUserId', () => {
 
-        test('Success', async () => {
+        test('Success without any parameters', async () => {
             jest.spyOn(PostService, 'getByUserId').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
 
             const mReq = getMockReq({ query: {}, params: { userId: MockValues.mUserId1 } });
@@ -220,22 +88,22 @@ describe('Post controller', () => {
             await PostController.getByUserId(mReq, mRes.res, mNext);
 
             expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, undefined)
+            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, null, null, null);
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
         });
 
-        test('Success with query parameters', async () => {
+        test('Success with all parameters', async () => {
             jest.spyOn(PostService, 'getByUserId').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
 
-            const mReq = getMockReq({ query: { field: "visibility", asc: 1 }, params: { userId: MockValues.mUserId1 } });
-            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mReq = getMockReq({ query: { field: "visibility", asc: 1, category: Category.GENERAL }, params: { userId: MockValues.mUserId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
             await PostController.getByUserId(mReq, mRes.res, mNext);
 
             expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, MockValues.mPostSort)
+            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1, Category.GENERAL, MockValues.mPostSort)
             expect(mRes.res.status).toBeCalledWith(200);
             expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
         });
@@ -250,7 +118,7 @@ describe('Post controller', () => {
             await PostController.getByUserId(mReq, mRes.res, mNext);
 
             expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, undefined)
+            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, null, null, null);
             expect(mRes.res.status).toBeCalledWith(400);
             expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
         });
@@ -267,7 +135,74 @@ describe('Post controller', () => {
             await PostController.getByUserId(mReq, mRes.res, mNext);
 
             expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, undefined)
+            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, null, null, null);
+            expect(mNext).toBeCalled();
+            expect(mRes.res.locals.err).toBeDefined();
+            expect(mRes.res.locals.err).toBeInstanceOf(Error);
+        });
+
+    });
+
+    describe('getById', () => {
+
+        test('Success without any parameters', async () => {
+            jest.spyOn(PostService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultPost1);
+
+            const mReq = getMockReq({ query: { }, params: { id: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getById(mReq, mRes.res, mNext);
+
+            expect(PostService.getById).toBeCalled();
+            expect(PostService.getById).toBeCalledWith(MockValues.mPostId1, undefined);
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPost1);
+        });
+
+        test('Success with all parameters', async () => {
+            jest.spyOn(PostService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultPost1);
+
+            const mReq = getMockReq({ query: { }, params: { id: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getById(mReq, mRes.res, mNext);
+
+            expect(PostService.getById).toBeCalled();
+            expect(PostService.getById).toBeCalledWith(MockValues.mPostId1, MockValues.mTokenPayloadUser1)
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPost1);
+        });
+
+        test('Error', async () => {
+            jest.spyOn(PostService, 'getById').mockResolvedValueOnce(MockValues.mErrorResult as any);
+
+            const mReq = getMockReq({ query: {}, params: { id: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getById(mReq, mRes.res, mNext);
+
+            expect(PostService.getById).toBeCalled();
+            expect(PostService.getById).toBeCalledWith(MockValues.mPostId1, undefined);
+            expect(mRes.res.status).toBeCalledWith(400);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
+        });
+
+        test('Exception', async () => {
+            jest.spyOn(PostService, 'getById').mockImplementation(() => {
+                throw new Error();
+            });
+
+            const mReq = getMockReq({ query: {}, params: { id: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.getById(mReq, mRes.res, mNext);
+
+            expect(PostService.getById).toBeCalled();
+            expect(PostService.getById).toBeCalledWith(MockValues.mPostId1, undefined);
             expect(mNext).toBeCalled();
             expect(mRes.res.locals.err).toBeDefined();
             expect(mRes.res.locals.err).toBeInstanceOf(Error);

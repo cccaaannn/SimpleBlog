@@ -15,6 +15,7 @@ import { UserModel } from '../../src/models/UserModel';
 import { Token } from '../../src/core/types/Token';
 import { User } from '../../src/types/User';
 import { Post } from '../../src/types/Post';
+import Category from '../../src/types/enums/Category';
 
 
 describe('/api/v1/posts', () => {
@@ -86,62 +87,26 @@ describe('/api/v1/posts', () => {
 
     });
 
-    describe('/getForPublic', () => {
+    describe('/getById', () => {
 
-        test('Successfully retrieving all public posts', async () => {
+        test('Successfully retrieving posts by its id', async () => {
             // Add mock user
             const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
 
             // Add mock post
             const postToAdd: any = { ...MockValues.mPostToAdd }
             postToAdd.owner = createdUser._id;
-            await PostModel.create(postToAdd);
-
-            const postToAddMembers: any = { ...MockValues.mPostToAddMembers }
-            postToAddMembers.owner = createdUser._id;
-            await PostModel.create(postToAddMembers);
-            
-            const postToAddPrivate: any = { ...MockValues.mPostToAddPrivate }
-            postToAddPrivate.owner = createdUser._id;
-            await PostModel.create(postToAddPrivate);
-
-            const res = await request.get(`/api/v1/posts/getForPublic`)
-                .set('Accept', 'application/json')
-                .set('Authorization', ``);
-
-            expect(res.body.data.length).toEqual(1);
-            expect(res.status).toEqual(200);
-        });
-
-    });
-
-    describe('/getForMembers', () => {
-
-        test('Successfully retrieving all public or member posts', async () => {
-            // Add mock user
-            const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
-
-            // Add mock post
-            const postToAdd: any = { ...MockValues.mPostToAdd }
-            postToAdd.owner = createdUser._id;
-            await PostModel.create(postToAdd);
-
-            const postToAddMembers: any = { ...MockValues.mPostToAddMembers }
-            postToAddMembers.owner = createdUser._id;
-            await PostModel.create(postToAddMembers);
-            
-            const postToAddPrivate: any = { ...MockValues.mPostToAddPrivate }
-            postToAddPrivate.owner = createdUser._id;
-            await PostModel.create(postToAddPrivate);
+            const createdPost: Post = await PostModel.create(postToAdd);
 
             // Get admin token
             const token: Token = JWTService.generateToken(MockValues.mTokenPayloadAdmin);
 
-            const res = await request.get(`/api/v1/posts/getForMembers`)
+            const res = await request.get(`/api/v1/posts/getById/${createdPost._id}`)
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${token.token}`);
 
-            expect(res.body.data.length).toEqual(2);
+            expect(res.body.data._id).toEqual(createdPost._id.toString());
+            expect(res.body.data.owner).toEqual(createdUser._id.toString());
             expect(res.status).toEqual(200);
         });
 
@@ -166,6 +131,8 @@ describe('/api/v1/posts', () => {
                     {
                         "header": MockValues.mPostHeader1,
                         "body": MockValues.mPostBody1,
+                        "image": MockValues.mImage1,
+                        "category": Category.GENERAL,
                         "visibility": Visibility.PUBLIC
                     }
                 );
@@ -214,6 +181,7 @@ describe('/api/v1/posts', () => {
                     {
                         "header": MockValues.mPostHeader2,
                         "body": MockValues.mPostBody2,
+                        "image": MockValues.mImage1,
                         "visibility": Visibility.PUBLIC
                     }
                 );

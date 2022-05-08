@@ -71,6 +71,15 @@ export namespace MockValues {
         type: TokenType.AUTH
     }
 
+    export const mTokenPayloadUser2: TokenPayload = {
+        id: mUserId2,
+        status: Status.ACTIVE,
+        username: mUsername2,
+        email: mEmail2,
+        role: Roles.USER,
+        type: TokenType.AUTH
+    }
+
     export const mTokenPayloadVerifyUser1: TokenPayload = {
         id: mUserId1,
         status: Status.ACTIVE,
@@ -127,6 +136,7 @@ export namespace MockValues {
             owner: mUserId2,
             header: mPostHeader2,
             body: mPostBody2,
+            image: mImage1,
             category: Category.GENERAL,
             visibility: Visibility.PUBLIC,
             comments: [
@@ -151,6 +161,44 @@ export namespace MockValues {
         image: mImage1,
         category: Category.GENERAL,
         visibility: Visibility.PUBLIC,
+        comments: [
+            {
+                _id: mCommentId1,
+                owner: mUserId1,
+                comment: mComment1,
+                dateCreated: mDateNow
+            }
+        ],
+        dateCreated: mDateNow
+    }
+
+    export const mPostMember: Post = {
+        _id: mPostId1,
+        owner: mUserId1,
+        header: mPostHeader1,
+        body: mPostBody1,
+        image: mImage1,
+        category: Category.GENERAL,
+        visibility: Visibility.MEMBERS,
+        comments: [
+            {
+                _id: mCommentId1,
+                owner: mUserId1,
+                comment: mComment1,
+                dateCreated: mDateNow
+            }
+        ],
+        dateCreated: mDateNow
+    }
+    
+    export const mPostPrivate: Post = {
+        _id: mPostId1,
+        owner: mUserId1,
+        header: mPostHeader1,
+        body: mPostBody1,
+        image: mImage1,
+        category: Category.GENERAL,
+        visibility: Visibility.PRIVATE,
         comments: [
             {
                 _id: mCommentId1,
@@ -189,14 +237,6 @@ export namespace MockValues {
         visibility: Visibility.PRIVATE
     }
 
-    export const mPostToAddWithoutImage: PostAdd = {
-        owner: mUserId1,
-        header: mPostHeader1,
-        body: mPostBody1,
-        category: Category.GENERAL,
-        visibility: Visibility.PUBLIC
-    }
-
     export const mPostToAddWrongValidations: any = {
         owner: mUserId1,
         header: mPostHeader1,
@@ -210,6 +250,8 @@ export namespace MockValues {
         owner: mUserId1,
         header: mPostHeader1,
         body: mPostBody1,
+        image: mImage1,
+        category: Category.GENERAL,
         visibility: Visibility.PUBLIC,
         comments: [
             { comment: mComment1 }
@@ -219,12 +261,14 @@ export namespace MockValues {
     export const mPostToUpdate: PostUpdate = {
         header: mPostHeader1,
         body: mPostBody1,
+        image: mImage1,
         visibility: Visibility.PUBLIC
     }
 
     export const mPostToUpdate2: PostUpdate = {
         header: mPostHeader2,
         body: mPostBody2,
+        image: mImage2,
         visibility: Visibility.PUBLIC
     }
 
@@ -448,6 +492,21 @@ export namespace MockValues {
 
     export const mSuccessDataResultPostsEmpty: SuccessDataResult<Post[]> = {
         data: mPostsEmpty,
+        status: true
+    }
+
+    export const mSuccessDataResultPost1: SuccessDataResult<Post> = {
+        data: mPost1,
+        status: true
+    }
+
+    export const mSuccessDataResultPostMember: SuccessDataResult<Post> = {
+        data: mPostMember,
+        status: true
+    }
+
+    export const mSuccessDataResultPostPrivate: SuccessDataResult<Post> = {
+        data: mPostPrivate,
         status: true
     }
 
