@@ -33,7 +33,7 @@ function decodeTokenIfExists() {
     return async function (req: Request, res: Response, next: NextFunction) {
         const token: Token = res.locals.token
 
-        if (token == null) {
+        if (!token || token == null) {
             return next();
         }
 
@@ -49,7 +49,7 @@ function decodeAndVerifyToken() {
     return async function (req: Request, res: Response, next: NextFunction) {
         const token: Token = res.locals.token
 
-        if (token == null) {
+        if (!token || token == null) {
             return res.status(401).json(new ErrorResult("Not authorized"))
         }
 
