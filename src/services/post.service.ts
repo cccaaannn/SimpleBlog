@@ -7,47 +7,112 @@ import { TokenPayload } from "../core/types/TokenPayload";
 import Roles from "../core/types/enums/Roles";
 import { CommentAdd } from "../types/Comment";
 import Visibility from "../types/enums/Visibility";
+import Category from "../types/enums/Category";
 
 
-async function getAll(postSort?: PostSort): Promise<IDataResult<Post[]>> {
-    if (postSort) {
-        return new SuccessDataResult(await PostModel.find().sort(postSort));
+async function getAll(tokenPayload: TokenPayload | null, category: Category | null, postSort: PostSort | null | undefined): Promise<IDataResult<Post[]>> {
+
+    let categoryFilter: Category[] = Object.values(Category);
+    if (category != null && category != Category.ALL) {
+        categoryFilter = [category];
     }
-    return new SuccessDataResult(await PostModel.find());
+
+    if (postSort == null) {
+        postSort = undefined;
+    }
+
+    // Everyone can see Visibility.PUBLIC
+    let visibilityFilter: Visibility[] = [Visibility.PUBLIC]
+
+    // Admin or user itself
+    if (tokenPayload != null) {
+        visibilityFilter.push(Visibility.MEMBERS);
+    }
+
+    const posts: any = await PostModel.find({ visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } }).sort(postSort);
+    return new SuccessDataResult(posts);
 }
 
-async function getForPublic(postSort?: PostSort): Promise<IDataResult<Post[]>> {
-    if (postSort) {
-        return new SuccessDataResult(await PostModel.find({ visibility: { $eq: Visibility.PUBLIC } }).sort(postSort));
+async function getByUserId(userId: string, tokenPayload: TokenPayload | null, category: Category | null, postSort: PostSort | null | undefined): Promise<IDataResult<Post[]>> {
+
+    let categoryFilter: Category[] = Object.values(Category);
+    if (category != null && category != Category.ALL) {
+        categoryFilter = [category];
     }
-    return new SuccessDataResult(await PostModel.find({ visibility: { $eq: Visibility.PUBLIC } }));
+
+    if (postSort == null) {
+        postSort = undefined;
+    }
+
+    // Everyone can see Visibility.PUBLIC
+    let visibilityFilter: Visibility[] = [Visibility.PUBLIC]
+
+    // Admin or user itself
+    if (tokenPayload != null) {
+        visibilityFilter.push(Visibility.MEMBERS);
+    }
+    // Regular members
+    if (tokenPayload != null && (tokenPayload.role == Roles.ADMIN || tokenPayload.role == Roles.SYS_ADMIN || tokenPayload.id == userId)) {
+        visibilityFilter.push(Visibility.PRIVATE);
+    }
+
+    const posts: any = await PostModel.find({ owner: { $eq: userId }, visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } }).sort(postSort);
+    return new SuccessDataResult(posts);
 }
 
-async function getForMembers(postSort?: PostSort): Promise<IDataResult<Post[]>> {
-    if (postSort) {
-        return new SuccessDataResult(await PostModel.find({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] } }).sort(postSort));
+async function getById(id: string, tokenPayload?: TokenPayload): Promise<IDataResult<Post | null>> {
+    const res: Result = await run(
+        [
+            { function: isExists, args: [id] },
+        ]
+    );
+    if (!res.status) {
+        return new ErrorDataResult(null, res.message);
     }
-    return new SuccessDataResult(await PostModel.find({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] } }));
-}
 
-async function getByUserId(userId: string, postSort?: PostSort): Promise<IDataResult<Post[]>> {
-    if (postSort) {
-        return new SuccessDataResult(await PostModel.find({ owner: { $eq: userId } }).sort(postSort));
+    const post: Post | any = await PostModel.findById(id);
+
+    if (post.visibility == Visibility.PUBLIC) {
+        return new SuccessDataResult(post);
     }
-    return new SuccessDataResult(await PostModel.find({ owner: { $eq: userId } }));
+
+    if (!tokenPayload) {
+        return new ErrorDataResult(null, "Not authorized");
+    }
+
+    if (post.visibility == Visibility.MEMBERS) {
+        return new SuccessDataResult(post);
+    }
+
+    if (post.visibility == Visibility.PRIVATE) {
+        const authorizationResult: IResult = await isUserAllowedForOperation(id, tokenPayload);
+        if (authorizationResult.status) {
+            return new SuccessDataResult(post);
+        }
+    }
+
+    return new ErrorDataResult(null, "Not authorized");
 }
 
 async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IResult> {
 
     let visibility: Visibility = Visibility.PUBLIC;
-    if(Object.values(Visibility).includes(post.visibility as Visibility)) {
+    if (Object.values(Visibility).includes(post.visibility as Visibility)) {
         visibility = post.visibility as Visibility
+    }
+
+    // Category validation, posts can not be on Category.ALL
+    let category: Category = Category.GENERAL;
+    if (Object.values(Category).includes(post.category as Category) && post.category != Category.ALL) {
+        category = post.category as Category
     }
 
     const postToAdd: PostAdd = {
         owner: tokenPayload.id,
         header: post.header,
         body: post.body,
+        image: post?.image,
+        category: category,
         visibility: visibility
     }
 
@@ -69,6 +134,7 @@ async function update(id: string, post: PostUpdate, tokenPayload: TokenPayload):
     const postToUpdate: PostUpdate = {
         header: post.header,
         body: post.body,
+        image: post?.image,
         visibility: post.visibility
     }
 
@@ -176,5 +242,5 @@ async function isExists(id: string): Promise<IResult> {
 
 
 
-const PostService = { getAll, getForPublic, getForMembers, getByUserId, add, update, addComment, removeComment, remove };
+const PostService = { getAll, getByUserId, getById, add, update, addComment, removeComment, remove };
 export default PostService;

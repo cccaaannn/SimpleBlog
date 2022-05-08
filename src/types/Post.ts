@@ -1,5 +1,6 @@
 import Visibility from "./enums/Visibility";
 import { Comment } from "./Comment";
+import Category from "./enums/Category";
 
 
 interface Post {
@@ -7,7 +8,9 @@ interface Post {
     owner: string,
     header: string,
     body: string,
-    visibility: Visibility
+    image?: string,
+    category: Category,
+    visibility: Visibility,
     comments: Comment[],
     dateCreated: Date
 };
@@ -16,18 +19,19 @@ interface PostAdd {
     owner: string,
     header: string,
     body: string,
+    image?: string,
+    category: Category,
     visibility: Visibility
 };
 
 interface PostUpdate {
     header: string,
     body: string,
+    image?: string,
     visibility: Visibility
 };
 
 interface PostSort {
-    _id?: number,
-    owner?: number,
     visibility?: number
     dateCreated?: number
 };

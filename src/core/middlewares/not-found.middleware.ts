@@ -3,7 +3,7 @@ import { ErrorResult } from "../results/Result";
 
 function notFound() {
     return (req: Request, res: Response, next: NextFunction) => {
-        res.status(404).json(new ErrorResult("Not found"));
+        res.status(404).json(new ErrorResult("Endpoint not found"));
     }
 }
 

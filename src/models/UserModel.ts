@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import Roles from "../core/types/enums/Roles";
-import Status from "../types/enums/Status";
+import Status from "../core/types/enums/Status";
 
 const UserSchema = new Schema({
     username: { type: String, required: true },

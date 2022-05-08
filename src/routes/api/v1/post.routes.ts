@@ -3,33 +3,29 @@ import { Router } from 'express';
 
 // Project imports
 import PostController from '../../../controllers/post.controller';
-import { allowForRoles, extractAndValidateToken } from '../../../core/middlewares/secured-operation.middleware';
+import { allowForRoles, decodeTokenIfExists, decodeAndVerifyToken } from '../../../core/middlewares/secured-operation.middleware';
 import Roles from '../../../core/types/enums/Roles';
 
 
 const PostRouter = Router();
 
 // Post
-// PostRouter.get('/getAllPublic', PostController.getAll);
+PostRouter.get('/getAll', decodeTokenIfExists(), PostController.getAll);
 
-PostRouter.get('/getAll', extractAndValidateToken(), allowForRoles([Roles.ADMIN]), PostController.getAll); // ?field=username&asc=1
+PostRouter.get('/getById/:id', decodeTokenIfExists(), PostController.getById);
 
-PostRouter.get('/getForPublic', PostController.getForPublic);
+PostRouter.get('/getByUserId/:userId', decodeTokenIfExists(), PostController.getByUserId);
 
-PostRouter.get('/getForMembers', extractAndValidateToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.getForMembers);
+PostRouter.post('/add', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.add);
 
-PostRouter.get('/getByUserId/:userId', extractAndValidateToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.getByUserId);
+PostRouter.put('/update/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.update);
 
-PostRouter.post('/add', extractAndValidateToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.add);
-
-PostRouter.put('/update/:postId', extractAndValidateToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.update);
-
-PostRouter.delete('/delete/:id', extractAndValidateToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.remove);
+PostRouter.delete('/delete/:id', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.remove);
 
 // Comment
-PostRouter.put('/addComment/:postId', extractAndValidateToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.addComment);
+PostRouter.put('/addComment/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.addComment);
 
-PostRouter.put('/removeComment/:postId/:commentId', extractAndValidateToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.removeComment);
+PostRouter.put('/removeComment/:postId/:commentId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.removeComment);
 
 
 export default PostRouter;
