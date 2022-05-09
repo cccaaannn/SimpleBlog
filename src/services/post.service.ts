@@ -32,7 +32,7 @@ async function getAll(tokenPayload: TokenPayload | null, category: Category | nu
     const posts: any = await PostModel.find({
         visibility: { $in: visibilityFilter }, category: { $in: categoryFilter }
     }).populate("owner", "_id username").sort(postSort);
-    
+
     return new SuccessDataResult(posts);
 }
 
@@ -73,7 +73,7 @@ async function getById(id: string, tokenPayload?: TokenPayload): Promise<IDataRe
         return new ErrorDataResult(null, res.message);
     }
 
-    const post: Post | any = await PostModel.findById(id).populate("owner", "_id username");
+    const post: Post | any = await PostModel.findById(id).populate({ path: "owner", select: "_id username" }).populate({ path: "comments.owner", select: "_id username" });
 
     if (post.visibility == Visibility.PUBLIC) {
         return new SuccessDataResult(post);
