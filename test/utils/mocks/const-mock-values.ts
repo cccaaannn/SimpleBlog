@@ -303,6 +303,18 @@ export namespace MockValues {
         }
     }
 
+    export const mPostPopulaterPopulater: any = {
+        populate: () => mPostPopulater
+    }
+
+    export const mPostPopulaterPopulaterMember: any = {
+        populate: () => mPostPopulaterMember
+    }
+    
+    export const mPostPopulaterPopulaterPrivate: any = {
+        populate: () => mPostPopulaterPrivate
+    }
+
     export const mPostSorter: any = {
         sort: function () {
             return mPostsFull
