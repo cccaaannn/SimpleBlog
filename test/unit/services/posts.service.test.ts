@@ -15,9 +15,10 @@ describe('Post service', () => {
 
         test('Get all posts without any parameters', async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostSorter;
+                return MockValues.mPostPopulaterAfterSorter as any
             });
-            jest.spyOn(MockValues.mPostSorter, 'sort').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
+            jest.spyOn(MockValues.mPostSorter, 'sort');
 
             const result = await PostService.getAll(null, null, null);
 
@@ -25,6 +26,8 @@ describe('Post service', () => {
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC] }, category: { $in: categoryFilter } });
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
             expect(MockValues.mPostSorter.sort).toBeCalled();
             expect(MockValues.mPostSorter.sort).toBeCalledWith(undefined);
             expect(result).toBeDefined();
@@ -33,9 +36,10 @@ describe('Post service', () => {
 
         test('Get all posts with all parameters', async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostSorter;
+                return MockValues.mPostPopulaterAfterSorter as any
             });
-            jest.spyOn(MockValues.mPostSorter, 'sort').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
+            jest.spyOn(MockValues.mPostSorter, 'sort');
 
             const result = await PostService.getAll(MockValues.mTokenPayloadResetUser1, Category.GENERAL, MockValues.mPostSort);
 
@@ -43,6 +47,8 @@ describe('Post service', () => {
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] }, category: { $in: categoryFilter } });
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
             expect(MockValues.mPostSorter.sort).toBeCalled();
             expect(MockValues.mPostSorter.sort).toBeCalledWith(MockValues.mPostSort);
             expect(result).toBeDefined();
@@ -55,9 +61,10 @@ describe('Post service', () => {
 
         test("Get posts by user's by id without any parameters", async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostSorter;
+                return MockValues.mPostPopulaterAfterSorter as any
             });
-            jest.spyOn(MockValues.mPostSorter, 'sort').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
+            jest.spyOn(MockValues.mPostSorter, 'sort');
 
             const result = await PostService.getByUserId(MockValues.mUserId1, null, null, null);
 
@@ -65,6 +72,8 @@ describe('Post service', () => {
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ owner: { $eq: MockValues.mUserId1 }, visibility: { $in: [Visibility.PUBLIC] }, category: { $in: categoryFilter } });
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
             expect(MockValues.mPostSorter.sort).toBeCalled();
             expect(MockValues.mPostSorter.sort).toBeCalledWith(undefined);
             expect(result).toBeDefined();
@@ -73,9 +82,10 @@ describe('Post service', () => {
 
         test("Get posts by user's by id with all parameters", async () => {
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostSorter;
+                return MockValues.mPostPopulaterAfterSorter as any
             });
-            jest.spyOn(MockValues.mPostSorter, 'sort').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
+            jest.spyOn(MockValues.mPostSorter, 'sort');
 
             const result = await PostService.getByUserId(MockValues.mUserId1, MockValues.mTokenPayloadResetUser1, Category.GENERAL, MockValues.mPostSort);
 
@@ -83,6 +93,8 @@ describe('Post service', () => {
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ owner: { $eq: MockValues.mUserId1 }, visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS, Visibility.PRIVATE] }, category: { $in: categoryFilter } });
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
             expect(MockValues.mPostSorter.sort).toBeCalled();
             expect(MockValues.mPostSorter.sort).toBeCalledWith(MockValues.mPostSort);
             expect(result).toBeDefined();
@@ -106,7 +118,10 @@ describe('Post service', () => {
 
         test("Non member requesting public post", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull);
-            jest.spyOn(PostModel, 'findById').mockResolvedValueOnce(MockValues.mPost1);
+            jest.spyOn(PostModel, 'findById').mockImplementationOnce((params: any) => {
+                return MockValues.mPostPopulater as any
+            });
+            jest.spyOn(MockValues.mPostPopulater, 'populate');
 
             const result = await PostService.getById(MockValues.mPostId1, undefined);
 
@@ -114,13 +129,18 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
             expect(PostModel.findById).toBeCalled();
             expect(PostModel.findById).toBeCalledWith(MockValues.mPostId1);
+            expect(MockValues.mPostPopulater.populate).toBeCalled();
+            expect(MockValues.mPostPopulater.populate).toBeCalledWith("owner", "_id username");
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
         test("Non member requesting member only post", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull);
-            jest.spyOn(PostModel, 'findById').mockResolvedValueOnce(MockValues.mPostMember);
+            jest.spyOn(PostModel, 'findById').mockImplementationOnce((params: any) => {
+                return MockValues.mPostPopulaterMember as any
+            });
+            jest.spyOn(MockValues.mPostPopulaterMember, 'populate');
 
             const result = await PostService.getById(MockValues.mPostId1, undefined);
 
@@ -128,13 +148,18 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
             expect(PostModel.findById).toBeCalled();
             expect(PostModel.findById).toBeCalledWith(MockValues.mPostId1);
+            expect(MockValues.mPostPopulaterMember.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterMember.populate).toBeCalledWith("owner", "_id username");
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorDataResult);
         });
     
         test("Member requesting member only post", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull);
-            jest.spyOn(PostModel, 'findById').mockResolvedValueOnce(MockValues.mPostMember);
+            jest.spyOn(PostModel, 'findById').mockImplementationOnce((params: any) => {
+                return MockValues.mPostPopulaterMember as any
+            });
+            jest.spyOn(MockValues.mPostPopulaterMember, 'populate');
 
             const result = await PostService.getById(MockValues.mPostId1, MockValues.mTokenPayloadUser1);
 
@@ -142,13 +167,18 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
             expect(PostModel.findById).toBeCalled();
             expect(PostModel.findById).toBeCalledWith(MockValues.mPostId1);
+            expect(MockValues.mPostPopulaterMember.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterMember.populate).toBeCalledWith("owner", "_id username");
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
         test("Member requesting another users private post", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull);
-            jest.spyOn(PostModel, 'findById').mockResolvedValueOnce(MockValues.mPostPrivate);
+            jest.spyOn(PostModel, 'findById').mockImplementationOnce((params: any) => {
+                return MockValues.mPostPopulaterPrivate as any
+            });
+            jest.spyOn(MockValues.mPostPopulaterPrivate, 'populate');
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(null);
 
             const result = await PostService.getById(MockValues.mPostId1, MockValues.mTokenPayloadUser2);
@@ -157,6 +187,8 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
             expect(PostModel.findById).toBeCalled();
             expect(PostModel.findById).toBeCalledWith(MockValues.mPostId1);
+            expect(MockValues.mPostPopulaterPrivate.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterPrivate.populate).toBeCalledWith("owner", "_id username");
             expect(PostModel.findOne).toBeCalled();
             expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId1, owner: { $eq: MockValues.mTokenPayloadUser2.id } });
             expect(result).toBeDefined();
@@ -165,7 +197,10 @@ describe('Post service', () => {
 
         test("User requesting its own private post", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull);
-            jest.spyOn(PostModel, 'findById').mockResolvedValueOnce(MockValues.mPostPrivate);
+            jest.spyOn(PostModel, 'findById').mockImplementationOnce((params: any) => {
+                return MockValues.mPostPopulaterPrivate as any
+            });
+            jest.spyOn(MockValues.mPostPopulaterPrivate, 'populate');
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(MockValues.mPostPrivate);
 
             const result = await PostService.getById(MockValues.mPostId1, MockValues.mTokenPayloadUser1);
@@ -174,6 +209,8 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
             expect(PostModel.findById).toBeCalled();
             expect(PostModel.findById).toBeCalledWith(MockValues.mPostId1);
+            expect(MockValues.mPostPopulaterPrivate.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterPrivate.populate).toBeCalledWith("owner", "_id username");
             expect(PostModel.findOne).toBeCalled();
             expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId1, owner: { $eq: MockValues.mTokenPayloadUser1.id } });
             expect(result).toBeDefined();
@@ -182,7 +219,10 @@ describe('Post service', () => {
 
         test("Admin requesting another users private post", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull);
-            jest.spyOn(PostModel, 'findById').mockResolvedValueOnce(MockValues.mPostPrivate);
+            jest.spyOn(PostModel, 'findById').mockImplementationOnce((params: any) => {
+                return MockValues.mPostPopulaterPrivate as any
+            });
+            jest.spyOn(MockValues.mPostPopulaterPrivate, 'populate');
 
             const result = await PostService.getById(MockValues.mPostId1, MockValues.mTokenPayloadAdmin);
 
@@ -190,6 +230,8 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
             expect(PostModel.findById).toBeCalled();
             expect(PostModel.findById).toBeCalledWith(MockValues.mPostId1);
+            expect(MockValues.mPostPopulaterPrivate.populate).toBeCalled();
+            expect(MockValues.mPostPopulaterPrivate.populate).toBeCalledWith("owner", "_id username");
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });

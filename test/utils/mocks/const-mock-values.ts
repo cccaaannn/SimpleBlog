@@ -88,7 +88,7 @@ export namespace MockValues {
         role: Roles.USER,
         type: TokenType.VERIFY
     }
-    
+
     export const mTokenPayloadResetUser1: TokenPayload = {
         id: mUserId1,
         status: Status.ACTIVE,
@@ -190,7 +190,7 @@ export namespace MockValues {
         ],
         dateCreated: mDateNow
     }
-    
+
     export const mPostPrivate: Post = {
         _id: mPostId1,
         owner: mUserId1,
@@ -279,6 +279,28 @@ export namespace MockValues {
 
     export const mPostSort: PostSort = {
         visibility: 1
+    }
+
+    export const mPostPopulaterAfterSorter: any = {
+        populate: () => mPostSorter
+    }
+
+    export const mPostPopulater: any = {
+        populate: function () {
+            return mPost1
+        }
+    }
+
+    export const mPostPopulaterMember: any = {
+        populate: function () {
+            return mPostMember
+        }
+    }
+    
+    export const mPostPopulaterPrivate: any = {
+        populate: function () {
+            return mPostPrivate
+        }
     }
 
     export const mPostSorter: any = {

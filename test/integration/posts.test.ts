@@ -80,8 +80,8 @@ describe('/api/v1/posts', () => {
                 .set('Authorization', `Bearer ${token.token}`);
 
             expect(res.body.data.length).toEqual(1);
-            expect(res.body.data[0].owner).toEqual(createdUser._id.toString());
-            expect(res.body.data[0].owner).not.toEqual(createdUser2._id.toString());
+            expect(res.body.data[0].owner._id).toEqual(createdUser._id.toString());
+            expect(res.body.data[0].owner._id).not.toEqual(createdUser2._id.toString());
             expect(res.status).toEqual(200);
         });
 
@@ -106,7 +106,7 @@ describe('/api/v1/posts', () => {
                 .set('Authorization', `Bearer ${token.token}`);
 
             expect(res.body.data._id).toEqual(createdPost._id.toString());
-            expect(res.body.data.owner).toEqual(createdUser._id.toString());
+            expect(res.body.data.owner._id).toEqual(createdUser._id.toString());
             expect(res.status).toEqual(200);
         });
 
