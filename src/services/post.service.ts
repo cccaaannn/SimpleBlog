@@ -29,7 +29,10 @@ async function getAll(tokenPayload: TokenPayload | null, category: Category | nu
         visibilityFilter.push(Visibility.MEMBERS);
     }
 
-    const posts: any = await PostModel.find({ visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } }).sort(postSort);
+    const posts: any = await PostModel.find({
+        visibility: { $in: visibilityFilter }, category: { $in: categoryFilter }
+    }).populate("owner", "_id username").sort(postSort);
+    
     return new SuccessDataResult(posts);
 }
 
@@ -56,7 +59,7 @@ async function getByUserId(userId: string, tokenPayload: TokenPayload | null, ca
         visibilityFilter.push(Visibility.PRIVATE);
     }
 
-    const posts: any = await PostModel.find({ owner: { $eq: userId }, visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } }).sort(postSort);
+    const posts: any = await PostModel.find({ owner: { $eq: userId }, visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } }).populate("owner", "_id username").sort(postSort);
     return new SuccessDataResult(posts);
 }
 
@@ -70,7 +73,7 @@ async function getById(id: string, tokenPayload?: TokenPayload): Promise<IDataRe
         return new ErrorDataResult(null, res.message);
     }
 
-    const post: Post | any = await PostModel.findById(id);
+    const post: Post | any = await PostModel.findById(id).populate("owner", "_id username");
 
     if (post.visibility == Visibility.PUBLIC) {
         return new SuccessDataResult(post);
