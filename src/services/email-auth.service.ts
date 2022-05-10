@@ -5,6 +5,7 @@ import * as fs from 'fs/promises';
 import JWTService from '../core/services/jwt.service';
 import { EmailService } from '../core/services/email.service';
 import { EmailAuthConfig } from '../configs/email-verification.config';
+import { FrontEndConfig } from '../configs/front-end.config';
 import UserService from './user.service';
 
 import { ErrorResult, IResult, Result } from '../core/results/Result';
@@ -48,7 +49,7 @@ async function sendAccountVerificationEmail(userId: string): Promise<IResult> {
     const token: Token = JWTService.generateToken(tokenPayload, EmailAuthConfig.AccountVerification.JWT_TOKEN_EXPIRATION)
 
     // Build url for account activation, this will be embedded in html content of the email
-    const URL: string = `${process.env.FRONTEND_URL}${process.env.FRONTEND_ACCOUNT_VERIFICATION_PATH}?token=${token.token}`;
+    const URL: string = `${process.env.FRONTEND_URL}${FrontEndConfig.Paths.FRONTEND_ACCOUNT_VERIFICATION_PATH}?token=${token.token}`;
 
     // Build email data
     const to = userResult.data.email;
@@ -93,7 +94,7 @@ async function sendPasswordResetEmail(userId: string): Promise<IResult> {
     const token: Token = JWTService.generateToken(tokenPayload, EmailAuthConfig.PasswordReset.JWT_TOKEN_EXPIRATION)
 
     // Build url for account activation, this will be embedded in html content of the email
-    const URL: string = `${process.env.FRONTEND_URL}${process.env.FRONTEND_PASSWORD_RESET_PATH}?token=${token.token}`;
+    const URL: string = `${process.env.FRONTEND_URL}${FrontEndConfig.Paths.FRONTEND_PASSWORD_RESET_PATH}?token=${token.token}`;
 
     // Build email data
     const to = userResult.data.email;
