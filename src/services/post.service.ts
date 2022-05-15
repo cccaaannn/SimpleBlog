@@ -217,7 +217,8 @@ async function isUserAllowedToDeleteComment(operatingPostId: string, operatingCo
     }
 
     // Is user owns comment
-    const res: any = await PostModel.findOne({ _id: operatingPostId, comments: { _id: operatingCommentId, owner: tokenPayload.id } });
+    const res: any = await PostModel.findOne({ _id: operatingPostId, $in: { comments: { _id: operatingCommentId, owner: tokenPayload.id } } });
+
     if (res == null) {
         return new ErrorResult("User Does not owns this comment");
     }

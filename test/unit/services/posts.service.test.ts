@@ -159,7 +159,7 @@ describe('Post service', () => {
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorDataResult);
         });
-    
+
         test("Member requesting member only post", async () => {
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull);
             jest.spyOn(PostModel, 'findById').mockImplementationOnce((params: any) => {
@@ -394,7 +394,7 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId2 });
 
             expect(PostModel.findOne).toBeCalled();
-            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId2, comments: { _id: MockValues.mCommentId1, owner: MockValues.mTokenPayloadUser1.id } });
+            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId2, $in: { comments: { _id: MockValues.mCommentId1, owner: MockValues.mTokenPayloadUser1.id } } });
 
             expect(PostModel.findOneAndUpdate).toBeCalled();
             expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId2 }, { $pull: { comments: { _id: MockValues.mCommentId1 } } }, { new: true });
@@ -439,7 +439,7 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId2 });
 
             expect(PostModel.findOne).toBeCalled();
-            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId2, comments: { _id: MockValues.mCommentId2, owner: MockValues.mTokenPayloadUser1.id } });
+            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId2, $in: { comments: { _id: MockValues.mCommentId2, owner: MockValues.mTokenPayloadUser1.id } } });
 
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
