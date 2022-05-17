@@ -28,6 +28,7 @@ interface PostUpdate {
     header: string,
     body: string,
     image: string,
+    category: Category,
     visibility: Visibility
 };
 

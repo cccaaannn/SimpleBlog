@@ -138,6 +138,7 @@ async function update(id: string, post: PostUpdate, tokenPayload: TokenPayload):
         header: post.header,
         body: post.body,
         image: post.image,
+        category: post.category,
         visibility: post.visibility
     }
 

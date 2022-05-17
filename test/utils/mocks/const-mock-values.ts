@@ -262,6 +262,7 @@ export namespace MockValues {
         header: mPostHeader1,
         body: mPostBody1,
         image: mImage1,
+        category: Category.GENERAL,
         visibility: Visibility.PUBLIC
     }
 
@@ -269,6 +270,7 @@ export namespace MockValues {
         header: mPostHeader2,
         body: mPostBody2,
         image: mImage2,
+        category: Category.GENERAL,
         visibility: Visibility.PUBLIC
     }
 
