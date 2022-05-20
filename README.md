@@ -2,7 +2,7 @@
 
 Practice project for various web technologies.
 
-![GitHub top language](https://img.shields.io/github/languages/top/cccaaannn/SimpleBlogBackend?color=blue) [![Coverage Status](https://coveralls.io/repos/github/cccaaannn/SimpleBlogBackend/badge.svg?branch=master)](https://coveralls.io/github/cccaaannn/SimpleBlogBackend?branch=master) ![GitHub repo size](https://img.shields.io/github/repo-size/cccaaannn/SimpleBlogBackend?color=darkgreen) [![GitHub](https://img.shields.io/github/license/cccaaannn/SimpleBlogBackend?color=orange)](https://github.com/cccaaannn/SimpleBlogBackend/blob/master/LICENSE)
+![GitHub top language](https://img.shields.io/github/languages/top/cccaaannn/SimpleBlogBackend?color=blue) [![Coverage Status](https://coveralls.io/repos/github/cccaaannn/SimpleBlogBackend/badge.svg?branch=master)](https://coveralls.io/github/cccaaannn/SimpleBlogBackend?branch=master) ![GitHub repo size](https://img.shields.io/github/repo-size/cccaaannn/SimpleBlogBackend?color=darkgreen) [![GitHub](https://img.shields.io/github/license/cccaaannn/SimpleBlogBackend?color=purple)](https://github.com/cccaaannn/SimpleBlogBackend/blob/master/LICENSE) [![Docker Image Size (tag)](https://img.shields.io/docker/image-size/cccaaannn/simple-blog-backend/latest?color=orange)](https://hub.docker.com/r/cccaaannn/simple-blog-backend)
 
 ---
 
@@ -39,6 +39,8 @@ EMAIL_USERNAME
 
 JWT_PRIVATE_KEY
 JWT_USER_TOKEN_EXPIRATION
+
+RECAPTCHA_SECRET_KEY
 
 FRONTEND_URL
 ```
