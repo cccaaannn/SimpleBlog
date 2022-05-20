@@ -266,7 +266,7 @@ describe('Post service', () => {
             expect(PostModel.create).toBeCalled();
             expect(PostModel.create).toBeCalledWith(MockValues.mPostToAdd);
             expect(result).toBeDefined();
-            expect(result).toBeInstanceOf(SuccessResult);
+            expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
         test('User adding a post with wrong validations', async () => {
@@ -277,7 +277,7 @@ describe('Post service', () => {
             expect(PostModel.create).toBeCalled();
             expect(PostModel.create).toBeCalledWith(MockValues.mPostToAdd);
             expect(result).toBeDefined();
-            expect(result).toBeInstanceOf(SuccessResult);
+            expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
     });

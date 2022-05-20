@@ -7,6 +7,7 @@ import Visibility from '../../../src/types/enums/Visibility';
 import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
 import { MockValues } from '../../utils/mocks/const-mock-values';
 import Category from '../../../src/types/enums/Category';
+import { ErrorDataResult, SuccessDataResult } from '../../../src/core/results/DataResult';
 
 
 describe('Post controller', () => {
@@ -213,7 +214,7 @@ describe('Post controller', () => {
     describe('add', () => {
 
         test('Success', async () => {
-            const result = new SuccessResult()
+            const result = new SuccessDataResult(null);
             jest.spyOn(PostService, 'add').mockResolvedValueOnce(result);
 
             const mReq = getMockReq({ query: {}, body: MockValues.mPostToAdd });
@@ -229,7 +230,7 @@ describe('Post controller', () => {
         });
 
         test('Error', async () => {
-            const result = new ErrorResult()
+            const result = new ErrorDataResult(null);
             jest.spyOn(PostService, 'add').mockResolvedValueOnce(result);
 
             const mReq = getMockReq({ query: {}, body: MockValues.mPostToAdd });

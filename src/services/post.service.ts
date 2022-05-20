@@ -97,7 +97,7 @@ async function getById(id: string, tokenPayload?: TokenPayload): Promise<IDataRe
     return new ErrorDataResult(null, "Not authorized");
 }
 
-async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IResult> {
+async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IDataResult<Post | null>> {
 
     let visibility: Visibility = Visibility.PUBLIC;
     if (Object.values(Visibility).includes(post.visibility as Visibility)) {
@@ -119,8 +119,7 @@ async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IResult> 
         visibility: visibility
     }
 
-    await PostModel.create(postToAdd);
-    return new SuccessResult("Created");
+    return new SuccessDataResult(await PostModel.create(postToAdd), "Created");
 }
 
 async function update(id: string, post: PostUpdate, tokenPayload: TokenPayload): Promise<IResult> {

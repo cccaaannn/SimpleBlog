@@ -21,7 +21,7 @@ describe('recaptcha service', () => {
         });
 
         test('Low captcha answer', async () => {
-            jest.spyOn(axios, 'post').mockResolvedValueOnce(MockValues.mCaptchaResponse1FalseLow);
+            jest.spyOn(axios, 'post').mockResolvedValueOnce(MockValues.mCaptchaResponse1TrueLow);
 
             const result = await RecaptchaService.verify(MockValues.mCaptcha1);
 

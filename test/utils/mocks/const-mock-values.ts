@@ -607,9 +607,9 @@ export namespace MockValues {
         }
     }
 
-    export const mCaptchaResponse1FalseLow: any = {
+    export const mCaptchaResponse1TrueLow: any = {
         data: {
-            success: false,
+            success: true,
             challenge_ts: mDateNow,
             hostname: 'localhost',
             score: 0.3,
