@@ -59,6 +59,10 @@ export namespace MockValues {
     export const mComment2 = "comment2";
     export const mComment3 = "comment3";
 
+    export const mCaptcha1 = "captcha1";
+    export const mCaptcha2 = "captcha2";
+    export const mCaptcha3 = "captcha3";
+
 
     export const mDateNow = new Date();
 
@@ -298,7 +302,7 @@ export namespace MockValues {
             return mPostMember
         }
     }
-    
+
     export const mPostPopulaterPrivate: any = {
         populate: function () {
             return mPostPrivate
@@ -312,7 +316,7 @@ export namespace MockValues {
     export const mPostPopulaterPopulaterMember: any = {
         populate: () => mPostPopulaterMember
     }
-    
+
     export const mPostPopulaterPopulaterPrivate: any = {
         populate: () => mPostPopulaterPrivate
     }
@@ -461,13 +465,15 @@ export namespace MockValues {
 
     export const mLoginUser1: Login = {
         username: mUsername1,
-        password: mPassword1
+        password: mPassword1,
+        captcha: mCaptcha1
     };
 
     export const mSignUp1: SignUp = {
         username: mUsername1,
         email: mEmail1,
-        password: mPassword1
+        password: mPassword1,
+        captcha: mCaptcha1
     }
 
     export const mToken1: Token = {
@@ -574,6 +580,41 @@ export namespace MockValues {
     export const mErrorDataResult: ErrorDataResult<null> = {
         data: null,
         status: false
+    }
+
+    // ---------- ---------- ---------- ---------- ----------
+
+
+    // ---------- ---------- Captcha ---------- ----------
+
+    export const mCaptchaResponse1Correct: any = {
+        data: {
+            success: true,
+            challenge_ts: mDateNow,
+            hostname: 'localhost',
+            score: 0.9,
+            action: 'login'
+        }
+    }
+
+    export const mCaptchaResponse1False: any = {
+        data: {
+            success: false,
+            challenge_ts: mDateNow,
+            hostname: 'localhost',
+            score: 0.9,
+            action: 'login'
+        }
+    }
+
+    export const mCaptchaResponse1FalseLow: any = {
+        data: {
+            success: false,
+            challenge_ts: mDateNow,
+            hostname: 'localhost',
+            score: 0.3,
+            action: 'login'
+        }
     }
 
     // ---------- ---------- ---------- ---------- ----------

@@ -7,17 +7,32 @@ import AuthService from "../../../src/services/auth.service";
 import { ErrorDataResult, SuccessDataResult } from "../../../src/core/results/DataResult";
 import { ErrorResult, SuccessResult } from "../../../src/core/results/Result";
 import { MockValues } from "../../utils/mocks/const-mock-values";
+import RecaptchaService from "../../../src/core/services/recaptcha.service";
 
 
 describe('Auth service', () => {
 
     describe('login', () => {
 
+        test('Incorrect captcha', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mErrorResult);
+
+            const result = await AuthService.login(MockValues.mLoginUser1);
+
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorDataResult);
+        });
+
         test('Not existing user', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'getByUsername').mockResolvedValueOnce(MockValues.mErrorDataResult);
 
             const result = await AuthService.login(MockValues.mLoginUser1);
 
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
             expect(UserService.getByUsername).toBeCalled();
             expect(UserService.getByUsername).toBeCalledWith(MockValues.mLoginUser1.username);
             expect(result).toBeDefined();
@@ -25,10 +40,13 @@ describe('Auth service', () => {
         });
 
         test('Deleted user', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'getByUsername').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Deleted);
 
             const result = await AuthService.login(MockValues.mLoginUser1);
 
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
             expect(UserService.getByUsername).toBeCalled();
             expect(UserService.getByUsername).toBeCalledWith(MockValues.mLoginUser1.username);
             expect(result).toBeDefined();
@@ -36,10 +54,13 @@ describe('Auth service', () => {
         });
 
         test('Inactive user', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'getByUsername').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
 
             const result = await AuthService.login(MockValues.mLoginUser1);
 
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
             expect(UserService.getByUsername).toBeCalled();
             expect(UserService.getByUsername).toBeCalledWith(MockValues.mLoginUser1.username);
             expect(result).toBeDefined();
@@ -47,10 +68,13 @@ describe('Auth service', () => {
         });
 
         test('Suspended user', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'getByUsername').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Suspended);
 
             const result = await AuthService.login(MockValues.mLoginUser1);
 
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
             expect(UserService.getByUsername).toBeCalled();
             expect(UserService.getByUsername).toBeCalledWith(MockValues.mLoginUser1.username);
             expect(result).toBeDefined();
@@ -58,11 +82,14 @@ describe('Auth service', () => {
         });
 
         test('Incorrect password', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'getByUsername').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1);
             jest.spyOn(EncryptionService, 'compare').mockResolvedValueOnce(false);
 
             const result = await AuthService.login(MockValues.mLoginUser1);
 
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
             expect(UserService.getByUsername).toBeCalled();
             expect(UserService.getByUsername).toBeCalledWith(MockValues.mLoginUser1.username);
             expect(EncryptionService.compare).toBeCalled();
@@ -72,11 +99,15 @@ describe('Auth service', () => {
         });
 
         test('Successful login', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'getByUsername').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1);
             jest.spyOn(EncryptionService, 'compare').mockResolvedValueOnce(true);
             jest.spyOn(JWTService, 'generateToken').mockReturnValueOnce(MockValues.mToken1);
 
             const result = await AuthService.login(MockValues.mLoginUser1);
+
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
 
             expect(UserService.getByUsername).toBeCalled();
             expect(UserService.getByUsername).toBeCalledWith(MockValues.mLoginUser1.username);
@@ -97,26 +128,43 @@ describe('Auth service', () => {
 
     describe('signUp', () => {
 
+        test('Incorrect captcha', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mErrorResult);
+
+            const result = await AuthService.signUp(MockValues.mSignUp1);
+
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
         test('Non unique username or email', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'add').mockResolvedValueOnce(MockValues.mErrorDataResult);
             jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.signUp(MockValues.mSignUp1);
 
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
             expect(UserService.add).toBeCalled();
-            expect(UserService.add).toBeCalledWith(MockValues.mSignUp1);
+            expect(UserService.add).toBeCalledWith(MockValues.mUserToAdd);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
         test('Successful signup', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(UserService, 'add').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1);
             jest.spyOn(EmailAuthService, 'sendAccountVerificationEmail').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.signUp(MockValues.mSignUp1);
 
+            expect(RecaptchaService.verify).toBeCalled();
+            expect(RecaptchaService.verify).toBeCalledWith(MockValues.mCaptcha1);
             expect(UserService.add).toBeCalled();
-            expect(UserService.add).toBeCalledWith(MockValues.mSignUp1);
+            expect(UserService.add).toBeCalledWith(MockValues.mUserToAdd);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });

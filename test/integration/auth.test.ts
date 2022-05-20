@@ -17,6 +17,7 @@ import { SuccessResult } from '../../src/core/results/Result';
 import { UserModel } from '../../src/models/UserModel';
 import { User, UserAdd } from '../../src/types/User';
 import { Token } from '../../src/core/types/Token';
+import RecaptchaService from '../../src/core/services/recaptcha.service';
 
 
 // Special mock case, EmailService is a class that is instantiated inside the email-verification.service
@@ -49,6 +50,8 @@ describe('/api/v1/auth', () => {
     describe('/login', () => {
 
         test('Successful login', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
+
             // Add mock user
             const mUserToAdd: User = { ...MockValues.mUserToAddActive }
             mUserToAdd.password = await EncryptionService.hash(MockValues.mUserToAddActive.password);
@@ -78,6 +81,7 @@ describe('/api/v1/auth', () => {
     describe('/signUp', () => {
 
         test('Successful signUp', async () => {
+            jest.spyOn(RecaptchaService, 'verify').mockResolvedValueOnce(MockValues.mSuccessResult);
             jest.spyOn(EmailAuthService, "sendAccountVerificationEmail").mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const res = await request.post(`/api/v1/auth/signUp`)
