@@ -54,8 +54,8 @@ async function sendAccountVerificationEmail(userId: string): Promise<IResult> {
     // Build email data
     const to = userResult.data.email;
     const subject = EmailAuthConfig.AccountVerification.EMAIL_SUBJECT;
-    const text = EmailAuthConfig.AccountVerification.EMAIL_TEXT.replace("{{URL}}", URL);
-    const html = template.replace("{{URL}}", URL);
+    const text = EmailAuthConfig.AccountVerification.EMAIL_TEXT.replace("{{URL}}", URL).replace("{{USERNAME}}", tokenPayload.username);
+    const html = template.replace("{{URL}}", URL).replace("{{USERNAME}}", tokenPayload.username);
 
     // Send
     const emailResult: Result = await emailService.send(to, subject, text, html);
@@ -99,8 +99,8 @@ async function sendPasswordResetEmail(userId: string): Promise<IResult> {
     // Build email data
     const to = userResult.data.email;
     const subject = EmailAuthConfig.PasswordReset.EMAIL_SUBJECT;
-    const text = EmailAuthConfig.PasswordReset.EMAIL_TEXT.replace("{{URL}}", URL);
-    const html = template.replace("{{URL}}", URL);
+    const text = EmailAuthConfig.PasswordReset.EMAIL_TEXT.replace("{{URL}}", URL).replace("{{USERNAME}}", tokenPayload.username);
+    const html = template.replace("{{URL}}", URL).replace("{{USERNAME}}", tokenPayload.username);
 
     // Send
     const emailResult: Result = await emailService.send(to, subject, text, html);

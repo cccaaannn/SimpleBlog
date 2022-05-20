@@ -14,9 +14,17 @@ import { TokenPayload } from '../core/types/TokenPayload';
 import Status from '../core/types/enums/Status';
 import { User, UserAdd, UserUpdate } from '../types/User';
 import TokenType from '../core/types/enums/TokenType';
+import RecaptchaService from '../core/services/recaptcha.service'
 
 
 async function login(login: Login): Promise<IDataResult<Token | null>> {
+
+    // Recaptcha
+    const recaptchaResult =  await RecaptchaService.verify(login.captcha);
+    if(!recaptchaResult.status) {
+        return new ErrorDataResult(null, recaptchaResult.message);
+    }
+
     const userResult: DataResult<User | null> = await UserService.getByUsername(login.username);
 
     if (userResult == null || userResult.data == null || !userResult.status) {
@@ -51,6 +59,12 @@ async function login(login: Login): Promise<IDataResult<Token | null>> {
 }
 
 async function signUp(signUp: SignUp): Promise<IResult> {
+
+    // Recaptcha
+    const recaptchaResult =  await RecaptchaService.verify(signUp.captcha);
+    if(!recaptchaResult.status) {
+        return new ErrorResult(recaptchaResult.message);
+    }
 
     // build user model
     const user: UserAdd = {
