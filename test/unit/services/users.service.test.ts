@@ -182,7 +182,7 @@ describe('User service', () => {
 
         test('User add with existing username', async () => {
             jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
-            
+
             const result = await UserService.add(MockValues.mUserToAdd);
 
             expect(UserModel.find).toBeCalled();
@@ -419,11 +419,11 @@ describe('User service', () => {
             expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId1 });
 
             expect(PostModel.updateMany).toBeCalled();
-            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId1 } } });
+            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId1 } } }, { timestamps: false });
 
             expect(UserModel.findOneAndDelete).toBeCalled();
             expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: MockValues.mUserId1 });
-   
+
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
@@ -439,11 +439,11 @@ describe('User service', () => {
             expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId2 });
 
             expect(PostModel.updateMany).toBeCalled();
-            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId2 } } });
+            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId2 } } }, { timestamps: false });
 
             expect(UserModel.findOneAndDelete).toBeCalled();
             expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: MockValues.mUserId2 });
-   
+
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
@@ -457,11 +457,11 @@ describe('User service', () => {
 
         test('Purge fail', async () => {
             jest.spyOn(PostModel, 'deleteMany').mockImplementation(() => {
-				throw new Error();
-			});
+                throw new Error();
+            });
 
             const result = await UserService.purge(MockValues.mUserId1, MockValues.mTokenPayloadUser1);
-    
+
             expect(PostModel.deleteMany).toBeCalled();
             expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId1 });
 

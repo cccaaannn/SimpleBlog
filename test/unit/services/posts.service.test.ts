@@ -362,7 +362,7 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
 
             expect(PostModel.findOneAndUpdate).toBeCalled();
-            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId1 }, { $push: { comments: MockValues.mCommentAdd } }, { new: true });
+            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId1 }, { $push: { comments: MockValues.mCommentAdd } }, { new: true, timestamps: false });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
@@ -397,7 +397,7 @@ describe('Post service', () => {
             expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId2, $in: { comments: { _id: MockValues.mCommentId1, owner: MockValues.mTokenPayloadUser1.id } } });
 
             expect(PostModel.findOneAndUpdate).toBeCalled();
-            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId2 }, { $pull: { comments: { _id: MockValues.mCommentId1 } } }, { new: true });
+            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId2 }, { $pull: { comments: { _id: MockValues.mCommentId1 } } }, { new: true, timestamps: false });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
@@ -412,7 +412,7 @@ describe('Post service', () => {
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId2 });
 
             expect(PostModel.findOneAndUpdate).toBeCalled();
-            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId2 }, { $pull: { comments: { _id: MockValues.mCommentId2 } } }, { new: true });
+            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId2 }, { $pull: { comments: { _id: MockValues.mCommentId2 } } }, { new: true, timestamps: false });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
