@@ -188,7 +188,7 @@ async function purge(id: string, tokenPayload: TokenPayload): Promise<IResult> {
 
     try {
         await PostModel.deleteMany({ owner: id });
-        await PostModel.updateMany({}, { $pull: { comments: { owner: id } } });
+        await PostModel.updateMany({}, { $pull: { comments: { owner: id } } }, { timestamps: false });
         await UserModel.findOneAndDelete({ _id: id });
     }
     catch (error) {

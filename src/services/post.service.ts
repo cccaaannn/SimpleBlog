@@ -160,7 +160,7 @@ async function addComment(id: string, comment: CommentAdd, tokenPayload: TokenPa
         comment: comment.comment
     }
 
-    await PostModel.findOneAndUpdate({ _id: id }, { $push: { comments: commentToAdd } }, { new: true });
+    await PostModel.findOneAndUpdate({ _id: id }, { $push: { comments: commentToAdd } }, { new: true, timestamps: false });
     return new SuccessResult("Post updated");
 }
 
@@ -175,7 +175,7 @@ async function removeComment(postId: string, commentId: string, tokenPayload: To
         return res;
     }
 
-    await PostModel.findOneAndUpdate({ _id: postId }, { $pull: { comments: { _id: commentId } } }, { new: true });
+    await PostModel.findOneAndUpdate({ _id: postId }, { $pull: { comments: { _id: commentId } } }, { new: true, timestamps: false });
     return new SuccessResult("Post updated");
 }
 
