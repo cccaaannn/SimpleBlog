@@ -12,7 +12,8 @@ interface Post {
     category: Category,
     visibility: Visibility,
     comments: Comment[],
-    dateCreated: Date
+    createdAt: Date,
+    updatedAt: Date
 };
 
 interface PostAdd {
@@ -33,8 +34,9 @@ interface PostUpdate {
 };
 
 interface PostSort {
-    visibility?: number
-    dateCreated?: number
+    visibility?: number,
+    createdAt?: number,
+    updatedAt?: number
 };
 
 export { Post, PostAdd, PostUpdate, PostSort };

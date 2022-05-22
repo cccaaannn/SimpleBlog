@@ -130,10 +130,12 @@ export namespace MockValues {
                     _id: mCommentId1,
                     owner: mUserId1,
                     comment: mComment1,
-                    dateCreated: mDateNow
+                    createdAt: mDateNow,
+                    updatedAt: mDateNow
                 }
             ],
-            dateCreated: mDateNow
+            createdAt: mDateNow,
+            updatedAt: mDateNow
         },
         {
             _id: mPostId2,
@@ -148,10 +150,12 @@ export namespace MockValues {
                     _id: mCommentId2,
                     owner: mUserId2,
                     comment: mComment2,
-                    dateCreated: mDateNow
+                    createdAt: mDateNow,
+                    updatedAt: mDateNow
                 }
             ],
-            dateCreated: mDateNow
+            createdAt: mDateNow,
+            updatedAt: mDateNow
         }
     ]
 
@@ -170,10 +174,12 @@ export namespace MockValues {
                 _id: mCommentId1,
                 owner: mUserId1,
                 comment: mComment1,
-                dateCreated: mDateNow
+                createdAt: mDateNow,
+                updatedAt: mDateNow
             }
         ],
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mPostMember: Post = {
@@ -189,10 +195,12 @@ export namespace MockValues {
                 _id: mCommentId1,
                 owner: mUserId1,
                 comment: mComment1,
-                dateCreated: mDateNow
+                createdAt: mDateNow,
+                updatedAt: mDateNow
             }
         ],
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mPostPrivate: Post = {
@@ -208,10 +216,12 @@ export namespace MockValues {
                 _id: mCommentId1,
                 owner: mUserId1,
                 comment: mComment1,
-                dateCreated: mDateNow
+                createdAt: mDateNow,
+                updatedAt: mDateNow
             }
         ],
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mPostToAdd: PostAdd = {
@@ -340,7 +350,8 @@ export namespace MockValues {
             email: mEmail1,
             password: mPassword1,
             role: Roles.USER,
-            dateCreated: mDateNow
+            createdAt: mDateNow,
+            updatedAt: mDateNow
         }
     ]
 
@@ -351,7 +362,8 @@ export namespace MockValues {
         email: mEmail1,
         password: mPassword1,
         role: Roles.USER,
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mUser1Deleted: User = {
@@ -361,7 +373,8 @@ export namespace MockValues {
         email: mEmail1,
         password: mPassword1,
         role: Roles.USER,
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mUser1Passive: User = {
@@ -371,7 +384,8 @@ export namespace MockValues {
         email: mEmail1,
         password: mPassword1,
         role: Roles.USER,
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mUser1Suspended: User = {
@@ -381,7 +395,8 @@ export namespace MockValues {
         email: mEmail1,
         password: mPassword1,
         role: Roles.USER,
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mUserAdmin: User = {
@@ -391,7 +406,8 @@ export namespace MockValues {
         email: mEmail1,
         password: mPassword1,
         role: Roles.ADMIN,
-        dateCreated: mDateNow
+        createdAt: mDateNow,
+        updatedAt: mDateNow
     }
 
     export const mUsersEmpty: User[] = []
