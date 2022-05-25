@@ -23,7 +23,6 @@ async function verify(token: Token, privateKey?: string): Promise<DataResult<Tok
         return new SuccessDataResult(tokenPayload);
     }
     catch (err) {
-        console.log(err);
         let message: string = "Not authorized";
 
         if (err instanceof TokenExpiredError) {

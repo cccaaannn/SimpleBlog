@@ -9,13 +9,30 @@ import Roles from "../core/types/enums/Roles";
 import EncryptionService from '../core/services/encryption.service';
 import { PostModel } from "../models/PostModel";
 import { TokenPayload } from "../core/types/TokenPayload";
+import { Pagination } from "../core/types/Pagination";
 
 
-async function getAll(userSort?: UserSort): Promise<IDataResult<User[]>> {
-    if (userSort) {
-        return new SuccessDataResult(await UserModel.find({ status: { $ne: Status.DELETED } }).sort(userSort));
-    }
-    return new SuccessDataResult(await UserModel.find({ status: { $ne: Status.DELETED } }));
+async function getAll({ page, limit, sort, asc }: { page?: number, limit?: number, sort?: string, asc?: number }): Promise<IDataResult<Pagination<User>>> {
+
+    const sortMethod = sort ? sort: "createdAt";
+    const userSort = { [sortMethod] : asc ? asc : -1 };
+
+    const query = { status: { $ne: Status.DELETED } };
+
+    const count = await UserModel.countDocuments(query);
+
+    const page_ = page ? page - 1 : 0;
+    const limit_ = limit ? limit : count;
+
+    const users: any = await UserModel
+        .find(query)
+        .sort(userSort)
+        .skip(page_ * limit_)
+        .limit(limit_);
+
+    const paginatedUsers: Pagination<User> = { data: users, page: parseInt(page_ + 1 + ""), pageSize: parseInt(limit_ + ""), totalItems: count, totalPages: Math.ceil(count / limit_) }
+
+    return new SuccessDataResult(paginatedUsers);
 }
 
 async function getById(id: string): Promise<DataResult<User | null>> {

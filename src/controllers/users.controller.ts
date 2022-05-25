@@ -1,16 +1,17 @@
 // Project imports
 import { IResult } from "../core/results/Result";
 import UserService from "../services/user.service"
-import { UserSort } from "../types/User";
 
 async function getAll(req: any, res: any, next: any) {
     try {
-        let userSort: UserSort | undefined = undefined;
-        if (req.query.field && req.query.asc) {
-            userSort = { [req.query.field]: req.query.asc };
-        }
+        const result: IResult = await UserService.getAll(
+            { 
+                page: req.query.page, 
+                limit: req.query.limit, 
+                sort: req.query.sort, 
+                asc: req.query.asc
+            });
 
-        const result: IResult = await UserService.getAll(userSort);
         if(result.status) {
             return res.status(200).json(result);
         }
@@ -35,20 +36,6 @@ async function getById(req: any, res: any, next: any) {
         next();
     }
 }
-
-// async function add(req: any, res: any, next: any) {
-//     try {
-//         const result: IResult = await UserService.add(req.body);
-//         if(result.status) {
-//             return res.status(200).json(result);
-//         }
-//         return res.status(400).json(result);
-//     } 
-//     catch (err: any) {
-//         res.locals.err = err;
-//         next();
-//     }
-// }
 
 async function update(req: any, res: any, next: any) {
     try {

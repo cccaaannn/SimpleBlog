@@ -10,7 +10,7 @@ import Roles from '../../../core/types/enums/Roles';
 const PostRouter = Router();
 
 // Post
-PostRouter.get('/getAll', decodeTokenIfExists(), PostController.getAll);
+PostRouter.get('/getAll', decodeTokenIfExists(), PostController.getAll);  // ?page=1&limit=5&sort=createdAt&asc=-1&category=Food
 
 PostRouter.get('/getById/:id', decodeTokenIfExists(), PostController.getById);
 

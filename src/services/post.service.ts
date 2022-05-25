@@ -8,44 +8,55 @@ import Roles from "../core/types/enums/Roles";
 import { CommentAdd } from "../types/Comment";
 import Visibility from "../types/enums/Visibility";
 import Category from "../types/enums/Category";
+import { Pagination } from "../core/types/Pagination";
 
 
-async function getAll(tokenPayload: TokenPayload | null, category: Category | null, postSort: PostSort | null | undefined): Promise<IDataResult<Post[]>> {
+async function getAll({ tokenPayload, page, limit, category, sort, asc }: { tokenPayload?: TokenPayload, page?: number, limit?: number, category?: Category, sort?: string, asc?: number }): Promise<IDataResult<Pagination<Post>>> {
 
     let categoryFilter: Category[] = Object.values(Category);
-    if (category != null && category != Category.ALL) {
+    if (category && category != Category.ALL) {
         categoryFilter = [category];
     }
 
-    if (postSort == null) {
-        postSort = undefined;
-    }
+    const sortMethod = sort ? sort: "createdAt";
+    const postSort = { [sortMethod] : asc ? asc : -1 };
 
     // Everyone can see Visibility.PUBLIC
     let visibilityFilter: Visibility[] = [Visibility.PUBLIC]
 
     // Admin or user itself
-    if (tokenPayload != null) {
+    if (tokenPayload) {
         visibilityFilter.push(Visibility.MEMBERS);
     }
 
-    const posts: any = await PostModel.find({
-        visibility: { $in: visibilityFilter }, category: { $in: categoryFilter }
-    }).populate("owner", "_id username").sort(postSort);
+    const query = { visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } };
 
-    return new SuccessDataResult(posts);
+    const count = await PostModel.countDocuments(query);
+
+    const page_ = page ? page - 1 : 0;
+    const limit_ = limit ? limit : count;
+
+    const posts: any = await PostModel
+        .find(query)
+        .populate("owner", "_id username")
+        .sort(postSort)
+        .skip(page_ * limit_)
+        .limit(limit_);
+
+    const paginatedPosts: Pagination<Post> = { data: posts, page: parseInt(page_ + 1 + ""), pageSize: parseInt(limit_ + ""), totalItems: count, totalPages: Math.ceil(count / limit_) }
+
+    return new SuccessDataResult(paginatedPosts);
 }
 
-async function getByUserId(userId: string, tokenPayload: TokenPayload | null, category: Category | null, postSort: PostSort | null | undefined): Promise<IDataResult<Post[]>> {
+async function getByUserId({ userId, tokenPayload, page, limit, category, sort, asc }: { userId: string, tokenPayload?: TokenPayload, page?: number, limit?: number, category?: Category, sort?: string, asc?: number }): Promise<IDataResult<Pagination<Post>>> {
 
     let categoryFilter: Category[] = Object.values(Category);
     if (category != null && category != Category.ALL) {
         categoryFilter = [category];
     }
 
-    if (postSort == null) {
-        postSort = undefined;
-    }
+    const sortMethod = sort ? sort: "createdAt";
+    const postSort = { [sortMethod] : asc ? asc : -1 };
 
     // Everyone can see Visibility.PUBLIC
     let visibilityFilter: Visibility[] = [Visibility.PUBLIC]
@@ -59,8 +70,23 @@ async function getByUserId(userId: string, tokenPayload: TokenPayload | null, ca
         visibilityFilter.push(Visibility.PRIVATE);
     }
 
-    const posts: any = await PostModel.find({ owner: { $eq: userId }, visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } }).populate("owner", "_id username").sort(postSort);
-    return new SuccessDataResult(posts);
+    const query = { owner: { $eq: userId }, visibility: { $in: visibilityFilter }, category: { $in: categoryFilter } };
+
+    const count = await PostModel.countDocuments(query);
+
+    const page_ = page ? page - 1 : 0;
+    const limit_ = limit ? limit : count;
+
+    const posts: any = await PostModel
+    .find(query)
+    .populate("owner", "_id username")
+    .sort(postSort)
+    .skip(page_ * limit_)
+    .limit(limit_);
+
+    const paginatedPosts: Pagination<Post> = { data: posts, page: parseInt(page_ + 1 + ""), pageSize: parseInt(limit_ + ""), totalItems: count, totalPages: Math.ceil(count / limit_) }
+
+    return new SuccessDataResult(paginatedPosts);
 }
 
 async function getById(id: string, tokenPayload?: TokenPayload): Promise<IDataResult<Post | null>> {

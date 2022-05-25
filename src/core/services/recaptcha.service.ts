@@ -13,7 +13,6 @@ async function verify(recaptchaToken: string): Promise<IResult> {
                 response: recaptchaToken
             }
         });
-        console.info(response.data);
 
         if (!response.data.success) {
             return new ErrorResult("Captcha verification failed.");
