@@ -13,7 +13,7 @@ describe('User controller', () => {
 	describe('getAll', () => {
 
 		test('Success', async () => {
-			jest.spyOn(UserService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultUsersFull);
+			jest.spyOn(UserService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultPaginationUsers);
 
 			const mReq = getMockReq({ query: {} });
 			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
@@ -22,23 +22,9 @@ describe('User controller', () => {
 			await UserController.getAll(mReq, mRes.res, mNext);
 
 			expect(UserService.getAll).toBeCalled();
+			expect(UserService.getAll).toBeCalledWith(MockValues.mPaginatorUsersGetAllEmpty);
 			expect(mRes.res.status).toBeCalledWith(200);
-			expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultUsersFull);
-		});
-
-		test('Success with query parameters', async () => {
-			jest.spyOn(UserService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultUsersFull);
-
-			const mReq = getMockReq({ query: { field: "username", asc: 1 } });
-			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
-			const mNext = jest.fn();
-
-			await UserController.getAll(mReq, mRes.res, mNext);
-
-			expect(UserService.getAll).toBeCalled();
-			expect(UserService.getAll).toBeCalledWith(MockValues.mUserSort)
-			expect(mRes.res.status).toBeCalledWith(200);
-			expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultUsersFull);
+			expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPaginationUsers);
 		});
 
 		test('Error', async () => {
@@ -51,6 +37,7 @@ describe('User controller', () => {
 			await UserController.getAll(mReq, mRes.res, mNext);
 
 			expect(UserService.getAll).toBeCalled();
+			expect(UserService.getAll).toBeCalledWith(MockValues.mPaginatorUsersGetAllEmpty);
 			expect(mRes.res.status).toBeCalledWith(400);
 			expect(mRes.res.json).toBeCalledWith(MockValues.mErrorDataResult);
 		});
@@ -67,6 +54,7 @@ describe('User controller', () => {
 			await UserController.getAll(mReq, mRes.res, mNext);
 
 			expect(UserService.getAll).toBeCalled();
+			expect(UserService.getAll).toBeCalledWith(MockValues.mPaginatorUsersGetAllEmpty);
 			expect(mNext).toBeCalled();
 			expect(mRes.res.locals.err).toBeDefined();
 			expect(mRes.res.locals.err).toBeInstanceOf(Error);

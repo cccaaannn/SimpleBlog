@@ -14,43 +14,31 @@ describe('Post service', () => {
     describe('getAll', () => {
 
         test('Get all posts without any parameters', async () => {
+            jest.spyOn(PostModel, "countDocuments").mockResolvedValueOnce(1);
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostPopulaterAfterSorter as any
+                return MockValues.mPostGetAllQuery as any
             });
-            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
-            jest.spyOn(MockValues.mPostSorter, 'sort');
 
-            const result = await PostService.getAll(null, null, null);
+            const result = await PostService.getAll(MockValues.mPaginatorPostsGetAllEmpty);
 
             let categoryFilter: Category[] = Object.values(Category);
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC] }, category: { $in: categoryFilter } });
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
-            expect(MockValues.mPostSorter.sort).toBeCalled();
-            expect(MockValues.mPostSorter.sort).toBeCalledWith(undefined);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
         test('Get all posts with all parameters', async () => {
+            jest.spyOn(PostModel, "countDocuments").mockResolvedValueOnce(1);
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostPopulaterAfterSorter as any
+                return MockValues.mPostGetAllQuery as any
             });
-            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
-            jest.spyOn(MockValues.mPostSorter, 'sort');
 
-            const result = await PostService.getAll(MockValues.mTokenPayloadResetUser1, Category.GENERAL, MockValues.mPostSort);
-
-            let categoryFilter: Category[] = [Category.GENERAL]
+            const result = await PostService.getAll(MockValues.mPaginatorPostsGetAllFull);
 
             expect(PostModel.find).toBeCalled();
-            expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] }, category: { $in: categoryFilter } });
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
-            expect(MockValues.mPostSorter.sort).toBeCalled();
-            expect(MockValues.mPostSorter.sort).toBeCalledWith(MockValues.mPostSort);
+            expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] }, category: { $in: [Category.GENERAL] } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
@@ -60,43 +48,31 @@ describe('Post service', () => {
     describe('getByUserId', () => {
 
         test("Get posts by user's by id without any parameters", async () => {
+            jest.spyOn(PostModel, "countDocuments").mockResolvedValueOnce(1);
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostPopulaterAfterSorter as any
+                return MockValues.mPostGetByUserIdQuery as any
             });
-            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
-            jest.spyOn(MockValues.mPostSorter, 'sort');
 
-            const result = await PostService.getByUserId(MockValues.mUserId1, null, null, null);
+            const result = await PostService.getByUserId(MockValues.mPaginatorPostsGetByUserIdEmpty);
 
             let categoryFilter: Category[] = Object.values(Category);
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ owner: { $eq: MockValues.mUserId1 }, visibility: { $in: [Visibility.PUBLIC] }, category: { $in: categoryFilter } });
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
-            expect(MockValues.mPostSorter.sort).toBeCalled();
-            expect(MockValues.mPostSorter.sort).toBeCalledWith(undefined);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
         test("Get posts by user's by id with all parameters", async () => {
+            jest.spyOn(PostModel, "countDocuments").mockResolvedValueOnce(1);
             jest.spyOn(PostModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mPostPopulaterAfterSorter as any
+                return MockValues.mPostGetByUserIdQuery as any
             });
-            jest.spyOn(MockValues.mPostPopulaterAfterSorter, 'populate');
-            jest.spyOn(MockValues.mPostSorter, 'sort');
 
-            const result = await PostService.getByUserId(MockValues.mUserId1, MockValues.mTokenPayloadResetUser1, Category.GENERAL, MockValues.mPostSort);
-
-            let categoryFilter: Category[] = [Category.GENERAL]
+            const result = await PostService.getByUserId(MockValues.mPaginatorPostsGetByUserIdFull);
 
             expect(PostModel.find).toBeCalled();
-            expect(PostModel.find).toBeCalledWith({ owner: { $eq: MockValues.mUserId1 }, visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS, Visibility.PRIVATE] }, category: { $in: categoryFilter } });
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalled();
-            expect(MockValues.mPostPopulaterAfterSorter.populate).toBeCalledWith("owner", "_id username");
-            expect(MockValues.mPostSorter.sort).toBeCalled();
-            expect(MockValues.mPostSorter.sort).toBeCalledWith(MockValues.mPostSort);
+            expect(PostModel.find).toBeCalledWith({ owner: { $eq: MockValues.mUserId1 }, visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS, Visibility.PRIVATE] }, category: { $in: [Category.GENERAL] } });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });

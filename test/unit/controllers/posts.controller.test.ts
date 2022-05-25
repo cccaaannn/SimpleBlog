@@ -2,11 +2,9 @@ import { getMockReq, getMockRes } from '@jest-mock/express'
 
 import PostController from '../../../src/controllers/post.controller';
 import PostService from '../../../src/services/post.service';
-import Visibility from '../../../src/types/enums/Visibility';
 
 import { ErrorResult, SuccessResult } from '../../../src/core/results/Result';
 import { MockValues } from '../../utils/mocks/const-mock-values';
-import Category from '../../../src/types/enums/Category';
 import { ErrorDataResult, SuccessDataResult } from '../../../src/core/results/DataResult';
 
 
@@ -14,8 +12,8 @@ describe('Post controller', () => {
 
     describe('getAll', () => {
 
-        test('Success without any parameters', async () => {
-            jest.spyOn(PostService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
+        test('Success', async () => {
+            jest.spyOn(PostService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultPaginationPosts);
 
             const mReq = getMockReq({ query: {} });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
@@ -24,24 +22,9 @@ describe('Post controller', () => {
             await PostController.getAll(mReq, mRes.res, mNext);
 
             expect(PostService.getAll).toBeCalled();
-            expect(PostService.getAll).toBeCalledWith(null, null, null);
+            expect(PostService.getAll).toBeCalledWith(MockValues.mPaginatorPostsGetAllEmpty);
             expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
-        });
-
-        test('Success with all parameters', async () => {
-            jest.spyOn(PostService, 'getAll').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
-
-            const mReq = getMockReq({ query: { field: "visibility", asc: 1, category: Category.GENERAL } });
-            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getAll(mReq, mRes.res, mNext);
-
-            expect(PostService.getAll).toBeCalled();
-            expect(PostService.getAll).toBeCalledWith(MockValues.mTokenPayloadUser1, Category.GENERAL, MockValues.mPostSort)
-            expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPaginationPosts);
         });
 
         test('Error', async () => {
@@ -54,6 +37,7 @@ describe('Post controller', () => {
             await PostController.getAll(mReq, mRes.res, mNext);
 
             expect(PostService.getAll).toBeCalled();
+            expect(PostService.getAll).toBeCalledWith(MockValues.mPaginatorPostsGetAllEmpty);
             expect(mRes.res.status).toBeCalledWith(400);
             expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
         });
@@ -70,6 +54,7 @@ describe('Post controller', () => {
             await PostController.getAll(mReq, mRes.res, mNext);
 
             expect(PostService.getAll).toBeCalled();
+            expect(PostService.getAll).toBeCalledWith(MockValues.mPaginatorPostsGetAllEmpty);
             expect(mNext).toBeCalled();
             expect(mRes.res.locals.err).toBeDefined();
             expect(mRes.res.locals.err).toBeInstanceOf(Error);
@@ -79,8 +64,8 @@ describe('Post controller', () => {
 
     describe('getByUserId', () => {
 
-        test('Success without any parameters', async () => {
-            jest.spyOn(PostService, 'getByUserId').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
+        test('Success', async () => {
+            jest.spyOn(PostService, 'getByUserId').mockResolvedValueOnce(MockValues.mSuccessDataResultPaginationPosts);
 
             const mReq = getMockReq({ query: {}, params: { userId: MockValues.mUserId1 } });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
@@ -89,24 +74,9 @@ describe('Post controller', () => {
             await PostController.getByUserId(mReq, mRes.res, mNext);
 
             expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, null, null, null);
+            expect(PostService.getByUserId).toBeCalledWith(MockValues.mPaginatorPostsGetByUserIdEmpty);
             expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
-        });
-
-        test('Success with all parameters', async () => {
-            jest.spyOn(PostService, 'getByUserId').mockResolvedValueOnce(MockValues.mSuccessDataResultPostsFull);
-
-            const mReq = getMockReq({ query: { field: "visibility", asc: 1, category: Category.GENERAL }, params: { userId: MockValues.mUserId1 } });
-            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
-            const mNext = jest.fn();
-
-            await PostController.getByUserId(mReq, mRes.res, mNext);
-
-            expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1, Category.GENERAL, MockValues.mPostSort)
-            expect(mRes.res.status).toBeCalledWith(200);
-            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPostsFull);
+            expect(mRes.res.json).toBeCalledWith(MockValues.mSuccessDataResultPaginationPosts);
         });
 
         test('Error', async () => {
@@ -119,7 +89,7 @@ describe('Post controller', () => {
             await PostController.getByUserId(mReq, mRes.res, mNext);
 
             expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, null, null, null);
+            expect(PostService.getByUserId).toBeCalledWith(MockValues.mPaginatorPostsGetByUserIdEmpty);
             expect(mRes.res.status).toBeCalledWith(400);
             expect(mRes.res.json).toBeCalledWith(MockValues.mErrorResult);
         });
@@ -136,7 +106,7 @@ describe('Post controller', () => {
             await PostController.getByUserId(mReq, mRes.res, mNext);
 
             expect(PostService.getByUserId).toBeCalled();
-            expect(PostService.getByUserId).toBeCalledWith(MockValues.mUserId1, null, null, null);
+            expect(PostService.getByUserId).toBeCalledWith(MockValues.mPaginatorPostsGetByUserIdEmpty);
             expect(mNext).toBeCalled();
             expect(mRes.res.locals.err).toBeDefined();
             expect(mRes.res.locals.err).toBeInstanceOf(Error);
@@ -149,7 +119,7 @@ describe('Post controller', () => {
         test('Success without any parameters', async () => {
             jest.spyOn(PostService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultPost1);
 
-            const mReq = getMockReq({ query: { }, params: { id: MockValues.mPostId1 } });
+            const mReq = getMockReq({ query: {}, params: { id: MockValues.mPostId1 } });
             const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 
@@ -164,7 +134,7 @@ describe('Post controller', () => {
         test('Success with all parameters', async () => {
             jest.spyOn(PostService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultPost1);
 
-            const mReq = getMockReq({ query: { }, params: { id: MockValues.mPostId1 } });
+            const mReq = getMockReq({ query: {}, params: { id: MockValues.mPostId1 } });
             const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
             const mNext = jest.fn();
 

@@ -81,7 +81,7 @@ describe('/api/v1/users', () => {
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${token.token}`);
 
-            expect(res.body.data.length).toEqual(1);
+            expect(res.body.data.data.length).toEqual(1);
             expect(res.status).toEqual(200);
         });
 

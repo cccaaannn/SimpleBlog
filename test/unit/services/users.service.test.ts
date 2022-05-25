@@ -16,9 +16,13 @@ describe('User service', () => {
     describe('getAll', () => {
 
         test('Get all users', async () => {
-            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(UserModel, "countDocuments").mockResolvedValueOnce(1);
 
-            const result = await UserService.getAll();
+            jest.spyOn(UserModel, 'find').mockImplementationOnce((params: any) => {
+                return MockValues.mUsersGetAllQuery;
+            });
+
+            const result = await UserService.getAll(MockValues.mPaginatorUsersGetAllEmpty);
 
             expect(UserModel.find).toBeCalled();
             expect(UserModel.find).toBeCalledWith({ status: { $ne: Status.DELETED } });
@@ -26,18 +30,17 @@ describe('User service', () => {
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
-        test('Get all users with sort', async () => {
-            jest.spyOn(UserModel, 'find').mockImplementationOnce((params: any) => {
-                return MockValues.mUsersSorter;
-            });
-            jest.spyOn(MockValues.mUsersSorter, 'sort').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+        test('Get all users with parameters', async () => {
+            jest.spyOn(UserModel, "countDocuments").mockResolvedValueOnce(1);
 
-            const result = await UserService.getAll(MockValues.mUserSort);
+            jest.spyOn(UserModel, 'find').mockImplementationOnce((params: any) => {
+                return MockValues.mUsersGetAllQuery;
+            });
+
+            const result = await UserService.getAll(MockValues.mPaginatorUsersGetAllFull);
 
             expect(UserModel.find).toBeCalled();
             expect(UserModel.find).toBeCalledWith({ status: { $ne: Status.DELETED } });
-            expect(MockValues.mUsersSorter.sort).toBeCalled();
-            expect(MockValues.mUsersSorter.sort).toBeCalledWith(MockValues.mUserSort);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });

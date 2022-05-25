@@ -50,7 +50,7 @@ describe('/api/v1/posts', () => {
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${token.token}`);
 
-            expect(res.body.data.length).toEqual(1);
+            expect(res.body.data.data.length).toEqual(1);
             expect(res.status).toEqual(200);
         });
 
@@ -79,9 +79,9 @@ describe('/api/v1/posts', () => {
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${token.token}`);
 
-            expect(res.body.data.length).toEqual(1);
-            expect(res.body.data[0].owner._id).toEqual(createdUser._id.toString());
-            expect(res.body.data[0].owner._id).not.toEqual(createdUser2._id.toString());
+            expect(res.body.data.data.length).toEqual(1);
+            expect(res.body.data.data[0].owner._id).toEqual(createdUser._id.toString());
+            expect(res.body.data.data[0].owner._id).not.toEqual(createdUser2._id.toString());
             expect(res.status).toEqual(200);
         });
 

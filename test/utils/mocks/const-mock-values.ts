@@ -13,6 +13,7 @@ import { Login } from "../../../src/core/types/Login";
 import { Token } from "../../../src/core/types/Token";
 import TokenType from "../../../src/core/types/enums/TokenType";
 import Category from "../../../src/types/enums/Category";
+import { Pagination } from "../../../src/core/types/Pagination";
 
 
 export namespace MockValues {
@@ -297,8 +298,40 @@ export namespace MockValues {
         visibility: 1
     }
 
-    export const mPostPopulaterAfterSorter: any = {
-        populate: () => mPostSorter
+    export const mPostGetAllQuery: any = {
+        populate: function () {
+            return {
+                sort: function () {
+                    return {
+                        skip: function () {
+                            return {
+                                limit: function () {
+                                    return mUsersFull
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    export const mPostGetByUserIdQuery: any = {
+        populate: function () {
+            return {
+                sort: function () {
+                    return {
+                        skip: function () {
+                            return {
+                                limit: function () {
+                                    return mUsersFull
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     export const mPostPopulater: any = {
@@ -453,9 +486,17 @@ export namespace MockValues {
         username: 1
     }
 
-    export const mUsersSorter: any = {
+    export const mUsersGetAllQuery: any = {
         sort: function () {
-            return mUsersFull
+            return {
+                skip: function () {
+                    return {
+                        limit: function () {
+                            return mUsersFull
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -499,6 +540,79 @@ export namespace MockValues {
     export const mToken2: Token = {
         token: "token2"
     };
+
+    // ---------- ---------- ---------- ---------- ----------
+
+
+    // ---------- ---------- Pagination ---------- ----------
+
+    export const mPaginationUsers: Pagination<User> = {
+        data: mUsersFull,
+        page: 1,
+        pageSize: 1,
+        totalItems: 1,
+        totalPages: 1
+    }
+
+    export const mPaginationPosts: Pagination<Post> = {
+        data: mPostsFull,
+        page: 1,
+        pageSize: 1,
+        totalItems: 1,
+        totalPages: 1
+    }
+
+    export const mPaginatorUsersGetAllFull: any = {
+        page: 1,
+        limit: 1,
+        sort: "createdAt",
+        asc: -1
+    }
+
+    export const mPaginatorUsersGetAllEmpty: any = {
+        page: undefined,
+        limit: undefined,
+        sort: undefined,
+        asc: undefined
+    }
+
+    export const mPaginatorPostsGetAllFull: any = {
+        tokenPayload: mTokenPayloadUser1,
+        page: 1,
+        limit: 1,
+        sort: "createdAt",
+        category: Category.GENERAL,
+        asc: -1
+    }
+
+    export const mPaginatorPostsGetAllEmpty: any = {
+        tokenPayload: undefined,
+        page: undefined,
+        limit: undefined,
+        category: undefined,
+        sort: undefined,
+        asc: undefined
+    }
+
+    export const mPaginatorPostsGetByUserIdFull: any = {
+        userId: MockValues.mUserId1,
+        tokenPayload: mTokenPayloadUser1,
+        page: 1,
+        limit: 1,
+        sort: "createdAt",
+        category: Category.GENERAL,
+        asc: -1
+    }
+
+    export const mPaginatorPostsGetByUserIdEmpty: any = {
+        userId: MockValues.mUserId1,
+        tokenPayload: undefined,
+        page: undefined,
+        limit: undefined,
+        category: undefined,
+        sort: undefined,
+        asc: undefined
+    }
 
     // ---------- ---------- ---------- ---------- ----------
 
@@ -590,6 +704,16 @@ export namespace MockValues {
 
     export const mSuccessDataResultUser1Active: SuccessDataResult<User> = {
         data: mUser1,
+        status: true
+    }
+
+    export const mSuccessDataResultPaginationUsers: SuccessDataResult<Pagination<User>> = {
+        data: mPaginationUsers,
+        status: true
+    }
+
+    export const mSuccessDataResultPaginationPosts: SuccessDataResult<Pagination<Post>> = {
+        data: mPaginationPosts,
         status: true
     }
 

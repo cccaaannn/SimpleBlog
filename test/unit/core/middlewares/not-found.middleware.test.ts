@@ -18,6 +18,16 @@ describe('not-found middleware', () => {
             expect(mRes.res.json).toBeCalled();
         });
 
+        test('Passing error to next middleware', async () => {
+            const mReq = getMockReq({});
+            const mRes = getMockRes({ locals: { err: { message: "err" } }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            notFound()(mReq, mRes.res, mNext);
+
+            expect(mNext).toBeCalled();
+        });
+
     });
 
 });
