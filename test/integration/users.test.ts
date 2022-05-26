@@ -113,7 +113,7 @@ describe('/api/v1/users', () => {
             const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
 
             // Get admin token
-            const token: Token = JWTService.generateToken(MockValues.mTokenPayloadAdmin);
+            const token: Token = JWTService.generateToken(MockValues.mTokenPayloadSysAdmin);
 
             const res = await request.put(`/api/v1/users/changeRole/${createdUser._id}/${Roles.ADMIN}`)
                 .set('Accept', 'application/json')

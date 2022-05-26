@@ -220,7 +220,7 @@ async function purge(id: string, tokenPayload: TokenPayload): Promise<IResult> {
 // ---------- ---------- business rules ---------- ----------
 
 async function isUserAllowedForOperation(operatingUserId: string, tokenPayload: TokenPayload): Promise<IResult> {
-    if (tokenPayload.role == Roles.ADMIN || tokenPayload.role == Roles.SYS_ADMIN) {
+    if (tokenPayload.role == Roles.ADMIN || tokenPayload.role == Roles.SYS_ADMIN || tokenPayload.role == Roles.SYS_ADMIN) {
         return new SuccessResult();
     }
 

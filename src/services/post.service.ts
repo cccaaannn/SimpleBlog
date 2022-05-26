@@ -37,7 +37,7 @@ async function getAll({ tokenPayload, page, limit, category, sort, asc }: { toke
     const limit_ = limit ? limit : count;
 
     const posts: any = await PostModel
-        .find(query)
+        .find(query, { comments: 0 })
         .populate("owner", "_id username")
         .sort(postSort)
         .skip(page_ * limit_)

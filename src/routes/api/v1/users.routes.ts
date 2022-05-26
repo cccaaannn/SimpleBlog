@@ -20,13 +20,15 @@ usersRouter.get('/getAll', allowForRoles([Roles.ADMIN]), UserController.getAll);
 
 usersRouter.get('/getById/:id', allowForRoles([Roles.ADMIN]), UserController.getById);
 
-usersRouter.put('/changeRole/:id/:role', allowForRoles([Roles.ADMIN]), UserController.changeRole);
-
 usersRouter.put('/activate/:id', allowForRoles([Roles.ADMIN]), UserController.activate);
 
 usersRouter.put('/suspend/:id', allowForRoles([Roles.ADMIN]), UserController.suspend);
 
 usersRouter.delete('/delete/:id', allowForRoles([Roles.ADMIN]), UserController.remove);
+
+
+// SYS_ADMIN
+usersRouter.put('/changeRole/:id/:role', allowForRoles([Roles.SYS_ADMIN]), UserController.changeRole);
 
 
 export default usersRouter;

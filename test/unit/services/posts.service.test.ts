@@ -24,7 +24,7 @@ describe('Post service', () => {
             let categoryFilter: Category[] = Object.values(Category);
 
             expect(PostModel.find).toBeCalled();
-            expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC] }, category: { $in: categoryFilter } });
+            expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC] }, category: { $in: categoryFilter } }, { comments: 0 });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
@@ -38,7 +38,7 @@ describe('Post service', () => {
             const result = await PostService.getAll(MockValues.mPaginatorPostsGetAllFull);
 
             expect(PostModel.find).toBeCalled();
-            expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] }, category: { $in: [Category.GENERAL] } });
+            expect(PostModel.find).toBeCalledWith({ visibility: { $in: [Visibility.PUBLIC, Visibility.MEMBERS] }, category: { $in: [Category.GENERAL] } }, { comments: 0 });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });

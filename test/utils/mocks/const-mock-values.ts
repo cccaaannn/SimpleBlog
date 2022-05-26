@@ -112,6 +112,15 @@ export namespace MockValues {
         type: TokenType.AUTH
     }
 
+    export const mTokenPayloadSysAdmin: TokenPayload = {
+        id: mUserId2,
+        status: Status.ACTIVE,
+        username: mUsername1,
+        email: mEmail1,
+        role: Roles.SYS_ADMIN,
+        type: TokenType.AUTH
+    }
+
     // ---------- ---------- ---------- ---------- ----------
 
 
