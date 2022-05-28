@@ -229,13 +229,13 @@ describe('User controller', () => {
 			jest.spyOn(UserService, 'suspend').mockResolvedValueOnce(result);
 
 			const mReq = getMockReq({ query: {}, params: { id: MockValues.mUserId1 } });
-			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+			const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
 			const mNext = jest.fn();
 
 			await UserController.suspend(mReq, mRes.res, mNext);
 
 			expect(UserService.suspend).toBeCalled();
-			expect(UserService.suspend).toBeCalledWith(MockValues.mUserId1)
+			expect(UserService.suspend).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1)
 			expect(mRes.res.status).toBeCalledWith(200);
 			expect(mRes.res.json).toBeCalledWith(result);
 		});
@@ -245,13 +245,13 @@ describe('User controller', () => {
 			jest.spyOn(UserService, 'suspend').mockResolvedValueOnce(result);
 
 			const mReq = getMockReq({ query: {}, params: { id: MockValues.mUserId1 } });
-			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+			const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
 			const mNext = jest.fn();
 
 			await UserController.suspend(mReq, mRes.res, mNext);
 
 			expect(UserService.suspend).toBeCalled();
-			expect(UserService.suspend).toBeCalledWith(MockValues.mUserId1)
+			expect(UserService.suspend).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1)
 			expect(mRes.res.status).toBeCalledWith(400);
 			expect(mRes.res.json).toBeCalledWith(result);
 		});
@@ -262,13 +262,13 @@ describe('User controller', () => {
 			});
 
 			const mReq = getMockReq({ query: {}, params: { id: MockValues.mUserId1 } });
-			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+			const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
 			const mNext = jest.fn();
 
 			await UserController.suspend(mReq, mRes.res, mNext);
 
 			expect(UserService.suspend).toBeCalled();
-			expect(UserService.suspend).toBeCalledWith(MockValues.mUserId1)
+			expect(UserService.suspend).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1)
 			expect(mNext).toBeCalled();
 			expect(mRes.res.locals.err).toBeDefined();
 			expect(mRes.res.locals.err).toBeInstanceOf(Error);
@@ -277,20 +277,19 @@ describe('User controller', () => {
 	});
 
 	describe('activate', () => {
-		const mId = "mock_value" 
 
 		test('Success', async () => {
 			const result = new SuccessResult()
 			jest.spyOn(UserService, 'activate').mockResolvedValueOnce(result);
 
-			const mReq = getMockReq({ query: {}, params: { id: mId } });
-			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+			const mReq = getMockReq({ query: {}, params: { id: MockValues.mUserId1 } });
+			const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
 			const mNext = jest.fn();
 
 			await UserController.activate(mReq, mRes.res, mNext);
 
 			expect(UserService.activate).toBeCalled();
-			expect(UserService.activate).toBeCalledWith(mId)
+			expect(UserService.activate).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1)
 			expect(mRes.res.status).toBeCalledWith(200);
 			expect(mRes.res.json).toBeCalledWith(result);
 		});
@@ -300,13 +299,13 @@ describe('User controller', () => {
 			jest.spyOn(UserService, 'activate').mockResolvedValueOnce(result);
 
 			const mReq = getMockReq({ query: {}, params: { id: MockValues.mUserId1 } });
-			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+			const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
 			const mNext = jest.fn();
 
 			await UserController.activate(mReq, mRes.res, mNext);
 
 			expect(UserService.activate).toBeCalled();
-			expect(UserService.activate).toBeCalledWith(MockValues.mUserId1)
+			expect(UserService.activate).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1)
 			expect(mRes.res.status).toBeCalledWith(400);
 			expect(mRes.res.json).toBeCalledWith(result);
 		});
@@ -317,13 +316,13 @@ describe('User controller', () => {
 			});
 
 			const mReq = getMockReq({ query: {}, params: { id: MockValues.mUserId1 } });
-			const mRes = getMockRes({ locals: {}, status: jest.fn().mockReturnThis(), send: jest.fn() });
+			const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
 			const mNext = jest.fn();
 
 			await UserController.activate(mReq, mRes.res, mNext);
 
 			expect(UserService.activate).toBeCalled();
-			expect(UserService.activate).toBeCalledWith(MockValues.mUserId1)
+			expect(UserService.activate).toBeCalledWith(MockValues.mUserId1, MockValues.mTokenPayloadUser1)
 			expect(mNext).toBeCalled();
 			expect(mRes.res.locals.err).toBeDefined();
 			expect(mRes.res.locals.err).toBeInstanceOf(Error);

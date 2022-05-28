@@ -138,7 +138,7 @@ async function verifyAccount(token: Token): Promise<IResult> {
     }
 
     // activate users account
-    const userActivationResult: IResult = await UserService.activate(tokenPayload.id);
+    const userActivationResult: IResult = await UserService.selfActivate(tokenPayload.id);
     if (!userActivationResult.status) {
         return new ErrorResult("Account activation failed");
     }

@@ -179,30 +179,30 @@ describe('/api/v1/users', () => {
 
     });
 
-    describe('/delete', () => {
+    // describe('/delete', () => {
 
-        test('Successfully changing users status to deleted', async () => {
-            // Add mock user
-            const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
+    //     test('Successfully changing users status to deleted', async () => {
+    //         // Add mock user
+    //         const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
 
-            // Get admin token
-            const token: Token = JWTService.generateToken(MockValues.mTokenPayloadAdmin);
+    //         // Get admin token
+    //         const token: Token = JWTService.generateToken(MockValues.mTokenPayloadAdmin);
 
-            expect(createdUser.status).toEqual(Status.ACTIVE);
+    //         expect(createdUser.status).toEqual(Status.ACTIVE);
 
-            const res = await request.delete(`/api/v1/users/delete/${createdUser._id}`)
-                .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token.token}`);
+    //         const res = await request.delete(`/api/v1/users/delete/${createdUser._id}`)
+    //             .set('Accept', 'application/json')
+    //             .set('Authorization', `Bearer ${token.token}`);
 
-            expect(res.body.status).toEqual(true);
-            expect(res.status).toEqual(200);
+    //         expect(res.body.status).toEqual(true);
+    //         expect(res.status).toEqual(200);
 
-            // Is user updated
-            const updatedUser: any = await UserModel.findById(createdUser._id);
-            expect(updatedUser.status).toEqual(Status.DELETED);
-        });
+    //         // Is user updated
+    //         const updatedUser: any = await UserModel.findById(createdUser._id);
+    //         expect(updatedUser.status).toEqual(Status.DELETED);
+    //     });
 
-    });
+    // });
 
     describe('/purge', () => {
 

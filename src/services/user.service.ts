@@ -14,8 +14,8 @@ import { Pagination } from "../core/types/Pagination";
 
 async function getAll({ page, limit, sort, asc }: { page?: number, limit?: number, sort?: string, asc?: number }): Promise<IDataResult<Pagination<User>>> {
 
-    const sortMethod = sort ? sort: "createdAt";
-    const userSort = { [sortMethod] : asc ? asc : -1 };
+    const sortMethod = sort ? sort : "createdAt";
+    const userSort = { [sortMethod]: asc ? asc : -1 };
 
     const query = { status: { $ne: Status.DELETED } };
 
@@ -151,10 +151,11 @@ async function changeRole(id: string, role: Roles): Promise<IResult> {
     return new SuccessResult("User deleted");
 }
 
-async function suspend(id: string): Promise<IResult> {
+async function suspend(id: string, tokenPayload: TokenPayload): Promise<IResult> {
     const res: Result = await run(
         [
-            { function: isExists, args: [id] }
+            { function: isExists, args: [id] },
+            { function: canChange, args: [id, tokenPayload] }
         ]
     );
     if (!res.status) {
@@ -165,7 +166,22 @@ async function suspend(id: string): Promise<IResult> {
     return new SuccessResult("User deleted");
 }
 
-async function activate(id: string): Promise<IResult> {
+async function activate(id: string, tokenPayload: TokenPayload): Promise<IResult> {
+    const res: Result = await run(
+        [
+            { function: isExists, args: [id] },
+            { function: canChange, args: [id, tokenPayload] }
+        ]
+    );
+    if (!res.status) {
+        return res;
+    }
+
+    await UserModel.findOneAndUpdate({ _id: id }, { status: Status.ACTIVE }, { new: true });
+    return new SuccessResult("User deleted");
+}
+
+async function selfActivate(id: string): Promise<IResult> {
     const res: Result = await run(
         [
             { function: isExists, args: [id] }
@@ -220,12 +236,39 @@ async function purge(id: string, tokenPayload: TokenPayload): Promise<IResult> {
 // ---------- ---------- business rules ---------- ----------
 
 async function isUserAllowedForOperation(operatingUserId: string, tokenPayload: TokenPayload): Promise<IResult> {
-    if (tokenPayload.role == Roles.ADMIN || tokenPayload.role == Roles.SYS_ADMIN || tokenPayload.role == Roles.SYS_ADMIN) {
+    // SYS_ADMIN can do anything
+    if (tokenPayload.role == Roles.SYS_ADMIN) {
         return new SuccessResult();
     }
 
+    // Users can delete or update themselves
     if (tokenPayload.id == operatingUserId) {
         return new SuccessResult();
+    }
+
+    // Admins can only delete or update users
+    if (tokenPayload.role == Roles.ADMIN) {
+        const user = await UserModel.findById(operatingUserId);
+        if (user.role == Roles.USER) {
+            return new SuccessResult();
+        }
+    }
+
+    return new ErrorResult("Not permitted");
+}
+
+async function canChange(operatingUserId: string, tokenPayload: TokenPayload): Promise<IResult> {
+    // SYS_ADMIN can do anything
+    if (tokenPayload.role == Roles.SYS_ADMIN) {
+        return new SuccessResult();
+    }
+
+    // Admins can only change regular users
+    if (tokenPayload.role == Roles.ADMIN) {
+        const user = await UserModel.findById(operatingUserId);
+        if (user.role == Roles.USER) {
+            return new SuccessResult();
+        }
     }
 
     return new ErrorResult("Not permitted");
@@ -312,5 +355,5 @@ async function isRolePossible(role: Roles): Promise<IResult> {
 
 
 
-const UserService = { getAll, getById, getByUsername, getByEmail, add, update, changeRole, suspend, activate, remove, purge };
+const UserService = { getAll, getById, getByUsername, getByEmail, add, update, changeRole, suspend, activate, selfActivate, remove, purge };
 export default UserService;

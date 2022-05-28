@@ -16,15 +16,15 @@ usersRouter.delete('/purge/:id', allowForRoles([Roles.ADMIN, Roles.USER]), UserC
 
 
 // Admin
-usersRouter.get('/getAll', allowForRoles([Roles.ADMIN]), UserController.getAll); // ?field=username&asc=1
+usersRouter.get('/getAll', allowForRoles([Roles.ADMIN, Roles.SYS_ADMIN]), UserController.getAll); // ?field=username&asc=1
 
-usersRouter.get('/getById/:id', allowForRoles([Roles.ADMIN]), UserController.getById);
+usersRouter.get('/getById/:id', allowForRoles([Roles.ADMIN, Roles.SYS_ADMIN]), UserController.getById);
 
-usersRouter.put('/activate/:id', allowForRoles([Roles.ADMIN]), UserController.activate);
+usersRouter.put('/activate/:id', allowForRoles([Roles.ADMIN, Roles.SYS_ADMIN]), UserController.activate);
 
-usersRouter.put('/suspend/:id', allowForRoles([Roles.ADMIN]), UserController.suspend);
+usersRouter.put('/suspend/:id', allowForRoles([Roles.ADMIN, Roles.SYS_ADMIN]), UserController.suspend);
 
-usersRouter.delete('/delete/:id', allowForRoles([Roles.ADMIN]), UserController.remove);
+// usersRouter.delete('/delete/:id', allowForRoles([Roles.ADMIN]), UserController.remove);
 
 
 // SYS_ADMIN

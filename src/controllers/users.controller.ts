@@ -67,7 +67,7 @@ async function changeRole(req: any, res: any, next: any) {
 
 async function suspend(req: any, res: any, next: any) {
     try {
-        const result: IResult = await UserService.suspend(req.params.id);
+        const result: IResult = await UserService.suspend(req.params.id, res.locals.tokenPayload);
         if(result.status) {
             return res.status(200).json(result);
         }
@@ -81,7 +81,7 @@ async function suspend(req: any, res: any, next: any) {
 
 async function activate(req: any, res: any, next: any) {
     try {
-        const result: IResult = await UserService.activate(req.params.id);
+        const result: IResult = await UserService.activate(req.params.id, res.locals.tokenPayload);
         if(result.status) {
             return res.status(200).json(result);
         }

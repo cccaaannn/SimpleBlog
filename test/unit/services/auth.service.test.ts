@@ -294,7 +294,7 @@ describe('Auth service', () => {
         test('Activation fail', async () => {
             jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadVerifyUser1);
             jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
-            jest.spyOn(UserService, 'activate').mockResolvedValueOnce(MockValues.mErrorResult);
+            jest.spyOn(UserService, 'selfActivate').mockResolvedValueOnce(MockValues.mErrorResult);
 
             const result = await AuthService.verifyAccount(MockValues.mToken1);
 
@@ -302,8 +302,8 @@ describe('Auth service', () => {
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
             expect(UserService.getById).toBeCalled();
             expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
-            expect(UserService.activate).toBeCalled();
-            expect(UserService.activate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
+            expect(UserService.selfActivate).toBeCalled();
+            expect(UserService.selfActivate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
@@ -311,7 +311,7 @@ describe('Auth service', () => {
         test('Successful activation', async () => {
             jest.spyOn(JWTService, 'verify').mockResolvedValueOnce(MockValues.mSuccessDataResultTokenPayloadVerifyUser1);
             jest.spyOn(UserService, 'getById').mockResolvedValueOnce(MockValues.mSuccessDataResultUser1Passive);
-            jest.spyOn(UserService, 'activate').mockResolvedValueOnce(MockValues.mSuccessResult);
+            jest.spyOn(UserService, 'selfActivate').mockResolvedValueOnce(MockValues.mSuccessResult);
 
             const result = await AuthService.verifyAccount(MockValues.mToken1);
 
@@ -319,8 +319,8 @@ describe('Auth service', () => {
             expect(JWTService.verify).toBeCalledWith(MockValues.mToken1);
             expect(UserService.getById).toBeCalled();
             expect(UserService.getById).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
-            expect(UserService.activate).toBeCalled();
-            expect(UserService.activate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
+            expect(UserService.selfActivate).toBeCalled();
+            expect(UserService.selfActivate).toBeCalledWith(MockValues.mSuccessDataResultTokenPayloadVerifyUser1.data.id);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });

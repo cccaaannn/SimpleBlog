@@ -452,6 +452,17 @@ export namespace MockValues {
         updatedAt: mDateNow
     }
 
+    export const mUserSysAdmin: User = {
+        _id: mUserId1,
+        status: Status.ACTIVE,
+        username: mUsername1,
+        email: mEmail1,
+        password: mPassword1,
+        role: Roles.SYS_ADMIN,
+        createdAt: mDateNow,
+        updatedAt: mDateNow
+    }
+
     export const mUsersEmpty: User[] = []
 
     export const mUserToAdd: UserAdd = {

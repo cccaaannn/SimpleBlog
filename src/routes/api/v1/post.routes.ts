@@ -16,16 +16,16 @@ PostRouter.get('/getById/:id', decodeTokenIfExists(), PostController.getById);
 
 PostRouter.get('/getByUserId/:userId', decodeTokenIfExists(), PostController.getByUserId);
 
-PostRouter.post('/add', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.add);
+PostRouter.post('/add', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.add);
 
-PostRouter.put('/update/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.update);
+PostRouter.put('/update/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.update);
 
-PostRouter.delete('/delete/:id', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.remove);
+PostRouter.delete('/delete/:id', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.remove);
 
 // Comment
-PostRouter.put('/addComment/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.addComment);
+PostRouter.put('/addComment/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.addComment);
 
-PostRouter.put('/removeComment/:postId/:commentId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN]), PostController.removeComment);
+PostRouter.put('/removeComment/:postId/:commentId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.removeComment);
 
 
 export default PostRouter;
