@@ -257,15 +257,15 @@ describe('User service', () => {
             jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.update(MockValues.mUserId1, MockValues.mUserToUpdate, MockValues.mTokenPayloadAdmin);
+            const result = await UserService.update(MockValues.mUserId2, MockValues.mUserToUpdate, MockValues.mTokenPayloadAdmin);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId2, status: { $ne: Status.DELETED } });
             expect(UserModel.findById).toBeCalled();
-            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId1);            
-            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: MockValues.mUserId1 }, username: MockValues.mUserToUpdate.username, status: { $ne: Status.DELETED } });
+            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId2);            
+            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: MockValues.mUserId2 }, username: MockValues.mUserToUpdate.username, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, MockValues.mUserToUpdate, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId2 }, MockValues.mUserToUpdate, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
@@ -274,13 +274,13 @@ describe('User service', () => {
             jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]).mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
             jest.spyOn(UserModel, 'findOneAndUpdate').mockResolvedValueOnce("");
 
-            const result = await UserService.update(MockValues.mUserId1, MockValues.mUserToUpdate, MockValues.mTokenPayloadSysAdmin);
+            const result = await UserService.update(MockValues.mUserId2, MockValues.mUserToUpdate, MockValues.mTokenPayloadSysAdmin);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
-            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: MockValues.mUserId1 }, username: MockValues.mUserToUpdate.username, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId2, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(2, { _id: { $ne: MockValues.mUserId2 }, username: MockValues.mUserToUpdate.username, status: { $ne: Status.DELETED } });
             expect(UserModel.findOneAndUpdate).toBeCalled();
-            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId1 }, MockValues.mUserToUpdate, { new: true });
+            expect(UserModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mUserId2 }, MockValues.mUserToUpdate, { new: true });
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
         });
@@ -289,12 +289,12 @@ describe('User service', () => {
             jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(MockValues.mUserSysAdmin);
 
-            const result = await UserService.update(MockValues.mUserId1, MockValues.mUserToUpdate, MockValues.mTokenPayloadAdmin);
+            const result = await UserService.update(MockValues.mUserId2, MockValues.mUserToUpdate, MockValues.mTokenPayloadAdmin);
 
             expect(UserModel.find).toBeCalled();
-            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId2, status: { $ne: Status.DELETED } });
             expect(UserModel.findById).toBeCalled();
-            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId1);
+            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId2);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
@@ -581,19 +581,19 @@ describe('User service', () => {
             jest.spyOn(PostModel, 'updateMany').mockResolvedValueOnce("" as any);
             jest.spyOn(UserModel, 'findOneAndDelete').mockResolvedValueOnce("");
 
-            const result = await UserService.purge(MockValues.mUserId1, MockValues.mTokenPayloadAdmin);
+            const result = await UserService.purge(MockValues.mUserId2, MockValues.mTokenPayloadAdmin);
 
             expect(UserModel.findById).toBeCalled();
-            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId1);
+            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId2);
 
             expect(PostModel.deleteMany).toBeCalled();
-            expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId1 });
+            expect(PostModel.deleteMany).toHaveBeenCalledWith({ owner: MockValues.mUserId2 });
 
             expect(PostModel.updateMany).toBeCalled();
-            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId1 } } }, { timestamps: false });
+            expect(PostModel.updateMany).toHaveBeenCalledWith({}, { $pull: { comments: { owner: MockValues.mUserId2 } } }, { timestamps: false });
 
             expect(UserModel.findOneAndDelete).toBeCalled();
-            expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: MockValues.mUserId1 });
+            expect(UserModel.findOneAndDelete).toHaveBeenCalledWith({ _id: MockValues.mUserId2 });
 
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessResult);
@@ -602,17 +602,17 @@ describe('User service', () => {
         test('Admin trying to purge sys admin', async () => {
             jest.spyOn(UserModel, 'findById').mockResolvedValueOnce(MockValues.mUserSysAdmin);
 
-            const result = await UserService.purge(MockValues.mUserId1, MockValues.mTokenPayloadAdmin);
+            const result = await UserService.purge(MockValues.mUserId2, MockValues.mTokenPayloadAdmin);
 
             expect(UserModel.findById).toBeCalled();
-            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId1);
+            expect(UserModel.findById).toBeCalledWith(MockValues.mUserId2);
 
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
         });
 
         test('User trying to purge another user', async () => {
-            const result = await UserService.purge(MockValues.mUserId1, MockValues.mTokenPayloadUser1);
+            const result = await UserService.purge(MockValues.mUserId2, MockValues.mTokenPayloadUser1);
 
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);

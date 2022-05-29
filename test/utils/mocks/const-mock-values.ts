@@ -104,7 +104,7 @@ export namespace MockValues {
     }
 
     export const mTokenPayloadAdmin: TokenPayload = {
-        id: mUserId2,
+        id: mUserId1,
         status: Status.ACTIVE,
         username: mUsername1,
         email: mEmail1,
@@ -113,7 +113,7 @@ export namespace MockValues {
     }
 
     export const mTokenPayloadSysAdmin: TokenPayload = {
-        id: mUserId2,
+        id: mUserId1,
         status: Status.ACTIVE,
         username: mUsername1,
         email: mEmail1,
