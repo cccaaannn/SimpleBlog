@@ -9,6 +9,8 @@ import { CommentAdd } from "../types/Comment";
 import Visibility from "../types/enums/Visibility";
 import Category from "../types/enums/Category";
 import { Pagination } from "../core/types/Pagination";
+import { UserModel } from "../models/UserModel";
+import Status from "../core/types/enums/Status";
 
 
 async function getAll({ tokenPayload, page, limit, category, sort, asc }: { tokenPayload?: TokenPayload, page?: number, limit?: number, category?: Category, sort?: string, asc?: number }): Promise<IDataResult<Pagination<Post>>> {
@@ -124,6 +126,14 @@ async function getById(id: string, tokenPayload?: TokenPayload): Promise<IDataRe
 }
 
 async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IDataResult<Post | null>> {
+    const res: Result = await run(
+        [
+            { function: isUserExists, args: [tokenPayload.id] },
+        ]
+    );
+    if (!res.status) {
+        return new ErrorDataResult(null, res.message);
+    }
 
     let visibility: Visibility = Visibility.PUBLIC;
     if (Object.values(Visibility).includes(post.visibility as Visibility)) {
@@ -258,6 +268,14 @@ async function isExists(id: string): Promise<IResult> {
         return new SuccessResult();
     }
     return new ErrorResult("Post not exits");
+}
+
+async function isUserExists(id: string): Promise<IResult> {
+    const user: any[] = await UserModel.find({ _id: id, status: { $ne: Status.DELETED } });
+    if (user.length > 0) {
+        return new SuccessResult();
+    }
+    return new ErrorResult("User not exits");
 }
 
 // async function isUserOwnsPost(userId: string, postId: string): Promise<IResult> {

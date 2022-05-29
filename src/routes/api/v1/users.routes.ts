@@ -10,9 +10,9 @@ import Roles from '../../../core/types/enums/Roles';
 const usersRouter = Router();
 
 // User - Admin
-usersRouter.put('/update/:id', allowForRoles([Roles.ADMIN, Roles.USER]), bodyTrimer(), UserController.update);
+usersRouter.put('/update/:id', allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), bodyTrimer(), UserController.update);
 
-usersRouter.delete('/purge/:id', allowForRoles([Roles.ADMIN, Roles.USER]), UserController.purge);
+usersRouter.delete('/purge/:id', allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), UserController.purge);
 
 
 // Admin

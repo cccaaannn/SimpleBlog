@@ -2,8 +2,6 @@
 import { IResult } from "../core/results/Result";
 import { TokenPayload } from "../core/types/TokenPayload";
 import PostService from "../services/post.service"
-import Category from "../types/enums/Category";
-import { PostSort } from "../types/Post";
 
 
 async function getAll(req: any, res: any, next: any) {

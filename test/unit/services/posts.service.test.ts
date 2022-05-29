@@ -7,6 +7,9 @@ import { MockValues } from "../../utils/mocks/const-mock-values";
 import { PostModel } from "../../../src/models/PostModel";
 import { Post } from "../../../src/types/Post";
 import Category from "../../../src/types/enums/Category";
+import Status from "../../../src/core/types/enums/Status";
+import { User } from "../../../src/types/User";
+import { UserModel } from "../../../src/models/UserModel";
 
 
 describe('Post service', () => {
@@ -235,21 +238,38 @@ describe('Post service', () => {
     describe('add', () => {
 
         test('User adding a post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'create').mockResolvedValueOnce("" as never);
 
             const result = await PostService.add(MockValues.mPostToAdd, MockValues.mTokenPayloadUser1);
 
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(PostModel.create).toBeCalled();
             expect(PostModel.create).toBeCalledWith(MockValues.mPostToAdd);
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(SuccessDataResult);
         });
 
+        test('Non existing user adding a post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersEmpty as User[]);
+
+            const result = await PostService.add(MockValues.mPostToAdd, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorDataResult);
+        });
+
         test('User adding a post with wrong validations', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'create').mockResolvedValueOnce("" as never);
 
             const result = await PostService.add(MockValues.mPostToAddWrongValidations, MockValues.mTokenPayloadUser1);
 
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
             expect(PostModel.create).toBeCalled();
             expect(PostModel.create).toBeCalledWith(MockValues.mPostToAdd);
             expect(result).toBeDefined();
