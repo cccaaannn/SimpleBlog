@@ -349,10 +349,14 @@ describe('Post service', () => {
     describe('addComment', () => {
 
         test('User adding comment to a post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
 
             const result = await PostService.addComment(MockValues.mPostId1, MockValues.mCommentAdd, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
@@ -364,10 +368,14 @@ describe('Post service', () => {
         });
 
         test('User trying to add comment to a non existing post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsEmpty as Post[]);
 
             const result = await PostService.addComment(MockValues.mPostId1, MockValues.mCommentAdd, MockValues.mTokenPayloadUser1);
 
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+            
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
 
@@ -380,11 +388,15 @@ describe('Post service', () => {
     describe('removeComment', () => {
 
         test('User deleting its own comment from another users post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(MockValues.mPost1 as Post);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
 
             const result = await PostService.removeComment(MockValues.mPostId2, MockValues.mCommentId1, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId2 });
@@ -399,10 +411,14 @@ describe('Post service', () => {
         });
 
         test('Admin deleting another users comment from another users post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
 
             const result = await PostService.removeComment(MockValues.mPostId2, MockValues.mCommentId2, MockValues.mTokenPayloadAdmin);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId2 });
@@ -414,9 +430,13 @@ describe('Post service', () => {
         });
 
         test('User trying to delete non existing comment from a post or a non existing post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsEmpty as Post[]);
 
             const result = await PostService.removeComment(MockValues.mPostId2, MockValues.mCommentId1, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId2 });
@@ -426,10 +446,14 @@ describe('Post service', () => {
         });
 
         test('User trying to delete another users comment from another users post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
             jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
             jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(null);
 
             const result = await PostService.removeComment(MockValues.mPostId2, MockValues.mCommentId2, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
 
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId2 });

@@ -316,4 +316,79 @@ describe('/api/v1/posts', () => {
 
     });
 
+    describe('/addLike', () => {
+
+        test('Successfully adding a like to a post by post id', async () => {
+            // Add mock user
+            const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
+
+            // Add mock post to regular user
+            const postToAdd: any = { ...MockValues.mPostToAdd }
+            postToAdd.owner = createdUser._id;
+            const createdPost: Post = await PostModel.create(postToAdd);
+
+            // Check post before update
+            const posts: any = await PostModel.find();
+            expect(posts.length).toEqual(1);
+
+            // Get token with real id
+            const tokenPayload = { ...MockValues.mTokenPayloadAdmin };
+            tokenPayload.id = createdUser._id.toString();
+
+            const token: Token = JWTService.generateToken(tokenPayload);
+
+            const res = await request.put(`/api/v1/posts/addLike/${createdPost._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${token.token}`);
+            
+            expect(res.body.status).toEqual(true);
+            expect(res.status).toEqual(200);
+
+            const postsUpdated: any = await PostModel.find();
+            expect(postsUpdated.length).toEqual(1);
+            expect(postsUpdated[0].likes.length).toEqual(1);
+            expect(postsUpdated[0].likes[0].owner.toString()).toEqual(tokenPayload.id.toString());
+        });
+
+    });
+
+    describe('/removeLike', () => {
+
+        test('Successfully removing a like to a post by post id', async () => {
+            // Add mock user
+            const createdUser: User = await UserModel.create(MockValues.mUserToAddActive);
+
+            // Add mock post to regular user
+            const postToAdd: any = { ...MockValues.mPostToAdd }
+            postToAdd.owner = createdUser._id;
+            postToAdd.likes = [{
+                owner: createdUser._id
+            }]
+            const createdPost: Post = await PostModel.create(postToAdd);
+
+            // Check post before update
+            const posts: any = await PostModel.find();
+            expect(posts.length).toEqual(1);
+            expect(posts[0].likes.length).toEqual(1);
+
+            // Get token with real id
+            const tokenPayload = { ...MockValues.mTokenPayloadAdmin };
+            tokenPayload.id = createdUser._id.toString();
+
+            const token: Token = JWTService.generateToken(tokenPayload);
+
+            const res = await request.put(`/api/v1/posts/removeLike/${createdPost._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${token.token}`);
+            
+            expect(res.body.status).toEqual(true);
+            expect(res.status).toEqual(200);
+
+            const postsUpdated: any = await PostModel.find();
+            expect(postsUpdated.length).toEqual(1);
+            expect(postsUpdated[0].likes.length).toEqual(0);
+        });
+
+    });
+
 });

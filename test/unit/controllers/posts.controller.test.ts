@@ -397,6 +397,114 @@ describe('Post controller', () => {
 
     });
 
+    describe('addLike', () => {
+
+        test('Success', async () => {
+            const result = new SuccessResult()
+            jest.spyOn(PostService, 'addLike').mockResolvedValueOnce(result);
+
+            const mReq = getMockReq({ query: {}, params: { postId: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.addLike(mReq, mRes.res, mNext);
+
+            expect(PostService.addLike).toBeCalled();
+            expect(PostService.addLike).toBeCalledWith(MockValues.mPostId1, MockValues.mTokenPayloadUser1)
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(result);
+        });
+
+        test('Error', async () => {
+            const result = new ErrorResult()
+            jest.spyOn(PostService, 'addLike').mockResolvedValueOnce(result);
+
+            const mReq = getMockReq({ query: {}, params: { postId: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.addLike(mReq, mRes.res, mNext);
+
+            expect(PostService.addLike).toBeCalled();
+            expect(PostService.addLike).toBeCalledWith(MockValues.mPostId1, MockValues.mTokenPayloadUser1)
+            expect(mRes.res.status).toBeCalledWith(400);
+            expect(mRes.res.json).toBeCalledWith(result);
+        });
+
+        test('Exception', async () => {
+            jest.spyOn(PostService, 'addLike').mockImplementation(() => {
+                throw new Error();
+            });
+
+            const mReq = getMockReq({ query: {}, params: { postId: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.addLike(mReq, mRes.res, mNext);
+
+            expect(PostService.addLike).toBeCalled();
+            expect(PostService.addLike).toBeCalledWith(MockValues.mPostId1, MockValues.mTokenPayloadUser1)
+            expect(mNext).toBeCalled();
+            expect(mRes.res.locals.err).toBeDefined();
+            expect(mRes.res.locals.err).toBeInstanceOf(Error);
+        });
+
+    });
+
+    describe('removeLike', () => {
+
+        test('Success', async () => {
+            const result = new SuccessResult()
+            jest.spyOn(PostService, 'removeLike').mockResolvedValueOnce(result);
+
+            const mReq = getMockReq({ query: {}, params: { postId: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.removeLike(mReq, mRes.res, mNext);
+
+            expect(PostService.removeLike).toBeCalled();
+            expect(PostService.removeLike).toBeCalledWith(MockValues.mPostId1, MockValues.mTokenPayloadUser1)
+            expect(mRes.res.status).toBeCalledWith(200);
+            expect(mRes.res.json).toBeCalledWith(result);
+        });
+
+        test('Error', async () => {
+            const result = new ErrorResult()
+            jest.spyOn(PostService, 'removeLike').mockResolvedValueOnce(result);
+
+            const mReq = getMockReq({ query: {}, params: { postId: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.removeLike(mReq, mRes.res, mNext);
+
+            expect(PostService.removeLike).toBeCalled();
+            expect(PostService.removeLike).toBeCalledWith(MockValues.mPostId1, MockValues.mTokenPayloadUser1)
+            expect(mRes.res.status).toBeCalledWith(400);
+            expect(mRes.res.json).toBeCalledWith(result);
+        });
+
+        test('Exception', async () => {
+            jest.spyOn(PostService, 'removeLike').mockImplementation(() => {
+                throw new Error();
+            });
+
+            const mReq = getMockReq({ query: {}, params: { postId: MockValues.mPostId1 } });
+            const mRes = getMockRes({ locals: { tokenPayload: MockValues.mTokenPayloadUser1 }, status: jest.fn().mockReturnThis(), send: jest.fn() });
+            const mNext = jest.fn();
+
+            await PostController.removeLike(mReq, mRes.res, mNext);
+
+            expect(PostService.removeLike).toBeCalled();
+            expect(PostService.removeLike).toBeCalledWith(MockValues.mPostId1, MockValues.mTokenPayloadUser1)
+            expect(mNext).toBeCalled();
+            expect(mRes.res.locals.err).toBeDefined();
+            expect(mRes.res.locals.err).toBeInstanceOf(Error);
+        });
+
+    });
+
     describe('remove', () => {
 
         test('Success', async () => {
