@@ -11,6 +11,7 @@ import Category from "../types/enums/Category";
 import { Pagination } from "../core/types/Pagination";
 import { UserModel } from "../models/UserModel";
 import Status from "../core/types/enums/Status";
+import { LikeAdd } from "../types/Like";
 
 
 async function getAll({ tokenPayload, page, limit, category, sort, asc }: { tokenPayload?: TokenPayload, page?: number, limit?: number, category?: Category, sort?: string, asc?: number }): Promise<IDataResult<Pagination<Post>>> {
@@ -20,8 +21,8 @@ async function getAll({ tokenPayload, page, limit, category, sort, asc }: { toke
         categoryFilter = [category];
     }
 
-    const sortMethod = sort ? sort: "createdAt";
-    const postSort = { [sortMethod] : asc ? asc : -1 };
+    const sortMethod = sort ? sort : "createdAt";
+    const postSort = { [sortMethod]: asc ? asc : -1 };
 
     // Everyone can see Visibility.PUBLIC
     let visibilityFilter: Visibility[] = [Visibility.PUBLIC]
@@ -57,8 +58,8 @@ async function getByUserId({ userId, tokenPayload, page, limit, category, sort, 
         categoryFilter = [category];
     }
 
-    const sortMethod = sort ? sort: "createdAt";
-    const postSort = { [sortMethod] : asc ? asc : -1 };
+    const sortMethod = sort ? sort : "createdAt";
+    const postSort = { [sortMethod]: asc ? asc : -1 };
 
     // Everyone can see Visibility.PUBLIC
     let visibilityFilter: Visibility[] = [Visibility.PUBLIC]
@@ -80,11 +81,11 @@ async function getByUserId({ userId, tokenPayload, page, limit, category, sort, 
     const limit_ = limit ? limit : count;
 
     const posts: any = await PostModel
-    .find(query)
-    .populate("owner", "_id username")
-    .sort(postSort)
-    .skip(page_ * limit_)
-    .limit(limit_);
+        .find(query)
+        .populate("owner", "_id username")
+        .sort(postSort)
+        .skip(page_ * limit_)
+        .limit(limit_);
 
     const paginatedPosts: Pagination<Post> = { data: posts, page: parseInt(page_ + 1 + ""), pageSize: parseInt(limit_ + ""), totalItems: count, totalPages: Math.ceil(count / limit_) }
 
@@ -128,7 +129,7 @@ async function getById(id: string, tokenPayload?: TokenPayload): Promise<IDataRe
 async function add(post: PostAdd, tokenPayload: TokenPayload): Promise<IDataResult<Post | null>> {
     const res: Result = await run(
         [
-            { function: isUserExists, args: [tokenPayload.id] },
+            { function: isUserExists, args: [tokenPayload.id] }
         ]
     );
     if (!res.status) {
@@ -184,6 +185,7 @@ async function update(id: string, post: PostUpdate, tokenPayload: TokenPayload):
 async function addComment(id: string, comment: CommentAdd, tokenPayload: TokenPayload): Promise<IResult> {
     const res: Result = await run(
         [
+            { function: isUserExists, args: [tokenPayload.id] },
             { function: isExists, args: [id] }
         ]
     );
@@ -203,6 +205,7 @@ async function addComment(id: string, comment: CommentAdd, tokenPayload: TokenPa
 async function removeComment(postId: string, commentId: string, tokenPayload: TokenPayload): Promise<IResult> {
     const res: Result = await run(
         [
+            { function: isUserExists, args: [tokenPayload.id] },
             { function: isExists, args: [postId] },
             { function: isUserAllowedToDeleteComment, args: [postId, commentId, tokenPayload] }
         ]
@@ -213,6 +216,42 @@ async function removeComment(postId: string, commentId: string, tokenPayload: To
 
     await PostModel.findOneAndUpdate({ _id: postId }, { $pull: { comments: { _id: commentId } } }, { new: true, timestamps: false });
     return new SuccessResult("Post updated");
+}
+
+async function addLike(id: string, tokenPayload: TokenPayload): Promise<IResult> {
+    const res: Result = await run(
+        [
+            { function: isUserExists, args: [tokenPayload.id] },
+            { function: isExists, args: [id] },
+            { function: isUserNotLikedBefore, args: [id, tokenPayload.id] }
+        ]
+    );
+    if (!res.status) {
+        return res;
+    }
+
+    const likeToAdd: LikeAdd = {
+        owner: tokenPayload.id
+    }
+
+    await PostModel.findOneAndUpdate({ _id: id }, { $push: { likes: likeToAdd } }, { new: true, timestamps: false });
+    return new SuccessResult("Liked");
+}
+
+async function removeLike(id: string, tokenPayload: TokenPayload): Promise<IResult> {
+    const res: Result = await run(
+        [
+            { function: isUserExists, args: [tokenPayload.id] },
+            { function: isExists, args: [id] },
+            { function: isUserLikedBefore, args: [id, tokenPayload.id] }
+        ]
+    );
+    if (!res.status) {
+        return res;
+    }
+
+    await PostModel.findOneAndUpdate({ _id: id }, { $pull: { likes: { owner: tokenPayload.id } } }, { new: true, timestamps: false });
+    return new SuccessResult("Un liked");
 }
 
 async function remove(id: string, tokenPayload: TokenPayload): Promise<IResult> {
@@ -278,6 +317,22 @@ async function isUserExists(id: string): Promise<IResult> {
     return new ErrorResult("User not exits");
 }
 
+async function isUserNotLikedBefore(id: string, userId: string): Promise<IResult> {
+    const posts: any = await PostModel.findOne({ _id: id, likes: { $elemMatch: { owner: userId } } });
+    if (posts !== null) {
+        return new ErrorResult("Post liked before");
+    }
+    return new SuccessResult();
+}
+
+async function isUserLikedBefore(id: string, userId: string): Promise<IResult> {
+    const posts: any = await PostModel.findOne({ _id: id, likes: { $elemMatch: { owner: userId } } });
+    if (posts !== null) {
+        return new SuccessResult();
+    }
+    return new ErrorResult("Post not liked before");
+}
+
 // async function isUserOwnsPost(userId: string, postId: string): Promise<IResult> {
 //     const res: any = await PostModel.findOne({ _id: postId, owner: { $eq: userId } });
 //     if(res == null) {
@@ -290,5 +345,5 @@ async function isUserExists(id: string): Promise<IResult> {
 
 
 
-const PostService = { getAll, getByUserId, getById, add, update, addComment, removeComment, remove };
+const PostService = { getAll, getByUserId, getById, add, update, addComment, removeComment, addLike, removeLike, remove };
 export default PostService;

@@ -126,6 +126,36 @@ async function removeComment(req: any, res: any, next: any) {
     }
 }
 
+async function addLike(req: any, res: any, next: any) {
+    try {
+        const result: IResult = await PostService.addLike(req.params.postId, res.locals.tokenPayload);
+        if (result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    }
+    catch (err: any) {
+        res.locals.err = err;
+        next();
+    }
+}
+
+async function removeLike(req: any, res: any, next: any) {
+    try {
+        const result: IResult = await PostService.removeLike(req.params.postId, res.locals.tokenPayload);
+        if (result.status) {
+            return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+    }
+    catch (err: any) {
+        console.log(err);
+        
+        res.locals.err = err;
+        next();
+    }
+}
+
 async function remove(req: any, res: any, next: any) {
     try {
         const result: IResult = await PostService.remove(req.params.id, res.locals.tokenPayload);
@@ -141,5 +171,5 @@ async function remove(req: any, res: any, next: any) {
 }
 
 
-const PostController = { getAll, getById, getByUserId, add, update, addComment, removeComment, remove };
+const PostController = { getAll, getById, getByUserId, add, update, addComment, removeComment, addLike, removeLike, remove };
 export default PostController;

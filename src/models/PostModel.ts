@@ -13,6 +13,15 @@ const CommentSchema = new Schema(
     }
 );
 
+const LikeSchema = new Schema(
+    {
+        owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    },
+    {
+        timestamps: true
+    }
+);
+
 const PostSchema = new Schema(
     {
         owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -21,7 +30,8 @@ const PostSchema = new Schema(
         image: { type: String, required: true },
         category: { type: String, default: Category.GENERAL },
         visibility: { type: String, default: Visibility.PUBLIC },
-        comments: [CommentSchema]
+        comments: [CommentSchema],
+        likes: [LikeSchema]
     },
     {
         timestamps: true

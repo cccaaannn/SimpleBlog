@@ -27,5 +27,10 @@ PostRouter.put('/addComment/:postId', decodeAndVerifyToken(), allowForRoles([Rol
 
 PostRouter.put('/removeComment/:postId/:commentId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.removeComment);
 
+// Likes
+PostRouter.put('/addLike/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.addLike);
+
+PostRouter.put('/removeLike/:postId', decodeAndVerifyToken(), allowForRoles([Roles.USER, Roles.ADMIN, Roles.SYS_ADMIN]), PostController.removeLike);
+
 
 export default PostRouter;
