@@ -375,7 +375,7 @@ describe('Post service', () => {
 
             expect(UserModel.find).toBeCalled();
             expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
-            
+
             expect(PostModel.find).toBeCalled();
             expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
 
@@ -460,6 +460,100 @@ describe('Post service', () => {
 
             expect(PostModel.findOne).toBeCalled();
             expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId2, $in: { comments: { _id: MockValues.mCommentId2, owner: MockValues.mTokenPayloadUser1.id } } });
+
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+    });
+
+    describe('addLike', () => {
+
+        test('User adding like to a post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(null);
+            jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
+
+            const result = await PostService.addLike(MockValues.mPostId1, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+
+            expect(PostModel.find).toBeCalled();
+            expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
+
+            expect(PostModel.findOne).toBeCalled();
+            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId1, likes: { $elemMatch: { owner: MockValues.mUserId1 } } });
+
+            expect(PostModel.findOneAndUpdate).toBeCalled();
+            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId1 }, { $push: { likes: { owner: MockValues.mUserId1 } } }, { new: true, timestamps: false });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+        test('User trying to add like again', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+
+            const result = await PostService.addLike(MockValues.mPostId1, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+
+            expect(PostModel.find).toBeCalled();
+            expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
+
+            expect(PostModel.findOne).toBeCalled();
+            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId1, likes: { $elemMatch: { owner: MockValues.mUserId1 } } });
+
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(ErrorResult);
+        });
+
+    });
+
+    describe('removeLike', () => {
+
+        test('User removing like from a post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(PostModel, 'findOneAndUpdate').mockResolvedValueOnce("" as never);
+
+            const result = await PostService.removeLike(MockValues.mPostId1, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+
+            expect(PostModel.find).toBeCalled();
+            expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
+
+            expect(PostModel.findOne).toBeCalled();
+            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId1, likes: { $elemMatch: { owner: MockValues.mUserId1 } } });
+
+            expect(PostModel.findOneAndUpdate).toBeCalled();
+            expect(PostModel.findOneAndUpdate).toBeCalledWith({ _id: MockValues.mPostId1 }, { $pull: { likes: { owner: MockValues.mUserId1 } } }, { new: true, timestamps: false });
+            expect(result).toBeDefined();
+            expect(result).toBeInstanceOf(SuccessResult);
+        });
+
+        test('User trying to remove like from a not liked post', async () => {
+            jest.spyOn(UserModel, 'find').mockResolvedValueOnce(MockValues.mUsersFull as User[]);
+            jest.spyOn(PostModel, 'find').mockResolvedValueOnce(MockValues.mPostsFull as Post[]);
+            jest.spyOn(PostModel, 'findOne').mockResolvedValueOnce(null);
+
+            const result = await PostService.removeLike(MockValues.mPostId1, MockValues.mTokenPayloadUser1);
+
+            expect(UserModel.find).toBeCalled();
+            expect(UserModel.find).toHaveBeenNthCalledWith(1, { _id: MockValues.mUserId1, status: { $ne: Status.DELETED } });
+
+            expect(PostModel.find).toBeCalled();
+            expect(PostModel.find).toBeCalledWith({ _id: MockValues.mPostId1 });
+
+            expect(PostModel.findOne).toBeCalled();
+            expect(PostModel.findOne).toBeCalledWith({ _id: MockValues.mPostId1, likes: { $elemMatch: { owner: MockValues.mUserId1 } } });
 
             expect(result).toBeDefined();
             expect(result).toBeInstanceOf(ErrorResult);
