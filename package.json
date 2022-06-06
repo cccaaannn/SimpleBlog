@@ -7,8 +7,8 @@
     "build": "tsc",
     "dev": "nodemon ./src/index.ts",
     "test": "jest -c jest.config.js --verbose --runInBand",
-    "test:coverage": "jest -c jest.config.js --coverage --collectCoverageFrom=\"./src/**\"",
-    "test:coveralls": "jest -c jest.config.js --coverage --collectCoverageFrom=\"./src/**\" --coverageReporters=text-lcov | coveralls"
+    "test:coverage": "jest -c jest.config.js --coverage --collectCoverageFrom=\"./src/**\" --collectCoverageFrom=\"!src/index.ts\"",
+    "test:coveralls": "jest -c jest.config.js --coverage --collectCoverageFrom=\"./src/**\" --collectCoverageFrom=\"!src/index.ts\" --coverageReporters=text-lcov | coveralls"
   },
   "author": "Can Kurt",
   "license": "MIT",
