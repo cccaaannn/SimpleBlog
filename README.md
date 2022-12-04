@@ -13,24 +13,20 @@ Practice project for various web technologies.
         1. Testing.
         2. Coverage report. (coveralls)
         3. Docker image build.
-        4. Push to DockerHub and Heroku. (Heroku will auto deploy container)
 2. Requirements
     - In order to use ci, these environment variables must be set.
-    - GitHub environments are used for deployment.
-    - Heroku environments are used for running the backend.
+    - GitHub environments are used for building the project.
+    - Deployment environments are used for running the backend.
 
 ```shell
 # GitHub
-
 DOCKER_PASSWORD
 DOCKER_USERNAME
-HEROKU_API_KEY
-HEROKU_EMAIL
 ```
 
 ```shell
-# Heroku
-IS_HEROKU
+# Deployment
+ENABLE_LOGS
 
 MONGO_CONNECTION_STRING
 

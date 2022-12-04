@@ -44,21 +44,3 @@ jobs:
 
       - name: Push Docker image
         run: docker push cccaaannn/simple-blog-backend
-
-  heroku:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Build and push Docker to Heroku
-        env:
-          HEROKU_APP_NAME: simple-blog-backend-1
-          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          DOCKERFILE_NAME: "Dockerfile"
-        run: |
-          echo ${HEROKU_API_KEY} | docker login --username=${HEROKU_EMAIL} registry.heroku.com --password-stdin
-          docker build --file ${DOCKERFILE_NAME} --tag registry.heroku.com/${HEROKU_APP_NAME}/web .
-          docker push registry.heroku.com/${HEROKU_APP_NAME}/web 
-          heroku container:release web --app ${HEROKU_APP_NAME}

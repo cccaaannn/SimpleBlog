@@ -28,8 +28,8 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-if(process.env.NODE_ENV !== 'test' && process.env.IS_HEROKU === 'false') {
-    app.use(morgan('common', { stream: fs.createWriteStream(path.join(__dirname, '../logs/access.log'), { flags: 'a' }) }))
+if(process.env.NODE_ENV !== 'test' && process.env.ENABLE_LOGS === 'true') {
+    app.use(morgan('common', { stream: fs.createWriteStream(path.join('./logs/access.log'), { flags: 'a' }) }))
 }
 
 

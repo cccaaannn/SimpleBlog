@@ -17,5 +17,6 @@ RUN npm run build
 ENV PORT=3000
 ENV IP=0.0.0.0
 ENV NODE_ENV=production
+ENV ENABLE_LOGS=true
 
 CMD [ "node", "dist/src/index.js" ]
