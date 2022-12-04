@@ -41,3 +41,24 @@ RECAPTCHA_SECRET_KEY
 
 FRONTEND_URL
 ```
+
+## Running with docker
+- Fill empty fields before running.
+1. docker compose
+```
+docker compose up -d
+```
+2. docker run
+```
+docker run -d --name simple-blog-backend --restart unless-stopped -m 512M --network=custom_bridge_network \
+-e MONGO_CONNECTION_STRING='mongodb://<username>:<password>@localhost:27017/SimpleBlogDb?authSource=admin&readPreference=primary&appname=MongoDB&ssl=false' \
+-e JWT_PRIVATE_KEY="" \
+-e JWT_USER_TOKEN_EXPIRATION="2592000s" \
+-e EMAIL_SERVICE="gmail" \
+-e EMAIL_USERNAME="" \
+-e EMAIL_PASSWORD="" \
+-e RECAPTCHA_SECRET_KEY="" \
+-e FRONTEND_URL="" \
+-v ./logs:/app/logs \
+cccaaannn/simple-blog-backend:latest
+```
